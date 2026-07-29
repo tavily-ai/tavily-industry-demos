@@ -298,19 +298,30 @@ export default function App() {
 
   return (
     <div className="min-h-screen relative" style={{ backgroundColor: "var(--color-background)" }}>
-      {/* Background image layer */}
+      {/* Background image layer — softened so it reads as a backdrop, not wallpaper */}
       <div
         className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: "url(/tavily_landscapes_edited_11.webp)",
-          opacity: 0.7,
+          backgroundImage: "url(/landscape-08.webp)",
+          filter: "saturate(0.75) brightness(1.08)",
+          transform: "scale(1.03) translateZ(0)",
           willChange: "transform",
+        }}
+      />
+      {/* Unifying veil — tints the image toward the glass palette */}
+      <div
+        className="fixed inset-0 z-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(248,248,250,0.78) 0%, rgba(248,248,250,0.42) 45%, rgba(248,248,250,0.6) 100%)",
+          backdropFilter: "blur(3px)",
+          WebkitBackdropFilter: "blur(3px)",
           transform: "translateZ(0)",
         }}
       />
       {/* Top gradient fade */}
       <div
-        className="fixed inset-x-0 top-0 z-0 h-48 pointer-events-none"
+        className="fixed inset-x-0 top-0 z-0 h-64 pointer-events-none"
         style={{
           background: "linear-gradient(to bottom, var(--color-background), transparent)",
           transform: "translateZ(0)",
@@ -318,7 +329,7 @@ export default function App() {
       />
       {/* Bottom gradient fade */}
       <div
-        className="fixed inset-x-0 bottom-0 z-0 h-48 pointer-events-none"
+        className="fixed inset-x-0 bottom-0 z-0 h-64 pointer-events-none"
         style={{
           background: "linear-gradient(to top, var(--color-background), transparent)",
           transform: "translateZ(0)",

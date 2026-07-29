@@ -11,7 +11,7 @@ fi
 
 # Create session — backend in top pane
 tmux new -d -s "$SESSION" -c "$DIR"
-tmux send-keys -t "$SESSION" ".venv/bin/python backend/app.py" Enter
+tmux send-keys -t "$SESSION" "uv run backend/app.py" Enter
 
 # Split horizontally — frontend in bottom pane
 tmux split-window -v -t "$SESSION" -c "$DIR/ui"

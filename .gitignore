@@ -1,5 +1,6 @@
 # Python
 venv/
+.venv/
 __pycache__/
 *.py[cod]
 *.egg-info/
@@ -23,3 +24,6 @@ Thumbs.db
 *.swo
 
 logs/
+
+# Local run history (SQLite)
+*.db

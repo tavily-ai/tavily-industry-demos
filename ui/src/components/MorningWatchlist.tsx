@@ -4,6 +4,7 @@ import {
   AlertTriangle,
   CheckCircle2,
   ChevronDown,
+  Clock,
   ExternalLink,
   History,
   Loader2,
@@ -142,9 +143,15 @@ export default function MorningWatchlist({
       {/* Run controls */}
       <div className="glass rounded-2xl p-5 flex items-center gap-4 flex-wrap">
         <div className="flex-1 min-w-[220px]">
-          <h2 className="font-display font-semibold text-ink-100">Daily adverse media screening</h2>
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <h2 className="font-display font-semibold text-ink-100">Daily adverse media screening</h2>
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-accent-500/10 text-accent-600 border border-accent-500/25">
+              <Clock className="w-3 h-3" />
+              Scheduled daily · 06:00
+            </span>
+          </div>
           <p className="text-xs text-ink-500 mt-0.5">
-            Scheduled 06:00 · {roster.length} clients on watchlist
+            {roster.length} clients on watchlist
             {isRunning && ` · ${completedCount}/${roster.length} screened`}
           </p>
         </div>
