@@ -12,7 +12,7 @@ Target length: ~3 minutes. Two workflows, one story: **scheduled triage at scale
 ---
 
 ## Beat 1 — The problem (0:00–0:15)
-**Shot:** Morning Watchlist view, roster of 10 clients visible.
+**Shot:** Morning Watchlist view, roster of 6 clients visible.
 
 > "Every morning, a bank's compliance team has to screen its client book against the open web for adverse media — bribery, sanctions, money laundering, fraud. This workbench does that triage automatically, and every finding is backed by a retrieved source."
 
@@ -26,17 +26,12 @@ Target length: ~3 minutes. Two workflows, one story: **scheduled triage at scale
 
 > "Clients come back triaged — clear, review, escalate. Expand a flag and you see exactly why: the FinCEN penalty against Canaccord, the OFAC settlement against Adani — each with the verbatim passage and the source. Nothing is a black box."
 
-## Beat 4 — Audit trail (1:30–1:50)
-**Shot:** Open the **Audit trail** drawer, scroll the query log.
-
-> "And because this is a regulated workflow, every step is logged — each query the agent issued, each source it read, with timestamps. That's the audit trail a regulator expects. It's also written to disk as JSONL."
-
-## Beat 5 — Handoff to investigation (1:50–2:45)
+## Beat 4 — Handoff to investigation (1:30–2:30)
 **Shot:** Click **Investigate Canaccord Genuity →** — view switches, entity pre-filled, flag context banner shown. Click **Investigate**. Show the live stage line, then the case file: identity card (legal name, HQ, NAICS, leadership), findings with severity, risk rating, recommended action.
 
 > "When an analyst needs to go deeper, one click hands the entity off to Investigator Search, flag context attached. The agent now builds a full enhanced-due-diligence case file — corporate profile, leadership, dated findings with severity, an overall risk rating, and a recommended next step. Investigators can also search anything directly — a name, an address, a phone number."
 
-## Beat 6 — Close (2:45–3:00)
+## Beat 5 — Close (2:30–2:45)
 **Shot:** Case file on screen, scroll the agent queries at the bottom.
 
 > "Scheduled monitoring at scale, plus on-demand investigation — grounded in real-time web retrieval, with every claim traceable to a source. That's what compliance agents look like in production."
@@ -46,5 +41,5 @@ Target length: ~3 minutes. Two workflows, one story: **scheduled triage at scale
 ## Fallback / retake notes
 
 - If a live call hangs mid-take: **Stop** button cancels the run; re-run. Tavily Search latency is typically <1s, agent runs are ~30–60s per client (4 run concurrently).
-- If a hit-client comes back unexpectedly clean that day, re-run — or expand **SAP** (2024 FCPA settlement) / **FirstEnergy** as alternates; the roster has redundancy.
+- If a hit-client comes back unexpectedly clean that day, re-run — or expand **FirstEnergy** as an alternate; the roster has redundancy.
 - `logs/<run-id>.jsonl` files persist after each run — you can scroll a previous audit trail on camera even if a re-record is needed.

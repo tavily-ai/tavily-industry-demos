@@ -1,11 +1,9 @@
-import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertTriangle,
   ArrowRight,
   Building2,
   ExternalLink,
-  FileClock,
   Flag,
   History,
   Loader2,
@@ -18,7 +16,6 @@ import {
   Users,
 } from "lucide-react";
 import { AuditEntry, CaseFile, Finding, RiskRating, RunRecord } from "../types";
-import AuditTrailDrawer from "./AuditTrailDrawer";
 import ActivityFeed from "./ActivityFeed";
 
 interface Props {
@@ -51,6 +48,13 @@ const SEVERITY_CLASSES: Record<Finding["severity"], string> = {
   critical: "text-risk-critical border-risk-critical/30 bg-risk-critical/10",
 };
 
+function initials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
 function formatCaseTime(ts: number): string {
   const d = new Date(ts * 1000);
   const now = new Date();
@@ -78,8 +82,6 @@ export default function InvestigatorSearch({
   onRun,
   onStop,
 }: Props) {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-
   const rating = caseFile ? RATING_STYLE[caseFile.risk_rating] : null;
 
   return (
@@ -138,13 +140,6 @@ export default function InvestigatorSearch({
               <ArrowRight className="w-4 h-4" />
             </button>
           )}
-          <button
-            onClick={() => setDrawerOpen(true)}
-            className="glass-button rounded-xl px-3.5 py-3 text-xs font-medium text-ink-200 flex items-center gap-1.5"
-          >
-            <FileClock className="w-3.5 h-3.5" />
-            {auditEntries.length > 0 && <span className="text-ink-500">({auditEntries.length})</span>}
-          </button>
         </div>
       </div>
 
@@ -246,19 +241,31 @@ export default function InvestigatorSearch({
               <p className="mt-4 text-sm text-ink-200 leading-relaxed">{caseFile.summary}</p>
 
               {caseFile.leadership.length > 0 && (
-                <div className="mt-4">
-                  <p className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-ink-500 font-medium mb-2">
+                <div className="mt-5 pt-4 border-t border-white/40">
+                  <p className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-ink-500 font-medium mb-3">
                     <Users className="w-3.5 h-3.5" />
-                    Leadership
+                    Executive leadership ({caseFile.leadership.length})
                   </p>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {caseFile.leadership.map((l, i) => (
-                      <span
+                      <div
                         key={i}
-                        className="glass-subtle rounded-lg px-2.5 py-1.5 text-xs text-ink-200"
+                        className="glass-subtle rounded-lg px-3 py-2.5 flex items-center gap-3"
                       >
-                        <span className="text-ink-500">{l.title}:</span> {l.name}
-                      </span>
+                        <div className="w-8 h-8 rounded-full bg-accent-500/10 border border-accent-500/20 flex items-center justify-center flex-shrink-0">
+                          <span className="text-[11px] font-semibold text-accent-600">
+                            {initials(l.name)}
+                          </span>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[13px] font-medium text-ink-100 leading-tight truncate">
+                            {l.name}
+                          </p>
+                          <p className="text-[11px] text-ink-500 leading-tight truncate mt-0.5">
+                            {l.title}
+                          </p>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -339,12 +346,6 @@ export default function InvestigatorSearch({
           </motion.div>
         )}
       </AnimatePresence>
-
-      <AuditTrailDrawer
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        entries={auditEntries}
-      />
     </div>
   );
 }

@@ -369,8 +369,7 @@ export default function App() {
           </h1>
           <p className="text-sm text-ink-400 mt-1.5 max-w-2xl">
             Adverse media monitoring and enhanced due diligence powered by Tavily
-            retrieval — every finding traced to a retrieved source, every step in
-            a complete audit trail.
+            retrieval — every finding traced to a retrieved source.
           </p>
         </header>
 
@@ -413,22 +412,7 @@ export default function App() {
           <div className="flex items-center gap-2 text-[11px] text-ink-500">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>
-              Demo — retrieval by Tavily Search &amp; Extract, agent orchestration
-              by LangChain. Not for production compliance use.
-            </span>
-          </div>
-          <div className="flex items-center gap-4 text-[11px] text-ink-500">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full" style={{ background: "#80AF9B" }} />
-              Source-backed findings
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full" style={{ background: "#817FFF" }} />
-              Complete audit trail
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full" style={{ background: "#FF7300" }} />
-              Real-time retrieval
+              Demo — Tavily. Not for production/compliance use.
             </span>
           </div>
         </footer>

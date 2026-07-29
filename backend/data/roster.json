@@ -15,11 +15,32 @@
       "known_context": "Agreed to pay $275M to settle OFAC apparent Iran sanctions violations (settlement agreement May 2026). Sources: ofac.treasury.gov/recent-actions/20260518, kingandwood.com"
     },
     {
+      "id": "C-1003",
+      "name": "FirstEnergy",
+      "country": "United States",
+      "industry": "Utilities / energy",
+      "known_context": "Former executives reindicted on state bribery / public corruption charges stemming from the Ohio HB 6 scandal (June 2026). Sources: ohioattorneygeneral.gov, apnews.com"
+    },
+    {
+      "id": "C-1004",
+      "name": "HealthSplash",
+      "country": "United States",
+      "industry": "Healthcare software / telemarketing",
+      "known_context": "Owner convicted for running a ~$1B Medicare fraud conspiracy (DOJ press release; CBS/Forbes coverage, 2026). Sources: justice.gov, cbsnews.com, forbes.com"
+    },
+    {
       "id": "C-1005",
       "name": "Shopify",
       "country": "Canada",
       "industry": "E-commerce software",
       "known_context": "Expected clear — mainstream, well-covered technology company."
+    },
+    {
+      "id": "C-1006",
+      "name": "Unilever",
+      "country": "United Kingdom",
+      "industry": "Consumer goods",
+      "known_context": "Expected clear — large multinational with routine press coverage."
     }
   ]
 }

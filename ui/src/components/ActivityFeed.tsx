@@ -7,7 +7,12 @@ interface Props {
   live?: boolean;
 }
 
-function activityLine(entry: AuditEntry): { icon: "search" | "read" | "done" | "flag"; text: string; link?: string } {
+interface SourceLink {
+  url: string;
+  title?: string;
+}
+
+function activityLine(entry: AuditEntry): { icon: "search" | "read" | "done" | "flag"; text: string; links?: SourceLink[] } {
   if (entry.type === "tool_call") {
     const tool = String(entry.tool || "");
     const args = (entry.args || {}) as Record<string, unknown>;
@@ -15,11 +20,19 @@ function activityLine(entry: AuditEntry): { icon: "search" | "read" | "done" | "
       return { icon: "search", text: `Search — "${args.query ?? ""}"` };
     }
     const urls = (args.urls as string[]) || [];
-    return { icon: "read", text: `Read ${urls.length} article${urls.length === 1 ? "" : "s"}`, link: urls[0] };
+    return {
+      icon: "read",
+      text: `Read ${urls.length} article${urls.length === 1 ? "" : "s"}`,
+      links: urls.map((url) => ({ url })),
+    };
   }
   if (entry.type === "tool_result") {
-    const hits = ((entry.hits as unknown[]) || []).length;
-    return { icon: "flag", text: `${hits} source${hits === 1 ? "" : "s"} retrieved` };
+    const hits = (entry.hits as { url?: string; title?: string }[]) || [];
+    return {
+      icon: "flag",
+      text: `${hits.length} source${hits.length === 1 ? "" : "s"} retrieved`,
+      links: hits.filter((h) => h?.url).map((h) => ({ url: h.url!, title: h.title })),
+    };
   }
   if (entry.type === "run_complete") {
     return { icon: "done", text: `Verdict: ${entry.verdict ?? "—"}` };
@@ -36,6 +49,38 @@ function ActivityIcon({ kind }: { kind: string }) {
   if (kind === "read") return <ExternalLink className={`${cls} text-tavily-blue`} />;
   if (kind === "done") return <CheckCircle2 className={`${cls} text-risk-low`} />;
   return <Activity className={`${cls} text-ink-500`} />;
+}
+
+function hostname(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
+function SourcePill({ link }: { link: SourceLink }) {
+  const host = hostname(link.url);
+  return (
+    <a
+      href={link.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={link.title || link.url}
+      className="inline-flex items-center gap-1.5 max-w-full rounded-md bg-white/40 border border-white/50 px-1.5 py-0.5 text-[10px] text-ink-400 hover:text-accent-600 hover:border-accent-400/40 transition-colors"
+    >
+      <img
+        src={`https://www.google.com/s2/favicons?domain=${host}&sz=32`}
+        alt=""
+        className="w-3 h-3 rounded-sm flex-shrink-0"
+        loading="lazy"
+        onError={(e) => {
+          (e.target as HTMLImageElement).style.display = "none";
+        }}
+      />
+      <span className="truncate">{host}</span>
+    </a>
+  );
 }
 
 export default function ActivityFeed({ entries, live = false }: Props) {
@@ -61,19 +106,16 @@ export default function ActivityFeed({ entries, live = false }: Props) {
           return (
             <div key={i} className="flex items-start gap-2">
               <ActivityIcon kind={line.icon} />
-              <p className="text-[11px] text-ink-300 leading-snug break-words">
-                {line.text}
-                {line.link && (
-                  <a
-                    href={line.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-1.5 text-accent-500 hover:underline"
-                  >
-                    source
-                  </a>
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] text-ink-300 leading-snug break-words">{line.text}</p>
+                {line.links && line.links.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {line.links.map((link, j) => (
+                      <SourcePill key={j} link={link} />
+                    ))}
+                  </div>
                 )}
-              </p>
+              </div>
             </div>
           );
         })}

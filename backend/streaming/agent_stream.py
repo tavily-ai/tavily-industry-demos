@@ -145,7 +145,11 @@ async def stream_agent_run(
         return
 
     if final_structured is None:
-        final_structured = {"verdict": "review", "summary": "Agent finished without structured output.", "evidence": [], "risk_categories": [], "searches_performed": []}
+        message = "Agent finished without producing structured output."
+        entry = audit.record("run_error", client_id, message=message, elapsed_s=elapsed)
+        yield {"type": "log", "client_id": client_id, "entry": entry}
+        yield {"type": "error", "client_id": client_id, "message": message}
+        return
 
     queries = final_structured.get("searches_performed") or []
     entry = audit.record(

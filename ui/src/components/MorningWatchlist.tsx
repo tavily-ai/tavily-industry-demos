@@ -5,7 +5,6 @@ import {
   CheckCircle2,
   ChevronDown,
   ExternalLink,
-  FileClock,
   History,
   Loader2,
   Play,
@@ -23,7 +22,6 @@ import {
   Verdict,
   WatchlistSummary,
 } from "../types";
-import AuditTrailDrawer from "./AuditTrailDrawer";
 import ActivityFeed from "./ActivityFeed";
 
 interface Props {
@@ -91,19 +89,21 @@ export default function MorningWatchlist({
   onInvestigate,
 }: Props) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const autoExpandedRef = useRef<Set<string>>(new Set());
 
   const completedCount = roster.filter((c) => runs[c.id]?.status === "done").length;
 
-  // Auto-expand flagged clients as they complete
+  // Auto-expand flagged clients as they complete (once per run, so manual collapse sticks)
   useEffect(() => {
     const newlyFlagged = roster.filter(
       (c) =>
         runs[c.id]?.status === "done" &&
         runs[c.id]?.verdict?.verdict !== "clear" &&
-        !expanded.has(c.id)
+        !expanded.has(c.id) &&
+        !autoExpandedRef.current.has(c.id)
     );
     if (newlyFlagged.length === 0) return;
+    for (const c of newlyFlagged) autoExpandedRef.current.add(c.id);
     setExpanded((prev) => {
       const next = new Set(prev);
       for (const c of newlyFlagged) next.add(c.id);
@@ -123,7 +123,10 @@ export default function MorningWatchlist({
   // Collapse all rows when a fresh run starts
   const wasRunningRef = useRef(false);
   useEffect(() => {
-    if (isRunning && !wasRunningRef.current) setExpanded(new Set());
+    if (isRunning && !wasRunningRef.current) {
+      setExpanded(new Set());
+      autoExpandedRef.current = new Set();
+    }
     wasRunningRef.current = isRunning;
   }, [isRunning]);
 
@@ -154,15 +157,6 @@ export default function MorningWatchlist({
             <span className="text-ink-500">{summary.elapsedS}s</span>
           </div>
         )}
-
-        <button
-          onClick={() => setDrawerOpen(true)}
-          className="glass-button rounded-xl px-3.5 py-2 text-xs font-medium text-ink-200 flex items-center gap-1.5"
-        >
-          <FileClock className="w-3.5 h-3.5" />
-          Audit trail
-          {auditEntries.length > 0 && <span className="text-ink-500">({auditEntries.length})</span>}
-        </button>
 
         {isRunning ? (
           <button
@@ -362,6 +356,21 @@ export default function MorningWatchlist({
                             </div>
                           )}
 
+                          {(run.verdict.searches_performed?.length || 0) > 0 && (
+                            <div className="mt-3 pt-3 border-t border-white/40">
+                              <p className="text-[10px] uppercase tracking-wider text-ink-500 font-medium mb-1.5">
+                                Agent queries ({run.verdict.searches_performed.length})
+                              </p>
+                              <div className="space-y-0.5">
+                                {run.verdict.searches_performed.map((q, i) => (
+                                  <p key={i} className="font-mono text-[11px] text-ink-500 truncate">
+                                    "{q}"
+                                  </p>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
                           {verdict !== "clear" && (
                             <button
                               onClick={() =>
@@ -386,13 +395,6 @@ export default function MorningWatchlist({
           );
         })}
       </div>
-
-      <AuditTrailDrawer
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        entries={auditEntries}
-        clients={roster}
-      />
     </div>
   );
 }

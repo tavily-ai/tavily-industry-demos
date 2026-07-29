@@ -2,10 +2,10 @@
 
 An evidence-first compliance workbench built with [Tavily](https://tavily.com) and LangChain. Two connected workflows:
 
-- **Morning Watchlist** — daily adverse media screening across a 10-client roster, streamed live with triage verdicts (clear / review / escalate) and source-backed evidence.
+- **Morning Watchlist** — daily adverse media screening across a 6-client roster, streamed live with triage verdicts (clear / review / escalate) and source-backed evidence.
 - **Investigator Search** — one-off enhanced due diligence that produces a structured case file (legal name, HQ, NAICS, leadership, dated adverse findings with quoted passages, risk rating, recommended action).
 
-A LangChain agent with Tavily Search + Extract tools generates its own risk queries from the entity context — no hardcoded keyword lists. Every agent step is written to a JSONL audit trail and viewable in-app.
+A LangChain agent with Tavily Search + Extract tools generates its own risk queries from the entity context — no hardcoded keyword lists. Every agent step is written to a JSONL audit log on disk.
 
 ## Getting Started
 
@@ -69,7 +69,7 @@ The UI opens at **http://localhost:5173**. Or use `./run.sh` to launch both in t
 │   ├── streaming/
 │   │   └── agent_stream.py       # LangChain agent events -> SSE
 │   └── data/
-│       └── roster.json           # 10-client watchlist (real companies)
+│       └── roster.json           # 6-client watchlist (real companies)
 ├── logs/                         # JSONL audit trails per run/case
 └── ui/
     └── src/

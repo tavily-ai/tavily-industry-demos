@@ -3,7 +3,7 @@
 from langchain.agents import create_agent
 
 from .llm import get_llm
-from .prompts import SCREENING_SYSTEM_PROMPT
+from .prompts import screening_system_prompt
 from .schemas import ScreeningVerdict
 from .tools import TOOLS
 
@@ -12,7 +12,7 @@ def build_screening_agent():
     return create_agent(
         model=get_llm(),
         tools=TOOLS,
-        system_prompt=SCREENING_SYSTEM_PROMPT,
+        system_prompt=screening_system_prompt(),
         response_format=ScreeningVerdict,
     )
 
