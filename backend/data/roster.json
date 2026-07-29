@@ -1,0 +1,25 @@
+{
+  "clients": [
+    {
+      "id": "C-1001",
+      "name": "Canaccord Genuity",
+      "country": "Canada",
+      "industry": "Financial services / brokerage",
+      "known_context": "FinCEN imposed a record $80M civil money penalty for willful Bank Secrecy Act / AML violations (largest ever against a broker-dealer); FINRA separately penalized the firm. Sources: chapman.com, mcdermottlaw.com, fincrimecentral.com"
+    },
+    {
+      "id": "C-1002",
+      "name": "Adani Enterprises",
+      "country": "India",
+      "industry": "Infrastructure / conglomerate",
+      "known_context": "Agreed to pay $275M to settle OFAC apparent Iran sanctions violations (settlement agreement May 2026). Sources: ofac.treasury.gov/recent-actions/20260518, kingandwood.com"
+    },
+    {
+      "id": "C-1005",
+      "name": "Shopify",
+      "country": "Canada",
+      "industry": "E-commerce software",
+      "known_context": "Expected clear — mainstream, well-covered technology company."
+    }
+  ]
+}
