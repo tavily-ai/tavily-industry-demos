@@ -11,6 +11,7 @@ import {
   RosterClient,
   RunRecord,
   ScreeningVerdict,
+  StoredInvestigationRun,
   StoredWatchlistRun,
   WatchlistSummary,
 } from "./types";
@@ -44,9 +45,19 @@ export default function App() {
       .catch(() => {});
   }, []);
 
+  const [caseHistory, setCaseHistory] = useState<RunRecord[]>([]);
+
+  const refreshCaseHistory = useCallback(() => {
+    fetch(`${getApiUrl()}/api/runs?kind=investigation`)
+      .then((r) => r.json())
+      .then((d) => setCaseHistory(d.runs || []))
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     refreshHistory();
-  }, [refreshHistory]);
+    refreshCaseHistory();
+  }, [refreshHistory, refreshCaseHistory]);
 
   const loadPastRun = useCallback(async (runId: string) => {
     try {
@@ -221,6 +232,25 @@ export default function App() {
         setInvError(event.message || "Investigation failed");
         setInvStage("");
         break;
+      case "complete":
+        refreshCaseHistory();
+        break;
+    }
+  }, [refreshCaseHistory]);
+
+  const loadPastCase = useCallback(async (caseId: string) => {
+    try {
+      const r = await fetch(`${getApiUrl()}/api/runs/${caseId}`);
+      if (!r.ok) return;
+      const run = (await r.json()) as StoredInvestigationRun;
+      setInvQuery(run.query || "");
+      setInvFlagContext(run.payload.flag_context || null);
+      setCaseFile(run.payload.case_file);
+      setInvError(null);
+      setCaseAudit([]);
+      setInvStage("");
+    } catch {
+      // ignore — history is best-effort
     }
   }, []);
 
@@ -370,6 +400,8 @@ export default function App() {
               caseFile={caseFile}
               error={invError}
               auditEntries={caseAudit}
+              caseHistory={caseHistory}
+              onLoadCase={loadPastCase}
               onRun={runInvestigation}
               onStop={stopInvestigation}
             />

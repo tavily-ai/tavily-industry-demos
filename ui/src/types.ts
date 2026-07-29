@@ -83,6 +83,14 @@ export interface StoredWatchlistRun extends RunRecord {
   };
 }
 
+export interface StoredInvestigationRun extends RunRecord {
+  payload: {
+    case_file: CaseFile | null;
+    flag_context?: string | null;
+    audit_log: string;
+  };
+}
+
 export interface Leader {
   name: string;
   title: string;

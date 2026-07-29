@@ -7,6 +7,7 @@ import {
   ExternalLink,
   FileClock,
   Flag,
+  History,
   Loader2,
   MapPin,
   Quote,
@@ -16,7 +17,7 @@ import {
   Square,
   Users,
 } from "lucide-react";
-import { AuditEntry, CaseFile, Finding, RiskRating } from "../types";
+import { AuditEntry, CaseFile, Finding, RiskRating, RunRecord } from "../types";
 import AuditTrailDrawer from "./AuditTrailDrawer";
 import ActivityFeed from "./ActivityFeed";
 
@@ -30,6 +31,8 @@ interface Props {
   caseFile: CaseFile | null;
   error: string | null;
   auditEntries: AuditEntry[];
+  caseHistory: RunRecord[];
+  onLoadCase: (caseId: string) => void;
   onRun: () => void;
   onStop: () => void;
 }
@@ -48,6 +51,18 @@ const SEVERITY_CLASSES: Record<Finding["severity"], string> = {
   critical: "text-risk-critical border-risk-critical/30 bg-risk-critical/10",
 };
 
+function formatCaseTime(ts: number): string {
+  const d = new Date(ts * 1000);
+  const now = new Date();
+  const sameDay =
+    d.getFullYear() === now.getFullYear() &&
+    d.getMonth() === now.getMonth() &&
+    d.getDate() === now.getDate();
+  const time = d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+  if (sameDay) return `Today ${time}`;
+  return `${d.toLocaleDateString(undefined, { month: "short", day: "numeric" })} ${time}`;
+}
+
 export default function InvestigatorSearch({
   query,
   onQueryChange,
@@ -58,6 +73,8 @@ export default function InvestigatorSearch({
   caseFile,
   error,
   auditEntries,
+  caseHistory,
+  onLoadCase,
   onRun,
   onStop,
 }: Props) {
@@ -130,6 +147,26 @@ export default function InvestigatorSearch({
           </button>
         </div>
       </div>
+
+      {/* Recent cases */}
+      {caseHistory.length > 0 && (
+        <div className="mt-3 flex items-center gap-2 flex-wrap">
+          <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-ink-500 font-medium">
+            <History className="w-3 h-3" />
+            Recent cases
+          </span>
+          {caseHistory.map((c) => (
+            <button
+              key={c.run_id}
+              onClick={() => onLoadCase(c.run_id)}
+              className="glass-subtle rounded-lg px-3 py-1.5 text-[11px] text-ink-400 hover:text-ink-200 transition-all flex items-center gap-2"
+            >
+              <span className="font-medium text-ink-300 max-w-[240px] truncate">{c.query}</span>
+              <span className="opacity-70">{formatCaseTime(c.created_at)}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Live status + full action list */}
       <AnimatePresence>
