@@ -1,6 +1,25 @@
-# Tavily Industry Demos
+<p align="center">
+  <a href="https://www.tavily.com">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/tavily-full-on-dark.svg">
+      <img alt="Tavily" src="assets/tavily-full.svg" width="280">
+    </picture>
+  </a>
+</p>
 
-Self-contained demo kits showcasing agentic workflows built with [Tavily](https://tavily.com), organized by industry and use case.
+<h1 align="center">Industry Demos</h1>
+
+<p align="center">
+  Self-contained demo kits showcasing agentic workflows built with <a href="https://tavily.com">Tavily</a>, organized by industry and use case.
+</p>
+
+<p align="center">
+  <a href="https://tavily.com"><img alt="Built with Tavily" src="https://img.shields.io/badge/built_with-Tavily-FF7300"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-1F1E1E"></a>
+  <img alt="Kits: 1" src="https://img.shields.io/badge/kits-1-817FFF">
+</p>
+
+---
 
 **Every folder is a complete, runnable project.** Grab just the kit you want — it has its own backend, frontend, environment setup, and docs.
 
