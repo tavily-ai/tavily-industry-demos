@@ -4,7 +4,7 @@ import json
 import logging
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -17,10 +17,10 @@ class AuditTrail:
     def __init__(self, run_id: str, kind: str):
         self.run_id = run_id
         self.kind = kind
-        self.events: List[Dict[str, Any]] = []
+        self.events: list[dict[str, Any]] = []
         LOG_DIR.mkdir(exist_ok=True)
 
-    def record(self, event_type: str, client_id: Optional[str] = None, **data: Any) -> Dict[str, Any]:
+    def record(self, event_type: str, client_id: str | None = None, **data: Any) -> dict[str, Any]:
         event = {
             "ts": round(time.time(), 3),
             "run_id": self.run_id,
@@ -35,8 +35,7 @@ class AuditTrail:
     def flush(self) -> Path:
         path = LOG_DIR / f"{self.run_id}.jsonl"
         with open(path, "a") as f:
-            for event in self.events:
-                f.write(json.dumps(event) + "\n")
+            f.writelines(json.dumps(event) + "\n" for event in self.events)
         logger.info("audit trail flushed: %s (%d events)", path, len(self.events))
         self.events = []
         return path

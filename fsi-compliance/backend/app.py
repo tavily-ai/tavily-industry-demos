@@ -2,7 +2,6 @@
 
 import json
 import logging
-import os
 import sys
 import time
 import uuid
@@ -60,6 +59,13 @@ async def health_check():
     return {"status": "healthy"}
 
 
+@app.get("/api/config")
+async def get_config():
+    from backend.agents.llm import MODEL, PROVIDER
+
+    return {"provider": PROVIDER, "model": MODEL}
+
+
 @app.get("/api/roster")
 async def get_roster():
     from backend.watchlist import load_roster
@@ -87,8 +93,10 @@ async def investigate_stream(request: InvestigateRequest):
     async def event_stream():
         audit = AuditTrail(case_id, kind="investigation")
         started = time.time()
-        yield f'data: {json.dumps({"type": "start", "case_id": case_id, "query": request.query})}\n\n'
-        audit.record("case_start", query=request.query, flag_context=request.flag_context)
+        yield f"data: {json.dumps({'type': 'start', 'case_id': case_id, 'query': request.query})}\n\n"
+        audit.record(
+            "case_start", query=request.query, flag_context=request.flag_context
+        )
 
         agent = build_investigation_agent()
         case_file = None
@@ -114,9 +122,11 @@ async def investigate_stream(request: InvestigateRequest):
                 "audit_log": str(log_path),
             },
         )
-        yield f'data: {json.dumps({"type": "complete", "case_id": case_id, "elapsed_s": elapsed, "audit_log": str(log_path)})}\n\n'
+        yield f"data: {json.dumps({'type': 'complete', 'case_id': case_id, 'elapsed_s': elapsed, 'audit_log': str(log_path)})}\n\n"
 
-    return StreamingResponse(event_stream(), media_type="text/event-stream", headers=SSE_HEADERS)
+    return StreamingResponse(
+        event_stream(), media_type="text/event-stream", headers=SSE_HEADERS
+    )
 
 
 @app.get("/api/runs")
@@ -137,4 +147,4 @@ async def get_run_detail(run_id: str):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("backend.app:app", host="0.0.0.0", port=8000, reload=True)

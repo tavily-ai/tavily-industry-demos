@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ClipboardList, Search, ShieldCheck } from "lucide-react";
 import MorningWatchlist from "./components/MorningWatchlist";
 import InvestigatorSearch from "./components/InvestigatorSearch";
+import ModelCard from "./components/ModelCard";
 import { getApiUrl, streamSSE } from "./sse";
 import {
   AuditEntry,
@@ -18,6 +19,11 @@ import {
 
 type View = "watchlist" | "investigator";
 
+interface LlmConfig {
+  provider: string;
+  model: string;
+}
+
 function stageToStatus(stage: string): ClientRunState["status"] {
   const s = stage.toLowerCase();
   if (s.includes("search")) return "searching";
@@ -27,6 +33,7 @@ function stageToStatus(stage: string): ClientRunState["status"] {
 
 export default function App() {
   const [view, setView] = useState<View>("watchlist");
+  const [llmConfig, setLlmConfig] = useState<LlmConfig | null>(null);
 
   // ---- Watchlist state (lifted so it persists across tab switches) ----
   const [roster, setRoster] = useState<RosterClient[]>([]);
@@ -57,6 +64,12 @@ export default function App() {
   useEffect(() => {
     refreshHistory();
     refreshCaseHistory();
+    fetch(`${getApiUrl()}/api/config`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.provider && d?.model) setLlmConfig({ provider: d.provider, model: d.model });
+      })
+      .catch(() => {});
   }, [refreshHistory, refreshCaseHistory]);
 
   const loadPastRun = useCallback(async (runId: string) => {
@@ -348,27 +361,35 @@ export default function App() {
             </div>
           </div>
 
-          {/* View switcher */}
-          <nav className="glass rounded-xl p-1 flex gap-1">
-            <button
-              onClick={() => setView("watchlist")}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                view === "watchlist" ? "glass-button-active text-ink-100" : "text-ink-400 hover:text-ink-200"
-              }`}
-            >
-              <ClipboardList className="w-4 h-4" />
-              Morning Watchlist
-            </button>
-            <button
-              onClick={() => setView("investigator")}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                view === "investigator" ? "glass-button-active text-ink-100" : "text-ink-400 hover:text-ink-200"
-              }`}
-            >
-              <Search className="w-4 h-4" />
-              Investigator Search
-            </button>
-          </nav>
+          <div className="flex items-center gap-3">
+            {llmConfig && (
+              <div className="hidden sm:block">
+                <ModelCard provider={llmConfig.provider} model={llmConfig.model} />
+              </div>
+            )}
+
+            {/* View switcher */}
+            <nav className="glass rounded-xl p-1 flex gap-1">
+              <button
+                onClick={() => setView("watchlist")}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+                  view === "watchlist" ? "glass-button-active text-ink-100" : "text-ink-400 hover:text-ink-200"
+                }`}
+              >
+                <ClipboardList className="w-4 h-4" />
+                Morning Watchlist
+              </button>
+              <button
+                onClick={() => setView("investigator")}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+                  view === "investigator" ? "glass-button-active text-ink-100" : "text-ink-400 hover:text-ink-200"
+                }`}
+              >
+                <Search className="w-4 h-4" />
+                Investigator Search
+              </button>
+            </nav>
+          </div>
         </div>
       </div>
 
