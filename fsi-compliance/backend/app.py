@@ -59,6 +59,13 @@ async def health_check():
     return {"status": "healthy"}
 
 
+@app.get("/api/config")
+async def get_config():
+    from backend.agents.llm import MODEL, PROVIDER
+
+    return {"provider": PROVIDER, "model": MODEL}
+
+
 @app.get("/api/roster")
 async def get_roster():
     from backend.watchlist import load_roster

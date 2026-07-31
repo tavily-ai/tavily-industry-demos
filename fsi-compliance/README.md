@@ -35,9 +35,8 @@ NEBIUS_API_KEY=your-nebius-key-here
 ### 2. Start the backend
 
 ```bash
-uv venv .venv --python 3.11
-uv pip install --python .venv/bin/python -r requirements.txt
-.venv/bin/python backend/app.py
+uv sync
+uv run backend/app.py
 ```
 
 The API server starts at **http://localhost:8000** (`GET /` returns a health check).
@@ -86,6 +85,8 @@ Screening and investigation behavior is prompt-driven (`backend/agents/prompts.p
 ## Project Structure
 
 ```
+├── pyproject.toml                # Python project + dependencies (managed with uv)
+├── uv.lock                       # Locked dependency graph
 ├── backend/
 │   ├── app.py                    # FastAPI entry: streaming + roster + run history endpoints
 │   ├── models.py                 # Request models
