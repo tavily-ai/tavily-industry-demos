@@ -1,6 +1,5 @@
 """Investigation agent: full EDD case file for a single entity."""
 
-from typing import Optional
 
 from langchain.agents import create_agent
 
@@ -19,7 +18,7 @@ def build_investigation_agent():
     )
 
 
-def investigation_task(query: str, flag_context: Optional[str] = None) -> str:
+def investigation_task(query: str, flag_context: str | None = None) -> str:
     task = f"Build an enhanced due diligence case file for: {query}"
     if flag_context:
         task += (

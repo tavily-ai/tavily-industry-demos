@@ -5,8 +5,9 @@ import json
 import logging
 import time
 import uuid
+from collections.abc import AsyncGenerator
 from pathlib import Path
-from typing import AsyncGenerator, Dict, Any, List, Optional
+from typing import Any
 
 from backend.agents.screening import build_screening_agent, client_task
 from backend.audit import AuditTrail
@@ -19,14 +20,14 @@ ROSTER_PATH = Path(__file__).parent / "data" / "roster.json"
 MAX_CONCURRENT = 4
 
 
-def load_roster() -> List[Dict[str, Any]]:
+def load_roster() -> list[dict[str, Any]]:
     with open(ROSTER_PATH) as f:
         return json.load(f)["clients"]
 
 
 async def _screen_one(
     agent: Any,
-    client: Dict[str, Any],
+    client: dict[str, Any],
     audit: AuditTrail,
     queue: asyncio.Queue,
     semaphore: asyncio.Semaphore,
@@ -50,7 +51,7 @@ async def _screen_one(
             await queue.put({"type": "client_done", "client_id": client_id})
 
 
-async def run_watchlist(max_clients: Optional[int] = None) -> AsyncGenerator[str, None]:
+async def run_watchlist(max_clients: int | None = None) -> AsyncGenerator[str, None]:
     """Screen every roster client, merging per-client agent events into one SSE stream."""
     run_id = f"watchlist-{uuid.uuid4().hex[:8]}"
     audit = AuditTrail(run_id, kind="watchlist")
@@ -72,7 +73,7 @@ async def run_watchlist(max_clients: Optional[int] = None) -> AsyncGenerator[str
     ]
 
     remaining = len(tasks)
-    results: Dict[str, Any] = {}
+    results: dict[str, Any] = {}
 
     while remaining > 0:
         event = await queue.get()
@@ -117,5 +118,5 @@ async def run_watchlist(max_clients: Optional[int] = None) -> AsyncGenerator[str
     })
 
 
-def _sse(payload: Dict[str, Any]) -> str:
+def _sse(payload: dict[str, Any]) -> str:
     return f"data: {json.dumps(payload)}\n\n"

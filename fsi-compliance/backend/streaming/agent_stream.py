@@ -1,10 +1,10 @@
 """Stream a LangChain agent run as SSE events while recording an audit trail."""
 
-import asyncio
 import json
 import logging
 import time
-from typing import Any, AsyncGenerator, Callable, Dict, List, Optional
+from collections.abc import AsyncGenerator
+from typing import Any
 
 from backend.audit import AuditTrail
 
@@ -20,18 +20,18 @@ TOOL_STAGES = {
 _INPUT_ALLOWLIST = {"query", "urls", "search_depth", "time_range", "include_domains", "extract_depth"}
 
 
-def _filter_tool_input(raw: Dict[str, Any]) -> Dict[str, Any]:
+def _filter_tool_input(raw: dict[str, Any]) -> dict[str, Any]:
     return {k: v for k, v in raw.items() if k in _INPUT_ALLOWLIST}
 
 
-def _summarize_tool_output(output: Any) -> Dict[str, Any]:
+def _summarize_tool_output(output: Any) -> dict[str, Any]:
     """Extract a compact, UI-ready summary from a Tavily tool result."""
     if isinstance(output, str):
         return {"note": output[:300]}
     if not isinstance(output, dict):
         return {}
 
-    summary: Dict[str, Any] = {}
+    summary: dict[str, Any] = {}
 
     results = output.get("results")
     if isinstance(results, list):
@@ -68,8 +68,8 @@ async def stream_agent_run(
     agent: Any,
     task: str,
     audit: AuditTrail,
-    client_id: Optional[str] = None,
-) -> AsyncGenerator[Dict[str, Any], None]:
+    client_id: str | None = None,
+) -> AsyncGenerator[dict[str, Any], None]:
     """Yield structured events for one agent run; the caller wraps them as SSE.
 
     Event shapes:
@@ -81,8 +81,8 @@ async def stream_agent_run(
     started = time.time()
     yield {"type": "stage", "client_id": client_id, "stage": "Planning search strategy"}
 
-    final_structured: Optional[Dict[str, Any]] = None
-    final_error: Optional[str] = None
+    final_structured: dict[str, Any] | None = None
+    final_error: str | None = None
 
     try:
         stream = agent.astream(

@@ -1,9 +1,9 @@
 """Chat model construction — the single place to swap providers/models."""
 
-from langchain.chat_models import init_chat_model
+from langchain_nebius import ChatNebius
 
-MODEL = "openai:gpt-5.6-terra"
+MODEL = "nvidia/Nemotron-3-Ultra-550b-a55b"
 
 
 def get_llm():
-    return init_chat_model(MODEL, use_responses_api=True)
+    return ChatNebius(model=MODEL)

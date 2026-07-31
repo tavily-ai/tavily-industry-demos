@@ -17,7 +17,7 @@ A LangChain agent with Tavily Search + Extract tools generates its own risk quer
 
 - [uv](https://docs.astral.sh/uv/) (Python 3.11+)
 - [bun](https://bun.sh) (or npm, but the repo is pinned to `bun.lock`)
-- A [Tavily API key](https://app.tavily.com) and an OpenAI API key
+- A [Tavily API key](https://app.tavily.com) and a [Nebius Token Factory](https://tokenfactory.nebius.com/) API key
 
 ### 1. Configure environment
 
@@ -29,7 +29,7 @@ Set your keys in `.env`:
 
 ```
 TAVILY_API_KEY=tvly-your-key-here
-OPENAI_API_KEY=sk-your-key-here
+NEBIUS_API_KEY=your-nebius-key-here
 ```
 
 ### 2. Start the backend
@@ -77,7 +77,7 @@ The agents' tools live in `backend/agents/tools.py` (Tavily Search + Extract for
 
 ### Swap the model
 
-`backend/agents/llm.py` is the single place where the chat model is constructed. Change `MODEL` to any provider/model LangChain supports.
+`backend/agents/llm.py` is the single place where the chat model is constructed. It uses Nebius Token Factory via `ChatNebius` — change `MODEL` to any model id from the [Nebius catalog](https://tokenfactory.nebius.com/models).
 
 ### Tune the agents
 
@@ -123,7 +123,7 @@ Screening and investigation behavior is prompt-driven (`backend/agents/prompts.p
 | Variable         | Required | Description                                                        |
 | ---------------- | -------- | ------------------------------------------------------------------ |
 | `TAVILY_API_KEY` | Yes      | Tavily API key for Search + Extract tools.                         |
-| `OPENAI_API_KEY` | Yes      | API key for the LangChain chat model (`openai:gpt-5.6-terra` by default — see `backend/agents/llm.py`). |
+| `NEBIUS_API_KEY` | Yes      | API key for [Nebius Token Factory](https://tokenfactory.nebius.com/) (`moonshotai/Kimi-K2.5` via `ChatNebius` by default — see `backend/agents/llm.py`). |
 
 ### Frontend
 

@@ -1,6 +1,6 @@
 """Shared Tavily tool instances used by both agents."""
 
-from langchain_tavily import TavilySearch, TavilyExtract
+from langchain_tavily import TavilyExtract, TavilySearch
 
 search_tool = TavilySearch(
     max_results=10,

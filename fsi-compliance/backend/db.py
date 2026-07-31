@@ -4,7 +4,7 @@ import json
 import sqlite3
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 DB_PATH = Path(__file__).parent / "data" / "runs.db"
 
@@ -31,10 +31,10 @@ def _conn() -> sqlite3.Connection:
 def save_run(
     run_id: str,
     kind: str,
-    payload: Dict[str, Any],
-    query: Optional[str] = None,
-    elapsed_s: Optional[float] = None,
-    counts: Optional[Dict[str, int]] = None,
+    payload: dict[str, Any],
+    query: str | None = None,
+    elapsed_s: float | None = None,
+    counts: dict[str, int] | None = None,
 ) -> None:
     with _conn() as conn:
         conn.execute(
@@ -52,7 +52,7 @@ def save_run(
         )
 
 
-def list_runs(kind: Optional[str] = None, limit: int = 50) -> List[Dict[str, Any]]:
+def list_runs(kind: str | None = None, limit: int = 50) -> list[dict[str, Any]]:
     """Return run metadata (no payload), newest first."""
     with _conn() as conn:
         if kind:
@@ -80,7 +80,7 @@ def list_runs(kind: Optional[str] = None, limit: int = 50) -> List[Dict[str, Any
     ]
 
 
-def get_run(run_id: str) -> Optional[Dict[str, Any]]:
+def get_run(run_id: str) -> dict[str, Any] | None:
     """Return a single run including its full payload."""
     with _conn() as conn:
         row = conn.execute("SELECT * FROM runs WHERE run_id = ?", (run_id,)).fetchone()
