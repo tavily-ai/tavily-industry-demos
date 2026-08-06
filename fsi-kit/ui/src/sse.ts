@@ -12,7 +12,7 @@ export async function streamSSE<TEvent = unknown>(
   path: string,
   body: Record<string, unknown>,
   onEvent: (event: TEvent) => void,
-  signal: AbortSignal
+  signal: AbortSignal,
 ): Promise<void> {
   const response = await fetch(`${API_URL}${path}`, {
     method: "POST",
@@ -23,7 +23,11 @@ export async function streamSSE<TEvent = unknown>(
 
   if (!response.ok) {
     let detail = "";
-    try { detail = (await response.json()).detail ?? ""; } catch { /* non-JSON error */ }
+    try {
+      detail = (await response.json()).detail ?? "";
+    } catch {
+      /* non-JSON error */
+    }
     throw new Error(detail || response.statusText || `Request failed (${response.status})`);
   }
   if (!response.body) throw new Error("The server returned no response stream");
@@ -38,7 +42,11 @@ export async function streamSSE<TEvent = unknown>(
       .map((line) => line.slice(5).trimStart())
       .join("\n");
     if (!data || data === "[DONE]") return;
-    try { onEvent(JSON.parse(data) as TEvent); } catch { /* ignore malformed event, continue stream */ }
+    try {
+      onEvent(JSON.parse(data) as TEvent);
+    } catch {
+      /* ignore malformed event, continue stream */
+    }
   };
 
   while (true) {

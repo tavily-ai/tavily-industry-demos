@@ -12,7 +12,11 @@ interface SourceLink {
   title?: string;
 }
 
-function activityLine(entry: AuditEntry): { icon: "search" | "read" | "done" | "flag"; text: string; links?: SourceLink[] } {
+function activityLine(entry: AuditEntry): {
+  icon: "search" | "read" | "done" | "flag";
+  text: string;
+  links?: SourceLink[];
+} {
   if (entry.type === "tool_call") {
     const tool = String(entry.tool || "");
     const args = (entry.args || {}) as Record<string, unknown>;

@@ -36,9 +36,18 @@ interface Props {
 
 const RATING_STYLE: Record<RiskRating, { label: string; classes: string }> = {
   low: { label: "Low risk", classes: "text-risk-low border-risk-low/30 bg-risk-low/10" },
-  medium: { label: "Medium risk", classes: "text-risk-moderate border-risk-moderate/30 bg-risk-moderate/10" },
-  high: { label: "High risk", classes: "text-risk-elevated border-risk-elevated/30 bg-risk-elevated/10" },
-  critical: { label: "Critical risk", classes: "text-risk-critical border-risk-critical/30 bg-risk-critical/10" },
+  medium: {
+    label: "Medium risk",
+    classes: "text-risk-moderate border-risk-moderate/30 bg-risk-moderate/10",
+  },
+  high: {
+    label: "High risk",
+    classes: "text-risk-elevated border-risk-elevated/30 bg-risk-elevated/10",
+  },
+  critical: {
+    label: "Critical risk",
+    classes: "text-risk-critical border-risk-critical/30 bg-risk-critical/10",
+  },
 };
 
 const SEVERITY_CLASSES: Record<Finding["severity"], string> = {

@@ -7,5 +7,19 @@ import InvestigatorPage from "./pages/compliance/InvestigatorPage";
 import WatchlistPage from "./pages/compliance/WatchlistPage";
 
 export default function App() {
-  return <BrowserRouter><Routes><Route element={<FsiShell/>}><Route index element={<KitHome/>}/><Route path="compliance" element={<Navigate to="/compliance/watchlist" replace/>}/><Route path="compliance/watchlist" element={<WatchlistPage/>}/><Route path="compliance/investigator" element={<InvestigatorPage/>}/><Route path="investment-research" element={<InvestmentResearchPage/>}/><Route path="merchant-risk" element={<MerchantRiskPage/>}/><Route path="*" element={<Navigate to="/" replace/>}/></Route></Routes></BrowserRouter>;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<FsiShell />}>
+          <Route index element={<KitHome />} />
+          <Route path="compliance" element={<Navigate to="/compliance/watchlist" replace />} />
+          <Route path="compliance/watchlist" element={<WatchlistPage />} />
+          <Route path="compliance/investigator" element={<InvestigatorPage />} />
+          <Route path="investment-research" element={<InvestmentResearchPage />} />
+          <Route path="merchant-risk" element={<MerchantRiskPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }

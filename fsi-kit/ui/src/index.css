@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --color-background: #FFFCF6;
+  --color-background: #fffcf6;
 }
 
 * {
@@ -37,8 +37,13 @@ body {
 
 /* Pulsing dot animation for progress */
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
 }
 
 .animate-pulse-dot {
@@ -47,17 +52,16 @@ body {
 
 /* Shimmer loading effect */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .animate-shimmer {
-  background: linear-gradient(
-    90deg,
-    #e8e8ee 25%,
-    #dddde6 50%,
-    #e8e8ee 75%
-  );
+  background: linear-gradient(90deg, #e8e8ee 25%, #dddde6 50%, #e8e8ee 75%);
   background-size: 200% 100%;
   animation: shimmer 2s ease-in-out infinite;
 }

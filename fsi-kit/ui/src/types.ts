@@ -23,13 +23,7 @@ export interface ScreeningVerdict {
   searches_performed: string[];
 }
 
-export type ClientStatus =
-  | "queued"
-  | "planning"
-  | "searching"
-  | "extracting"
-  | "done"
-  | "error";
+export type ClientStatus = "queued" | "planning" | "searching" | "extracting" | "done" | "error";
 
 export interface ClientRunState {
   client: RosterClient;
@@ -128,39 +122,179 @@ export interface HandoffContext {
 }
 
 // Normalized events shared by the research workflows.
-export interface ResearchSource { url: string; title?: string; snippet?: string; content?: string; domain?: string; published_date?: string | null }
-export interface WorkflowLaneDefinition { id: string; label: string }
+export interface ResearchSource {
+  url: string;
+  title?: string;
+  snippet?: string;
+  content?: string;
+  domain?: string;
+  published_date?: string | null;
+}
+export interface WorkflowLaneDefinition {
+  id: string;
+  label: string;
+}
 export type WorkflowName = "investment_research" | "merchant_risk" | string;
 export type NormalizedWorkflowEvent =
   | { type: "start"; run_id: string; workflow: WorkflowName; lanes: WorkflowLaneDefinition[] }
-  | { type: "progress"; run_id: string; workflow: WorkflowName; lane_id: string; phase?: string; message?: string; queries?: string[] }
-  | { type: "sources_found"; run_id: string; workflow: WorkflowName; lane_id: string; sources: ResearchSource[] }
-  | { type: "lane_complete" | "category_complete"; run_id: string; workflow: WorkflowName; lane_id?: string; category?: string; data: unknown; sources?: ResearchSource[]; message?: string }
-  | { type: "lane_skipped"; run_id: string; workflow: WorkflowName; lane_id: string; message: string }
-  | { type: "error"; run_id?: string; workflow?: WorkflowName; lane_id?: string; category?: string; message: string }
-  | { type: "result"; run_id: string; workflow: WorkflowName; data: unknown; sources?: ResearchSource[] }
+  | {
+      type: "progress";
+      run_id: string;
+      workflow: WorkflowName;
+      lane_id: string;
+      phase?: string;
+      message?: string;
+      queries?: string[];
+    }
+  | {
+      type: "sources_found";
+      run_id: string;
+      workflow: WorkflowName;
+      lane_id: string;
+      sources: ResearchSource[];
+    }
+  | {
+      type: "lane_complete" | "category_complete";
+      run_id: string;
+      workflow: WorkflowName;
+      lane_id?: string;
+      category?: string;
+      data: unknown;
+      sources?: ResearchSource[];
+      message?: string;
+    }
+  | {
+      type: "lane_skipped";
+      run_id: string;
+      workflow: WorkflowName;
+      lane_id: string;
+      message: string;
+    }
+  | {
+      type: "error";
+      run_id?: string;
+      workflow?: WorkflowName;
+      lane_id?: string;
+      category?: string;
+      message: string;
+    }
+  | {
+      type: "result";
+      run_id: string;
+      workflow: WorkflowName;
+      data: unknown;
+      sources?: ResearchSource[];
+    }
   | { type: "complete"; run_id: string; workflow: WorkflowName; elapsed_s?: number };
 
-export interface InvestmentResearchRequest { topic: string; meeting_objective?: string; audience?: string; horizon?: string }
-export interface InvestmentEvidencePoint { claim: string; detail: string; source_urls: string[]; as_of?: string | number | null }
+export interface InvestmentResearchRequest {
+  topic: string;
+  meeting_objective?: string;
+  audience?: string;
+  horizon?: string;
+}
+export interface InvestmentEvidencePoint {
+  claim: string;
+  detail: string;
+  source_urls: string[];
+  as_of?: string | number | null;
+}
 export interface InvestmentResearchResult {
-  topic: string; meeting_objective?: string | null; audience?: string | null; horizon?: string | null; executive_summary: string;
-  official_policy?: { developments: InvestmentEvidencePoint[]; official_positions: InvestmentEvidencePoint[]; watch_items: string[] } | null;
-  economic_data?: { indicators: InvestmentEvidencePoint[]; trend_summary: string; data_limitations: string[] } | null;
-  market_expectations?: { consensus: InvestmentEvidencePoint[]; disagreements: InvestmentEvidencePoint[]; market_signals: InvestmentEvidencePoint[] } | null;
-  portfolio_implications?: { implications: InvestmentEvidencePoint[]; affected_assets_or_sectors: string[]; transmission_channels: string[] } | null;
-  scenarios?: { base_case: string; upside_case: string; downside_case: string; counter_thesis: InvestmentEvidencePoint[]; signposts: string[] } | null;
-  discussion_questions: string[]; evidence_gaps: string[]; lane_errors: Record<string,string>; lane_skips: Record<string,string>; sources: ResearchSource[];
+  topic: string;
+  meeting_objective?: string | null;
+  audience?: string | null;
+  horizon?: string | null;
+  executive_summary: string;
+  official_policy?: {
+    developments: InvestmentEvidencePoint[];
+    official_positions: InvestmentEvidencePoint[];
+    watch_items: string[];
+  } | null;
+  economic_data?: {
+    indicators: InvestmentEvidencePoint[];
+    trend_summary: string;
+    data_limitations: string[];
+  } | null;
+  market_expectations?: {
+    consensus: InvestmentEvidencePoint[];
+    disagreements: InvestmentEvidencePoint[];
+    market_signals: InvestmentEvidencePoint[];
+  } | null;
+  portfolio_implications?: {
+    implications: InvestmentEvidencePoint[];
+    affected_assets_or_sectors: string[];
+    transmission_channels: string[];
+  } | null;
+  scenarios?: {
+    base_case: string;
+    upside_case: string;
+    downside_case: string;
+    counter_thesis: InvestmentEvidencePoint[];
+    signposts: string[];
+  } | null;
+  discussion_questions: string[];
+  evidence_gaps: string[];
+  lane_errors: Record<string, string>;
+  lane_skips: Record<string, string>;
+  sources: ResearchSource[];
 }
 
-export interface MerchantRiskRequest { merchant_name: string; category_code: string; domain?: string; country?: string }
-export interface MerchantEvidence { finding: string; significance: string; source_urls: string[]; observed_date?: string | number | null }
-export interface MerchantIdentity { canonical_name?: string | null; canonical_domain?: string | null; country?: string | null; business_description?: string | null; confidence: "low"|"medium"|"high"|"unresolved"; match_basis: string[]; ambiguities: string[]; alternative_candidates: Array<{name:string;domain?:string|null;country?:string|null;rationale:string;source_urls:string[]}> }
+export interface MerchantRiskRequest {
+  merchant_name: string;
+  category_code: string;
+  domain?: string;
+  country?: string;
+}
+export interface MerchantEvidence {
+  finding: string;
+  significance: string;
+  source_urls: string[];
+  observed_date?: string | number | null;
+}
+export interface MerchantIdentity {
+  canonical_name?: string | null;
+  canonical_domain?: string | null;
+  country?: string | null;
+  business_description?: string | null;
+  confidence: "low" | "medium" | "high" | "unresolved";
+  match_basis: string[];
+  ambiguities: string[];
+  alternative_candidates: Array<{
+    name: string;
+    domain?: string | null;
+    country?: string | null;
+    rationale: string;
+    source_urls: string[];
+  }>;
+}
 export interface MerchantRiskResult {
-  merchant_name: string; category_code: string; resolved_identity?: MerchantIdentity | null; identity_confidence: "low"|"medium"|"high"|"unresolved"; identity_ambiguities: string[];
-  category_fit?: { observed_offerings: MerchantEvidence[]; category_fit: "consistent"|"mixed"|"inconsistent"|"insufficient_evidence"; explanation: string } | null;
-  restricted_products?: { indicators: MerchantEvidence[]; products_reviewed: string[]; evidence_gaps: string[] } | null;
+  merchant_name: string;
+  category_code: string;
+  resolved_identity?: MerchantIdentity | null;
+  identity_confidence: "low" | "medium" | "high" | "unresolved";
+  identity_ambiguities: string[];
+  category_fit?: {
+    observed_offerings: MerchantEvidence[];
+    category_fit: "consistent" | "mixed" | "inconsistent" | "insufficient_evidence";
+    explanation: string;
+  } | null;
+  restricted_products?: {
+    indicators: MerchantEvidence[];
+    products_reviewed: string[];
+    evidence_gaps: string[];
+  } | null;
   reputation?: { indicators: MerchantEvidence[]; themes: string[]; evidence_gaps: string[] } | null;
-  legal_regulatory?: { indicators: MerchantEvidence[]; jurisdictions_checked: string[]; evidence_gaps: string[] } | null;
-  web_context_level: "insufficient_evidence"|"no_material_indicators_found"|"review_indicated"; evidence_coverage: "weak"|"partial"|"strong"; risk_indicators: MerchantEvidence[]; evidence_gaps: string[]; next_checks: string[]; lane_errors: Record<string,string>; lane_skips: Record<string,string>; sources: ResearchSource[];
+  legal_regulatory?: {
+    indicators: MerchantEvidence[];
+    jurisdictions_checked: string[];
+    evidence_gaps: string[];
+  } | null;
+  web_context_level: "insufficient_evidence" | "no_material_indicators_found" | "review_indicated";
+  evidence_coverage: "weak" | "partial" | "strong";
+  risk_indicators: MerchantEvidence[];
+  evidence_gaps: string[];
+  next_checks: string[];
+  lane_errors: Record<string, string>;
+  lane_skips: Record<string, string>;
+  sources: ResearchSource[];
 }

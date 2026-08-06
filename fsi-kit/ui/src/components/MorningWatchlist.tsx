@@ -39,10 +39,25 @@ interface Props {
   onInvestigate: (ctx: HandoffContext) => void;
 }
 
-const VERDICT_STYLE: Record<Verdict, { label: string; classes: string; icon: typeof CheckCircle2 }> = {
-  clear: { label: "Clear", classes: "text-risk-low border-risk-low/30 bg-risk-low/10", icon: CheckCircle2 },
-  review: { label: "Review", classes: "text-risk-elevated border-risk-elevated/30 bg-risk-elevated/10", icon: AlertTriangle },
-  escalate: { label: "Escalate", classes: "text-risk-high border-risk-high/30 bg-risk-high/10", icon: XCircle },
+const VERDICT_STYLE: Record<
+  Verdict,
+  { label: string; classes: string; icon: typeof CheckCircle2 }
+> = {
+  clear: {
+    label: "Clear",
+    classes: "text-risk-low border-risk-low/30 bg-risk-low/10",
+    icon: CheckCircle2,
+  },
+  review: {
+    label: "Review",
+    classes: "text-risk-elevated border-risk-elevated/30 bg-risk-elevated/10",
+    icon: AlertTriangle,
+  },
+  escalate: {
+    label: "Escalate",
+    classes: "text-risk-high border-risk-high/30 bg-risk-high/10",
+    icon: XCircle,
+  },
 };
 
 const STATUS_LABEL: Record<ClientRunState["status"], string> = {
@@ -101,7 +116,7 @@ export default function MorningWatchlist({
         runs[c.id]?.status === "done" &&
         runs[c.id]?.verdict?.verdict !== "clear" &&
         !expanded.has(c.id) &&
-        !autoExpandedRef.current.has(c.id)
+        !autoExpandedRef.current.has(c.id),
     );
     if (newlyFlagged.length === 0) return;
     for (const c of newlyFlagged) autoExpandedRef.current.add(c.id);
@@ -133,7 +148,7 @@ export default function MorningWatchlist({
 
   const order: Verdict[] = ["escalate", "review", "clear"];
   const doneClients = order.flatMap((v) =>
-    roster.filter((c) => runs[c.id]?.status === "done" && runs[c.id]?.verdict?.verdict === v)
+    roster.filter((c) => runs[c.id]?.status === "done" && runs[c.id]?.verdict?.verdict === v),
   );
   const activeOrQueued = roster.filter((c) => runs[c.id]?.status !== "done");
   const orderedRoster = [...doneClients, ...activeOrQueued];
@@ -144,7 +159,9 @@ export default function MorningWatchlist({
       <div className="glass rounded-2xl p-5 flex items-center gap-4 flex-wrap">
         <div className="flex-1 min-w-[220px]">
           <div className="flex items-center gap-2.5 flex-wrap">
-            <h2 className="font-display font-semibold text-ink-100">Daily adverse media screening</h2>
+            <h2 className="font-display font-semibold text-ink-100">
+              Daily adverse media screening
+            </h2>
             <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-accent-500/10 text-accent-600 border border-accent-500/25">
               <Clock className="w-3 h-3" />
               Scheduled daily · 06:00
@@ -200,7 +217,9 @@ export default function MorningWatchlist({
                 key={run.run_id}
                 onClick={() => onLoadRun(run.run_id)}
                 className={`rounded-lg px-3 py-1.5 text-[11px] flex items-center gap-2 transition-all ${
-                  isActive ? "glass-button-active text-ink-100" : "glass-subtle text-ink-400 hover:text-ink-200"
+                  isActive
+                    ? "glass-button-active text-ink-100"
+                    : "glass-subtle text-ink-400 hover:text-ink-200"
                 }`}
               >
                 <span className="font-medium">{day}</span>
@@ -211,7 +230,9 @@ export default function MorningWatchlist({
                       <span className="text-risk-high font-medium">{run.counts.escalate} esc</span>
                     )}
                     {run.counts.review > 0 && (
-                      <span className="text-risk-elevated font-medium">{run.counts.review} rev</span>
+                      <span className="text-risk-elevated font-medium">
+                        {run.counts.review} rev
+                      </span>
                     )}
                     {run.counts.clear > 0 && (
                       <span className="text-risk-low font-medium">{run.counts.clear} clear</span>
@@ -250,7 +271,10 @@ export default function MorningWatchlist({
                 {/* status indicator */}
                 <div className="w-5 flex-shrink-0 flex justify-center">
                   {run.status === "done" && style ? (
-                    <style.icon className={style.classes.split(" ")[0]} style={{ width: 18, height: 18 }} />
+                    <style.icon
+                      className={style.classes.split(" ")[0]}
+                      style={{ width: 18, height: 18 }}
+                    />
                   ) : run.status === "error" ? (
                     <XCircle className="w-[18px] h-[18px] text-risk-high" />
                   ) : run.status === "queued" ? (
@@ -282,9 +306,13 @@ export default function MorningWatchlist({
                 )}
 
                 {run.status === "done" && style && (
-                  <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full border ${style.classes}`}>
+                  <span
+                    className={`text-[11px] font-medium px-2.5 py-1 rounded-full border ${style.classes}`}
+                  >
                     {style.label}
-                    {run.elapsedS != null && <span className="ml-1.5 opacity-60">{run.elapsedS}s</span>}
+                    {run.elapsedS != null && (
+                      <span className="ml-1.5 opacity-60">{run.elapsedS}s</span>
+                    )}
                   </span>
                 )}
 
@@ -294,7 +322,9 @@ export default function MorningWatchlist({
                   </span>
                 )}
 
-                <ChevronDown className={`w-4 h-4 text-ink-500 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                <ChevronDown
+                  className={`w-4 h-4 text-ink-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                />
               </button>
 
               {/* expanded detail */}
@@ -308,7 +338,9 @@ export default function MorningWatchlist({
                     className="overflow-hidden"
                   >
                     <div className="px-5 pb-4 pt-1 border-t border-white/40">
-                      {run.status === "error" && <p className="text-sm text-risk-high">{run.error}</p>}
+                      {run.status === "error" && (
+                        <p className="text-sm text-risk-high">{run.error}</p>
+                      )}
 
                       {/* Live activity stream — the agent's work as it happens */}
                       {showActivity && (
@@ -322,7 +354,9 @@ export default function MorningWatchlist({
 
                       {run.verdict && (
                         <>
-                          <p className="text-sm text-ink-200 leading-relaxed">{run.verdict.summary}</p>
+                          <p className="text-sm text-ink-200 leading-relaxed">
+                            {run.verdict.summary}
+                          </p>
 
                           {run.verdict.risk_categories.length > 0 && (
                             <div className="flex flex-wrap gap-1.5 mt-2.5">
@@ -342,7 +376,9 @@ export default function MorningWatchlist({
                               {run.verdict.evidence.map((ev, i) => (
                                 <div key={i} className="glass-subtle rounded-lg p-3">
                                   <div className="flex items-start justify-between gap-3">
-                                    <p className="text-[13px] font-medium text-ink-100 leading-snug">{ev.headline}</p>
+                                    <p className="text-[13px] font-medium text-ink-100 leading-snug">
+                                      {ev.headline}
+                                    </p>
                                     <a
                                       href={ev.url}
                                       target="_blank"
@@ -353,10 +389,14 @@ export default function MorningWatchlist({
                                       <ExternalLink className="w-3.5 h-3.5" />
                                     </a>
                                   </div>
-                                  {ev.date && <p className="text-[10px] text-ink-500 mt-0.5">{ev.date}</p>}
+                                  {ev.date && (
+                                    <p className="text-[10px] text-ink-500 mt-0.5">{ev.date}</p>
+                                  )}
                                   <div className="flex gap-2 mt-2">
                                     <Quote className="w-3 h-3 text-ink-500 flex-shrink-0 mt-0.5" />
-                                    <p className="text-xs text-ink-400 italic leading-relaxed">{ev.quoted_passage}</p>
+                                    <p className="text-xs text-ink-400 italic leading-relaxed">
+                                      {ev.quoted_passage}
+                                    </p>
                                   </div>
                                 </div>
                               ))}
@@ -370,7 +410,10 @@ export default function MorningWatchlist({
                               </p>
                               <div className="space-y-0.5">
                                 {run.verdict.searches_performed.map((q, i) => (
-                                  <p key={i} className="font-mono text-[11px] text-ink-500 truncate">
+                                  <p
+                                    key={i}
+                                    className="font-mono text-[11px] text-ink-500 truncate"
+                                  >
                                     "{q}"
                                   </p>
                                 ))}
