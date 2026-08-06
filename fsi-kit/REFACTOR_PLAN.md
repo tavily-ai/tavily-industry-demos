@@ -100,7 +100,7 @@ Verification:
 ### Phase 4 — Merchant Risk
 
 - Add merchant input with required name/category and recommended domain/country.
-- Resolve canonical identity first with Tavily Research `mini`.
+- Resolve the merchant web identity first with a focused LangChain agent with Tavily Search + Extract, then hand the verified scope to Research lanes.
 - Launch bounded risk lanes for category fit, restricted products, reputation/business practices, and legal/regulatory context.
 - Add web-context level, identity confidence, evidence coverage, gaps, and next-check UI.
 

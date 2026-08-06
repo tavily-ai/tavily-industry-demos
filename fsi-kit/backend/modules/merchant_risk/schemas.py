@@ -5,6 +5,8 @@ from __future__ import annotations
 from typing import Literal
 from pydantic import BaseModel, Field, field_validator
 
+from backend.core.research.models import LooseResearchModel
+
 
 class MerchantRiskRequest(BaseModel):
     merchant_name: str = Field(min_length=2, max_length=300)
@@ -18,51 +20,51 @@ class MerchantRiskRequest(BaseModel):
         return value.strip() if value is not None else None
 
 
-class MerchantEvidence(BaseModel):
-    finding: str
-    significance: str
+class MerchantEvidence(LooseResearchModel):
+    finding: str = ""
+    significance: str = ""
     source_urls: list[str] = Field(default_factory=list)
-    observed_date: str | None = None
+    observed_date: str | int | float | None = None
 
 
-class IdentityCandidate(BaseModel):
-    name: str
+class IdentityCandidate(LooseResearchModel):
+    name: str = ""
     domain: str | None = None
     country: str | None = None
-    rationale: str
+    rationale: str = ""
     source_urls: list[str] = Field(default_factory=list)
 
 
-class MerchantIdentity(BaseModel):
+class MerchantIdentity(LooseResearchModel):
     canonical_name: str | None = None
     canonical_domain: str | None = None
     country: str | None = None
     business_description: str | None = None
-    confidence: Literal["low", "medium", "high"]
+    confidence: str = "unresolved"
     match_basis: list[str] = Field(default_factory=list)
     ambiguities: list[str] = Field(default_factory=list)
     alternative_candidates: list[IdentityCandidate] = Field(default_factory=list)
 
 
-class CategoryFitResearch(BaseModel):
+class CategoryFitResearch(LooseResearchModel):
     observed_offerings: list[MerchantEvidence] = Field(default_factory=list)
-    category_fit: Literal["consistent", "mixed", "inconsistent", "insufficient_evidence"]
-    explanation: str
+    category_fit: str = "insufficient_evidence"
+    explanation: str = ""
 
 
-class RestrictedProductsResearch(BaseModel):
+class RestrictedProductsResearch(LooseResearchModel):
     indicators: list[MerchantEvidence] = Field(default_factory=list)
     products_reviewed: list[str] = Field(default_factory=list)
     evidence_gaps: list[str] = Field(default_factory=list)
 
 
-class ReputationResearch(BaseModel):
+class ReputationResearch(LooseResearchModel):
     indicators: list[MerchantEvidence] = Field(default_factory=list)
     themes: list[str] = Field(default_factory=list)
     evidence_gaps: list[str] = Field(default_factory=list)
 
 
-class LegalRegulatoryResearch(BaseModel):
+class LegalRegulatoryResearch(LooseResearchModel):
     indicators: list[MerchantEvidence] = Field(default_factory=list)
     jurisdictions_checked: list[str] = Field(default_factory=list)
     evidence_gaps: list[str] = Field(default_factory=list)
@@ -84,4 +86,5 @@ class WebRiskContext(BaseModel):
     evidence_gaps: list[str] = Field(default_factory=list)
     next_checks: list[str] = Field(default_factory=list)
     lane_errors: dict[str, str] = Field(default_factory=dict)
+    lane_skips: dict[str, str] = Field(default_factory=dict)
     sources: list[dict] = Field(default_factory=list)

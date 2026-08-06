@@ -110,6 +110,11 @@ def normalize_sources(sources: Any) -> list[dict[str, Any]]:
                 item[source_key] = source[source_key]
         if source.get("date") and "published_date" not in item:
             item["published_date"] = source["date"]
+        snippet = source.get("snippet") or source.get("content")
+        if isinstance(snippet, str) and snippet.strip():
+            item["snippet"] = snippet.strip()[:1200]
+        if source.get("domain"):
+            item["domain"] = source["domain"]
         normalized.append(item)
     return normalized
 

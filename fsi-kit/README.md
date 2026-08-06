@@ -25,7 +25,7 @@ The UI shows each workstream, searches, sources, partial failures, and the final
 
 ### Merchant Risk
 
-Enrich a sparse merchant onboarding case using public-web evidence. The workflow resolves merchant identity first, then runs four Tavily Research `mini` lanes covering:
+Enrich a sparse merchant onboarding case using public-web evidence. A focused LangChain agent using Tavily Search + Extract first verifies the merchant’s web identity and domain; that resolved scope is then handed to four parallel Tavily Research `mini` lanes covering:
 
 - Claimed category and observable business-model fit
 - Restricted products and services

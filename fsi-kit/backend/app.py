@@ -55,6 +55,7 @@ async def get_config():
         "model": MODEL,
         "research_provider": "Tavily Research",
         "research_model": "mini",
+        "merchant_identity_provider": "LangChain agent with Tavily Search + Extract",
     }
 
 

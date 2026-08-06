@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field, field_validator
 
+from backend.core.research.models import LooseResearchModel
+
 
 class InvestmentResearchRequest(BaseModel):
     topic: str = Field(min_length=2, max_length=500)
@@ -17,41 +19,41 @@ class InvestmentResearchRequest(BaseModel):
         return value.strip() if value is not None else None
 
 
-class EvidencePoint(BaseModel):
-    claim: str
-    detail: str
+class EvidencePoint(LooseResearchModel):
+    claim: str = ""
+    detail: str = ""
     source_urls: list[str] = Field(default_factory=list)
-    as_of: str | None = None
+    as_of: str | int | float | None = None
 
 
-class OfficialPolicyResearch(BaseModel):
+class OfficialPolicyResearch(LooseResearchModel):
     developments: list[EvidencePoint] = Field(default_factory=list)
     official_positions: list[EvidencePoint] = Field(default_factory=list)
     watch_items: list[str] = Field(default_factory=list)
 
 
-class EconomicDataResearch(BaseModel):
+class EconomicDataResearch(LooseResearchModel):
     indicators: list[EvidencePoint] = Field(default_factory=list)
-    trend_summary: str
+    trend_summary: str = ""
     data_limitations: list[str] = Field(default_factory=list)
 
 
-class MarketExpectationsResearch(BaseModel):
+class MarketExpectationsResearch(LooseResearchModel):
     consensus: list[EvidencePoint] = Field(default_factory=list)
     disagreements: list[EvidencePoint] = Field(default_factory=list)
     market_signals: list[EvidencePoint] = Field(default_factory=list)
 
 
-class PortfolioImplicationsResearch(BaseModel):
+class PortfolioImplicationsResearch(LooseResearchModel):
     implications: list[EvidencePoint] = Field(default_factory=list)
     affected_assets_or_sectors: list[str] = Field(default_factory=list)
     transmission_channels: list[str] = Field(default_factory=list)
 
 
-class ScenarioResearch(BaseModel):
-    base_case: str
-    upside_case: str
-    downside_case: str
+class ScenarioResearch(LooseResearchModel):
+    base_case: str = ""
+    upside_case: str = ""
+    downside_case: str = ""
     counter_thesis: list[EvidencePoint] = Field(default_factory=list)
     signposts: list[str] = Field(default_factory=list)
 

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { streamSSE } from "../sse";
 import { NormalizedWorkflowEvent, ResearchSource, WorkflowLaneDefinition } from "../types";
 
-export type LaneStatus = "queued" | "running" | "complete" | "error";
+export type LaneStatus = "queued" | "running" | "complete" | "error" | "skipped";
 export interface LaneViewState extends WorkflowLaneDefinition {
   status: LaneStatus;
   phase?: string;
@@ -63,9 +63,12 @@ export function useWorkflowStream<TResult>(path: string, initialLanes: WorkflowL
         if (!laneId) break;
         const eventSources = event.sources ?? [];
         setSources((current) => mergeSources(current, eventSources));
-        updateLane(laneId, (lane) => ({ ...lane, status: "complete", data: event.data, message: "Evidence collected", sources: mergeSources(lane.sources, eventSources) }));
+        updateLane(laneId, (lane) => ({ ...lane, status: "complete", data: event.data, message: event.message || "Evidence collected", sources: mergeSources(lane.sources, eventSources) }));
         break;
       }
+      case "lane_skipped":
+        updateLane(event.lane_id, (lane) => ({ ...lane, status: "skipped", message: event.message }));
+        break;
       case "error": {
         const laneId = event.lane_id ?? event.category;
         if (laneId) {
