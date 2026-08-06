@@ -93,11 +93,7 @@ def _final_context(request: MerchantRiskRequest, results: dict[str, Any], errors
         evidence_coverage=coverage,
         risk_indicators=[MerchantEvidence.model_validate(item) for item in indicators],
         evidence_gaps=list(dict.fromkeys(gaps)),
-        next_checks=[
-            "Verify legal entity and beneficial ownership using authoritative onboarding documents.",
-            "Validate category code against transaction descriptors and actual product inventory.",
-            "Run applicable sanctions, licensing, and regulator database checks directly.",
-        ],
+        next_checks=[],
         lane_errors=errors,
         lane_skips=skips,
         sources=unique_sources,

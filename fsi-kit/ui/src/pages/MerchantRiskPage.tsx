@@ -33,7 +33,7 @@ function IdentityCheckpoint({lane,storedIdentity}:{lane?:LaneViewState;storedIde
   const StatusIcon=status==="complete"?CheckCircle2:status==="error"?AlertTriangle:status==="running"?Loader2:Circle;
   const statusColor=status==="complete"?"text-risk-low":status==="error"?"text-risk-high":status==="running"?"text-tavily-orange":"text-ink-500";
   return <section className="glass rounded-2xl p-5 md:p-7"><div className="max-w-4xl mx-auto">
-    <div className="flex flex-wrap justify-between gap-3 items-start"><div><p className="text-[10px] uppercase tracking-[.16em] font-semibold text-tavily-orange">Step 1</p><h2 className="font-display text-lg font-semibold text-ink-100 mt-1">Resolve merchant identity</h2></div><span className="text-[10px] text-ink-500 flex items-center gap-1.5"><FileSearch className="w-3.5 h-3.5 text-tavily-orange"/>LangChain agent · Tavily Search + Extract</span></div>
+    <div className="flex flex-wrap justify-between gap-3 items-start"><div><p className="text-[10px] uppercase tracking-[.16em] font-semibold text-tavily-orange">Step 1</p><h2 className="font-display text-lg font-semibold text-ink-100 mt-1">Resolve merchant identity</h2></div></div>
     <div className="flex gap-3 mt-4 items-start"><StatusIcon className={`w-4 h-4 mt-0.5 shrink-0 ${statusColor} ${status==="running"?"animate-spin":""}`}/><div className="min-w-0 flex-1"><p className={`text-sm ${status==="error"?"text-risk-high":"text-ink-300"}`}>{lane?.message||(status==="queued"?"Waiting to verify the submitted merchant":status)}</p>{lane?.phase&&<p className="text-[10px] uppercase tracking-wider text-ink-500 mt-1">{lane.phase.replace(/_/g," ")}</p>}</div><span className="text-[10px] text-ink-500 whitespace-nowrap">{lane?.sources.length||0} sources</span></div>
     {identity&&<div className="mt-5 border-t border-ink-700/35 pt-5"><div className="flex flex-wrap gap-x-5 gap-y-2 items-center"><p className="font-semibold text-ink-100">{identity.canonical_name||"Identity unresolved"}</p><p className="text-sm text-ink-400">{identity.canonical_domain||"No verified domain"}</p><span className="text-[10px] uppercase tracking-wider text-ink-500">{identity.confidence} confidence</span></div>{identity.business_description&&<p className="text-sm text-ink-300 leading-6 mt-3">{identity.business_description}</p>}<Subheading>Match basis</Subheading><List items={identity.match_basis} empty="No supporting match basis was returned."/>{identity.ambiguities.length>0&&<><Subheading>Identity caveats</Subheading><List items={identity.ambiguities}/></>}</div>}
   </div></section>;
@@ -69,7 +69,7 @@ function RiskReport({result}:{result:MerchantRiskResult}) {
     <ReportSection number="06" title="Evidence gaps"><List items={result.evidence_gaps} empty="Coverage gaps were not reported."/>{Object.keys(result.lane_errors||{}).length>0&&<p className="text-xs text-risk-high leading-5 mt-4">Incomplete workstreams: {Object.entries(result.lane_errors).map(([lane,message])=>`${lane}: ${message}`).join(" · ")}</p>}{Object.keys(result.lane_skips||{}).length>0&&<p className="text-xs text-risk-elevated leading-5 mt-4">Research held back: {Object.entries(result.lane_skips).map(([lane,message])=>`${lane}: ${message}`).join(" · ")}</p>}</ReportSection>
 
     <ReportSection number="07" title="Recommended next checks"><List items={result.next_checks} empty="No next checks were returned."/></ReportSection>
-    <div className="border-t border-ink-700/40 pt-5 flex gap-3"><Info className="w-4 h-4 text-tavily-orange shrink-0 mt-0.5"/><p className="text-xs text-ink-400 leading-5"><strong className="text-ink-200">Interpretation guardrail:</strong> This is public-web review context, not an underwriting decision. Missing or thin evidence means uncertainty and must never be interpreted as low risk.</p></div>
+
   </div></article>;
 }
 export default function MerchantRiskPage() {
@@ -118,9 +118,9 @@ export default function MerchantRiskPage() {
           <Fingerprint className="w-4 h-4" />
           Merchant risk
         </div>
-        <h1 className="font-display text-3xl font-semibold text-ink-100 mt-3">Resolve identity before reviewing risk</h1>
+        <h1 className="font-display text-3xl font-semibold text-ink-100 mt-3">Build an identity-grounded risk brief</h1>
         <p className="text-sm text-ink-400 mt-1.5 max-w-3xl">
-          Enrich a merchant with current public-web context, explicitly separating identity confidence, supported signals, and evidence gaps.
+          Confirm who the merchant is on the public web, then run parallel checks for category fit, restricted products, reputation, and regulatory signals.
         </p>
       </header>
 
@@ -163,7 +163,7 @@ export default function MerchantRiskPage() {
       <div className="space-y-5">
         <RunHistory runs={history.runs} activeRunId={workflow.runId} onLoad={load} />
         {workflow.error && <div className="glass rounded-xl p-4 text-sm text-risk-high flex gap-2"><AlertTriangle className="w-4 h-4 shrink-0" />{workflow.error}</div>}
-        {workflow.status === "cancelled" && <div className="glass-subtle rounded-xl p-3 text-xs text-ink-400">Review stopped. No conclusion is inferred from unfinished or missing evidence.</div>}
+        {workflow.status === "cancelled" && <div className="glass-subtle rounded-xl p-3 text-xs text-ink-400">Review stopped.</div>}
         <IdentityCheckpoint lane={identityLane} storedIdentity={workflow.result?.resolved_identity} />
         <div className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[.14em] text-ink-500"><ArrowDown className="w-3.5 h-3.5 text-tavily-orange"/>{identityReady ? "Resolved scope handed to all four lanes" : "Research waits for the identity checkpoint"}</div>
         <WorkstreamLanes lanes={researchLanes} heading="Step 2 · Parallel Research workstreams" variant="list" />

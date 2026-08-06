@@ -37,7 +37,7 @@ Search + Extract identity checkpoint output:
 
 The unit of analysis is the merchant storefront/business represented by the submitted category and resolved domain, not every product or controversy associated with a parent company. Use the identity checkpoint as a scope boundary. Exclude similarly named businesses, authorized resellers, sister brands, unrelated parent-company products, marketplaces, financial products, media services, and other channels unless the evidence explicitly connects them to this merchant's own offering. If a parent or platform relationship is materially relevant, label that relationship and do not present it as a direct merchant finding.
 
-Every indicator must include supporting source URLs. Absence of web evidence is an evidence gap, never proof of low risk. This is public-web review context, not an underwriting decision.
+Every indicator must include supporting source URLs. Absence of web evidence is an evidence gap, never proof of low risk.
 """
     specs = [
         ("category_fit", "Category & Business-model Fit", CategoryFitResearch,

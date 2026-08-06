@@ -226,7 +226,7 @@ export default function InvestmentResearchPage() {
         </div>
         <h1 className="font-display text-3xl font-semibold text-ink-100 mt-3">Build a meeting-ready brief</h1>
         <p className="text-sm text-ink-400 mt-1.5 max-w-3xl">
-          Parallel live-web workstreams synthesize policy, data, expectations, implications, and counter-theses into a cited brief—not a generic chat response.
+          Parallel research lanes synthesize policy, data, expectations, implications, and counter-theses into a cited brief.
         </p>
       </header>
 
@@ -278,7 +278,7 @@ export default function InvestmentResearchPage() {
         <RunHistory runs={history.runs} activeRunId={workflow.runId} onLoad={load} />
         {workflow.error && <div className="glass rounded-xl p-4 text-sm text-risk-high flex gap-2"><AlertTriangle className="w-4 h-4 shrink-0" />{workflow.error}</div>}
         {workflow.status === "cancelled" && <div className="glass-subtle rounded-xl p-3 text-xs text-ink-400">Research stopped. Completed lane evidence remains visible; no final brief was inferred.</div>}
-        <WorkstreamLanes lanes={workflow.lanes} />
+        <WorkstreamLanes lanes={workflow.lanes} heading="Parallel research workstreams" variant="list" />
         {workflow.result && <MeetingBrief result={workflow.result} />}
         <SourceList sources={workflow.sources.length ? workflow.sources : workflow.result?.sources || []} title="Brief sources" />
       </div>

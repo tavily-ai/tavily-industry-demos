@@ -41,8 +41,8 @@ class MerchantIdentityTests(unittest.IsolatedAsyncioTestCase):
         )
         prompt = identity_system_prompt()
         task = identity_task(request)
-        self.assertIn("Use Tavily Search", prompt)
-        self.assertIn("Use Tavily Extract", prompt)
+        self.assertIn("exactly one Tavily Search", prompt)
+        self.assertIn("at most one Tavily Extract", prompt)
         self.assertIn("Stop after identity resolution", task)
         self.assertIn("fashionnova.com", task)
 
