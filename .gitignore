@@ -2,4 +2,5 @@
 .DS_Store
 Thumbs.db
 
+artifacts/
 # Each kit manages its own ignores (see <kit>/.gitignore)
