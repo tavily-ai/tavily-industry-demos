@@ -5,7 +5,7 @@ import unittest
 import httpx
 from pydantic import BaseModel
 
-from backend.core.research.client import TavilyResearchClient, normalize_sources, parse_sse_json
+from backend.core.research.client import TavilyResearchClient, normalize_sources, parse_sse_json, to_tavily_output_schema
 from backend.core.research.orchestrator import ResearchLane, orchestrate_lanes
 
 
@@ -41,12 +41,57 @@ class SSEParserTests(unittest.IsolatedAsyncioTestCase):
                                   content=b'data: {"choices": []}\n\nevent: done\n\n')
 
         client = TavilyResearchClient(api_key="server-secret", transport=httpx.MockTransport(handler))
-        output = [item async for item in client.stream("query", {"type": "object"})]
+        output = [item async for item in client.stream("query", {
+            "type": "object", "title": "Ignored", "properties": {"answer": {"type": "string"}}, "required": ["answer"]
+        })]
         self.assertEqual(len(output), 1)
         self.assertEqual(seen["authorization"], "Bearer server-secret")
         self.assertEqual(seen["payload"]["model"], "mini")
         self.assertTrue(seen["payload"]["stream"])
-        self.assertEqual(seen["payload"]["output_schema"], {"type": "object"})
+        self.assertEqual(seen["payload"]["output_schema"], {
+            "properties": {"answer": {"type": "string", "description": "answer"}}, "required": ["answer"]
+        })
+
+
+    def test_pydantic_schema_is_inlined_and_reduced_to_tavily_subset(self):
+        class Nested(BaseModel):
+            label: str
+
+        class Output(BaseModel):
+            nested: list[Nested]
+            optional_note: str | None = None
+
+        schema = to_tavily_output_schema(Output.model_json_schema())
+        self.assertEqual(set(schema), {"properties", "required"})
+        serialized = json.dumps(schema)
+        self.assertNotIn("$defs", serialized)
+        self.assertNotIn("$ref", serialized)
+        self.assertNotIn("anyOf", serialized)
+        self.assertEqual(schema["properties"]["nested"]["items"]["properties"]["label"]["type"], "string")
+        self.assertEqual(schema["properties"]["optional_note"]["type"], "string")
+        self.assertEqual(schema["required"], ["nested"])
+        self.assertTrue(schema["properties"]["nested"]["description"])
+        self.assertTrue(schema["properties"]["nested"]["items"]["properties"]["label"]["description"])
+
+    def test_schema_with_only_default_fields_gets_nonempty_required(self):
+        class Output(BaseModel):
+            items: list[str] = []
+            notes: list[str] = []
+
+        schema = to_tavily_output_schema(Output.model_json_schema())
+        self.assertEqual(schema["required"], ["items", "notes"])
+
+    async def test_client_raises_on_sse_error_payload(self):
+        async def handler(request: httpx.Request) -> httpx.Response:
+            return httpx.Response(
+                200,
+                headers={"content-type": "text/event-stream"},
+                content=b'event: error\ndata: {"error":"bad schema"}\n\n',
+            )
+
+        client = TavilyResearchClient(api_key="server-secret", transport=httpx.MockTransport(handler))
+        with self.assertRaisesRegex(RuntimeError, "bad schema"):
+            _ = [item async for item in client.stream("query", {"properties": {}})]
 
     def test_source_normalization_deduplicates_fragments_and_trailing_slashes(self):
         sources = normalize_sources([

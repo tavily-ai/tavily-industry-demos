@@ -18,8 +18,8 @@ export default function FsiShell() {
   const researchRoute = location.pathname.startsWith("/investment-research") || location.pathname.startsWith("/merchant-risk");
   const activeModel = config && location.pathname !== "/" ? (researchRoute ? { provider: config.research_provider || "Tavily Research", model: config.research_model || "mini" } : { provider: config.provider, model: config.model }) : null;
   return <div className="min-h-screen relative" style={{ backgroundColor: "var(--color-background)" }}>
-    <div className="fixed inset-0 z-0 bg-cover bg-center" style={{backgroundImage:"url(/landscape-08.webp)",filter:"saturate(.75) brightness(1.08)",transform:"scale(1.03)"}}/>
-    <div className="fixed inset-0 z-0 pointer-events-none" style={{background:"linear-gradient(180deg,rgba(248,248,250,.86),rgba(248,248,250,.45) 50%,rgba(248,248,250,.72))",backdropFilter:"blur(3px)"}}/>
+    <div className="fixed inset-0 z-0 bg-cover bg-center" style={{backgroundImage:"url(/landscape-08.webp)",filter:"saturate(.58) brightness(1.08)",transform:"scale(1.03)"}}/>
+    <div className="fixed inset-0 z-0 pointer-events-none" style={{background:"linear-gradient(180deg,rgba(255,252,246,.92),rgba(255,252,246,.62) 50%,rgba(255,252,246,.84))",backdropFilter:"blur(3px)"}}/>
     <header className="sticky top-0 z-30 border-b border-white/50 bg-white/30 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-5 py-3 flex items-center gap-5">
         <NavLink to="/" className="flex items-center gap-3 shrink-0"><img src="/tavily-full.svg" alt="Tavily" className="h-8"/><span className="hidden lg:block w-px h-7 bg-ink-500/20"/><span className="hidden lg:block"><span className="font-display font-semibold text-ink-100 block leading-tight">FSI Intelligence Kit</span><span className="text-[9px] uppercase tracking-[.2em] text-ink-500">Live-web workflows</span></span></NavLink>

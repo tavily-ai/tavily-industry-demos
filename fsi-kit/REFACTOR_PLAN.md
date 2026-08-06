@@ -9,7 +9,8 @@
 - [x] Added Investment Research and Merchant Risk backend vertical slices and persisted run history.
 - [x] Added React Router, the shared FSI shell, module landing page, routed Compliance pages, and structured Investment/Merchant experiences.
 - [x] Added mocked Research/runtime/API tests and production frontend build verification.
-- [ ] Run credentialed live-demo QA on the agreed preset topics and tune prompts/output schemas from observed Research responses.
+- [x] Run credentialed live-demo QA on an investment-policy brief and an identity-first Apple Store merchant case.
+- [ ] Tune prompts and report semantics from the observed live Research results; no quality optimization was included in the integration fix.
 - [ ] Add recorded demo fixtures and remaining lifecycle/history hardening from Phase 5.
 
 ## Goal

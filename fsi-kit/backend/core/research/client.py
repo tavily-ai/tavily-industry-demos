@@ -114,6 +114,63 @@ def normalize_sources(sources: Any) -> list[dict[str, Any]]:
     return normalized
 
 
+def to_tavily_output_schema(schema: dict[str, Any]) -> dict[str, Any]:
+    """Convert general/Pydantic JSON Schema into Tavily Research's schema subset.
+
+    Tavily accepts only ``properties`` and ``required`` at the root and does not
+    resolve Pydantic ``$defs``/``$ref`` entries. Optional nullable fields are
+    represented by their non-null branch because Research output fields may be
+    omitted instead of returned as null.
+    """
+    definitions = schema.get("$defs") if isinstance(schema.get("$defs"), dict) else {}
+
+    def clean(node: Any, *, root: bool = False) -> dict[str, Any]:
+        if not isinstance(node, dict):
+            return {}
+        ref = node.get("$ref")
+        if isinstance(ref, str) and ref.startswith("#/$defs/"):
+            return clean(definitions.get(ref.rsplit("/", 1)[-1], {}), root=root)
+
+        variants = node.get("anyOf")
+        if isinstance(variants, list):
+            selected = next(
+                (variant for variant in variants if isinstance(variant, dict) and variant.get("type") != "null"),
+                {},
+            )
+            cleaned = clean(selected, root=root)
+            if node.get("description") and "description" not in cleaned:
+                cleaned["description"] = node["description"]
+            return cleaned
+
+        cleaned: dict[str, Any] = {}
+        if not root and node.get("type") in {"object", "string", "integer", "number", "array"}:
+            cleaned["type"] = node["type"]
+        if isinstance(node.get("description"), str):
+            cleaned["description"] = node["description"]
+        if isinstance(node.get("enum"), list):
+            cleaned["enum"] = node["enum"]
+        if isinstance(node.get("properties"), dict):
+            properties: dict[str, Any] = {}
+            for key, value in node["properties"].items():
+                property_schema = clean(value)
+                if "description" not in property_schema:
+                    title = value.get("title") if isinstance(value, dict) else None
+                    property_schema["description"] = str(title or key.replace("_", " ")).strip()
+                properties[key] = property_schema
+            cleaned["properties"] = properties
+        if isinstance(node.get("required"), list):
+            cleaned["required"] = [str(value) for value in node["required"]]
+        if isinstance(node.get("items"), dict):
+            cleaned["items"] = clean(node["items"])
+        return cleaned
+
+    result = clean(schema, root=True)
+    result.setdefault("properties", {})
+    if not result.get("required") and result["properties"]:
+        result["required"] = list(result["properties"])
+    return result
+
+
 class TavilyResearchClient:
     """Server-side client for structured, streaming Tavily mini research."""
 
@@ -137,7 +194,7 @@ class TavilyResearchClient:
         payload = {
             "input": query,
             "model": "mini",
-            "output_schema": output_schema,
+            "output_schema": to_tavily_output_schema(output_schema),
             "stream": True,
             "citation_format": "numbered",
         }
@@ -152,7 +209,7 @@ class TavilyResearchClient:
                     body = (await response.aread()).decode("utf-8", "replace")[:500]
                     raise RuntimeError(f"Tavily Research returned HTTP {response.status_code}: {body}")
                 async for event in parse_sse_json(response.aiter_bytes()):
-                    if event.get("object") == "error" or event.get("type") == "error":
+                    if event.get("object") == "error" or event.get("type") == "error" or event.get("error"):
                         message = event.get("error") or event.get("message") or "unknown upstream error"
                         raise RuntimeError(f"Tavily Research error: {message}")
                     yield event

@@ -91,7 +91,7 @@ async def stream_merchant_risk(request: MerchantRiskRequest, *, research_stream:
 
     async for event in orchestrate_lanes(
         run_id=run_id, workflow=WORKFLOW, lanes=risk_lanes(request, results.get("identity")),
-        research_stream=research_stream, max_concurrency=3, emit_start=False, emit_terminal=False,
+        research_stream=research_stream, max_concurrency=4, emit_start=False, emit_terminal=False,
     ):
         if event["type"] == "lane_complete":
             results[event["lane_id"]] = event["data"]

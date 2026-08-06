@@ -9,9 +9,9 @@ import { InvestmentEvidencePoint, InvestmentResearchResult, WorkflowLaneDefiniti
 const INVESTMENT_LANES: WorkflowLaneDefinition[] = [
   { id: "official_policy", label: "Official & policy" }, { id: "economic_data", label: "Economic data" }, { id: "market_expectations", label: "Market expectations" }, { id: "portfolio_implications", label: "Portfolio implications" }, { id: "scenarios", label: "Scenarios & counter-thesis" },
 ];
-const fieldClass = "glass-input rounded-xl px-3 py-2.5 text-sm text-ink-100 placeholder:text-ink-500 outline-none focus:ring-2 focus:ring-tavily-blue/20 w-full";
-function Bullets({ items }: { items?: string[] }) { if (!items?.length) return null; return <ul className="space-y-2">{items.map((item,index) => <li key={index} className="text-sm text-ink-300 leading-relaxed flex gap-2"><span className="text-tavily-blue">•</span><span>{item}</span></li>)}</ul>; }
-function Evidence({ items }: { items?: InvestmentEvidencePoint[] }) { if (!items?.length) return null; return <div className="space-y-3">{items.map((item,index) => <article key={`${item.claim}-${index}`} className="glass-subtle rounded-xl p-4"><h4 className="font-semibold text-sm text-ink-100">{item.claim}</h4><p className="text-sm text-ink-300 mt-1 leading-relaxed">{item.detail}</p>{item.as_of && <p className="text-[10px] text-ink-500 mt-2">As of {item.as_of}</p>}<div className="flex flex-wrap gap-2 mt-2">{item.source_urls.map((url,i)=><a key={url} href={url} target="_blank" rel="noreferrer" className="text-[10px] text-tavily-blue hover:underline">Source {i+1}</a>)}</div></article>)}</div>; }
+const fieldClass = "glass-input rounded-xl px-3 py-2.5 text-sm text-ink-100 placeholder:text-ink-500 outline-none focus:ring-2 focus:ring-tavily-orange/20 w-full";
+function Bullets({ items }: { items?: string[] }) { if (!items?.length) return null; return <ul className="space-y-2">{items.map((item,index) => <li key={index} className="text-sm text-ink-300 leading-relaxed flex gap-2"><span className="text-tavily-orange">•</span><span>{item}</span></li>)}</ul>; }
+function Evidence({ items }: { items?: InvestmentEvidencePoint[] }) { if (!items?.length) return null; return <div className="space-y-3">{items.map((item,index) => <article key={`${item.claim}-${index}`} className="glass-subtle rounded-xl p-4"><h4 className="font-semibold text-sm text-ink-100">{item.claim}</h4><p className="text-sm text-ink-300 mt-1 leading-relaxed">{item.detail}</p>{item.as_of && <p className="text-[10px] text-ink-500 mt-2">As of {item.as_of}</p>}<div className="flex flex-wrap gap-2 mt-2">{item.source_urls.map((url,i)=><a key={url} href={url} target="_blank" rel="noreferrer" className="text-[10px] text-tavily-orange hover:underline">Source {i+1}</a>)}</div></article>)}</div>; }
 function BriefSection({ title, children }: { title: string; children: React.ReactNode }) { return <section className="border-t border-white/50 pt-4"><h3 className="font-display font-semibold text-ink-100 mb-3">{title}</h3>{children}</section>; }
 function MeetingBrief({ result }: { result: InvestmentResearchResult }) {
   return <section className="glass rounded-2xl p-6"><div className="flex items-center gap-2 text-risk-low text-xs font-semibold uppercase tracking-wider"><CheckCircle2 className="w-4 h-4"/>Meeting brief ready</div><h2 className="font-display text-2xl font-semibold text-ink-100 mt-3">{result.topic}</h2><div className="flex flex-wrap gap-2 mt-2">{[result.meeting_objective,result.audience,result.horizon].filter(Boolean).map((value) => <span key={value} className="text-[10px] text-ink-500 bg-white/40 rounded-full px-2 py-1">{value}</span>)}</div><div className="mt-5"><h3 className="text-xs uppercase tracking-wider font-semibold text-ink-500">Executive summary</h3><p className="text-sm leading-7 text-ink-200 mt-2 whitespace-pre-line">{result.executive_summary}</p></div>
@@ -26,11 +26,104 @@ function MeetingBrief({ result }: { result: InvestmentResearchResult }) {
   </div></section>;
 }
 export default function InvestmentResearchPage() {
-  const [topic,setTopic]=useState(""); const [objective,setObjective]=useState(""); const [audience,setAudience]=useState(""); const [horizon,setHorizon]=useState(""); const lanes=useMemo(() => INVESTMENT_LANES, []); const workflow=useWorkflowStream<InvestmentResearchResult>("/api/investment-research/stream",lanes); const history=useRunHistory("investment_research"); const running=workflow.status === "running";
-  const submit=(event:FormEvent) => {event.preventDefault();if(!topic.trim() || running)return; void workflow.run({topic:topic.trim(),meeting_objective:objective.trim() || undefined,audience:audience.trim() || undefined,horizon:horizon.trim() || undefined});};
-  useEffect(() => { if (workflow.status === "complete" || workflow.status === "partial") history.refresh(); }, [workflow.status, history.refresh]);
-  const load=useCallback(async(id:string)=>{try{const stored=await fetchStoredWorkflow<InvestmentResearchResult>(id);workflow.hydrate(stored.result,stored.sources,id);}catch{/* saved partial run may have no result */}},[workflow.hydrate]);
-  return <main><header className="mb-8"><div className="flex items-center gap-2 text-xs uppercase tracking-[.16em] text-tavily-blue font-semibold"><Briefcase className="w-4 h-4"/>Investment research</div><h1 className="font-display text-3xl font-semibold text-ink-100 mt-3">Build a meeting-ready brief</h1><p className="text-sm text-ink-400 mt-1.5 max-w-2xl">Parallel live-web workstreams synthesize policy, data, expectations, implications, and counter-theses into a cited brief—not a generic chat response.</p></header>
-  <div className="grid lg:grid-cols-[320px_1fr] gap-5 items-start"><aside className="glass rounded-2xl p-5 lg:sticky lg:top-24"><form onSubmit={submit} className="space-y-4"><label className="block text-xs font-semibold text-ink-300">Research topic <span className="text-risk-high">*</span><textarea rows={3} value={topic} onChange={(e)=>setTopic(e.target.value)} className={`${fieldClass} mt-1.5 resize-none`} placeholder="e.g. Implications of the next Fed meeting for regional banks" required disabled={running}/></label><label className="block text-xs font-semibold text-ink-300">Meeting objective<input value={objective} onChange={(e)=>setObjective(e.target.value)} className={`${fieldClass} mt-1.5`} placeholder="Decide what to monitor" disabled={running}/></label><label className="block text-xs font-semibold text-ink-300">Audience<input value={audience} onChange={(e)=>setAudience(e.target.value)} className={`${fieldClass} mt-1.5`} placeholder="Investment committee" disabled={running}/></label><label className="block text-xs font-semibold text-ink-300">Horizon<input value={horizon} onChange={(e)=>setHorizon(e.target.value)} className={`${fieldClass} mt-1.5`} placeholder="Next 3–6 months" disabled={running}/></label>{running ? <button type="button" onClick={workflow.stop} className="w-full rounded-xl bg-ink-100 text-white px-4 py-2.5 text-sm font-semibold flex gap-2 justify-center"><Square className="w-4 h-4"/>Stop research</button> : <button type="submit" disabled={!topic.trim()} className="w-full rounded-xl bg-tavily-blue text-white px-4 py-2.5 text-sm font-semibold flex gap-2 justify-center disabled:opacity-40"><Play className="w-4 h-4"/>Build brief</button>}</form><p className="text-[10px] text-ink-500 leading-relaxed mt-4">Public-web research can be incomplete or stale. Validate material claims before making investment decisions.</p></aside>
-  <div className="space-y-5"><RunHistory runs={history.runs} activeRunId={workflow.runId} onLoad={load}/>{workflow.error && <div className="glass rounded-xl p-4 text-sm text-risk-high flex gap-2"><AlertTriangle className="w-4 h-4 shrink-0"/>{workflow.error}</div>}{workflow.status === "cancelled" && <div className="glass-subtle rounded-xl p-3 text-xs text-ink-400">Research stopped. Completed lane evidence remains visible; no final brief was inferred.</div>}<WorkstreamLanes lanes={workflow.lanes}/>{workflow.result && <MeetingBrief result={workflow.result}/>}<SourceList sources={workflow.sources.length ? workflow.sources : workflow.result?.sources || []} title="Brief sources"/></div></div></main>;
+  const [topic, setTopic] = useState("");
+  const [objective, setObjective] = useState("");
+  const [audience, setAudience] = useState("");
+  const [horizon, setHorizon] = useState("");
+  const lanes = useMemo(() => INVESTMENT_LANES, []);
+  const workflow = useWorkflowStream<InvestmentResearchResult>("/api/investment-research/stream", lanes);
+  const history = useRunHistory("investment_research");
+  const running = workflow.status === "running";
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    if (!topic.trim() || running) return;
+    void workflow.run({
+      topic: topic.trim(),
+      meeting_objective: objective.trim() || undefined,
+      audience: audience.trim() || undefined,
+      horizon: horizon.trim() || undefined,
+    });
+  };
+
+  useEffect(() => {
+    if (workflow.status === "complete" || workflow.status === "partial") history.refresh();
+  }, [workflow.status, history.refresh]);
+
+  const load = useCallback(async (id: string) => {
+    try {
+      const stored = await fetchStoredWorkflow<InvestmentResearchResult>(id);
+      workflow.hydrate(stored.result, stored.sources, id);
+    } catch {
+      // Saved partial runs may have no final result.
+    }
+  }, [workflow.hydrate]);
+
+  return (
+    <main>
+      <header className="mb-6">
+        <div className="flex items-center gap-2 text-xs uppercase tracking-[.16em] text-tavily-orange font-semibold">
+          <Briefcase className="w-4 h-4" />
+          Investment research
+        </div>
+        <h1 className="font-display text-3xl font-semibold text-ink-100 mt-3">Build a meeting-ready brief</h1>
+        <p className="text-sm text-ink-400 mt-1.5 max-w-3xl">
+          Parallel live-web workstreams synthesize policy, data, expectations, implications, and counter-theses into a cited brief—not a generic chat response.
+        </p>
+      </header>
+
+      <section className="glass rounded-2xl p-5 mb-5">
+        <form
+          onSubmit={submit}
+          className="grid md:grid-cols-2 xl:grid-cols-[minmax(280px,2fr)_repeat(3,minmax(135px,1fr))_auto] gap-3 items-end"
+        >
+          <label className="block text-xs font-semibold text-ink-300">
+            Research topic <span className="text-risk-high">*</span>
+            <textarea
+              rows={2}
+              value={topic}
+              onChange={(event) => setTopic(event.target.value)}
+              className={`${fieldClass} mt-1.5 resize-none`}
+              placeholder="e.g. Implications of the next Fed meeting for regional banks"
+              required
+              disabled={running}
+            />
+          </label>
+          <label className="block text-xs font-semibold text-ink-300">
+            Meeting objective
+            <input value={objective} onChange={(event) => setObjective(event.target.value)} className={`${fieldClass} mt-1.5`} placeholder="Decide what to monitor" disabled={running} />
+          </label>
+          <label className="block text-xs font-semibold text-ink-300">
+            Audience
+            <input value={audience} onChange={(event) => setAudience(event.target.value)} className={`${fieldClass} mt-1.5`} placeholder="Investment committee" disabled={running} />
+          </label>
+          <label className="block text-xs font-semibold text-ink-300">
+            Horizon
+            <input value={horizon} onChange={(event) => setHorizon(event.target.value)} className={`${fieldClass} mt-1.5`} placeholder="Next 3–6 months" disabled={running} />
+          </label>
+          {running ? (
+            <button type="button" onClick={workflow.stop} className="h-[42px] rounded-xl bg-ink-100 text-white px-4 text-sm font-semibold flex gap-2 items-center justify-center whitespace-nowrap">
+              <Square className="w-4 h-4" /> Stop
+            </button>
+          ) : (
+            <button type="submit" disabled={!topic.trim()} className="h-[42px] rounded-xl bg-tavily-orange text-white px-5 text-sm font-semibold flex gap-2 items-center justify-center whitespace-nowrap disabled:opacity-40">
+              <Play className="w-4 h-4" /> Build brief
+            </button>
+          )}
+        </form>
+        <p className="text-[10px] text-ink-500 leading-relaxed mt-3">
+          Public-web research can be incomplete or stale. Validate material claims before making investment decisions.
+        </p>
+      </section>
+
+      <div className="space-y-5">
+        <RunHistory runs={history.runs} activeRunId={workflow.runId} onLoad={load} />
+        {workflow.error && <div className="glass rounded-xl p-4 text-sm text-risk-high flex gap-2"><AlertTriangle className="w-4 h-4 shrink-0" />{workflow.error}</div>}
+        {workflow.status === "cancelled" && <div className="glass-subtle rounded-xl p-3 text-xs text-ink-400">Research stopped. Completed lane evidence remains visible; no final brief was inferred.</div>}
+        <WorkstreamLanes lanes={workflow.lanes} />
+        {workflow.result && <MeetingBrief result={workflow.result} />}
+        <SourceList sources={workflow.sources.length ? workflow.sources : workflow.result?.sources || []} title="Brief sources" />
+      </div>
+    </main>
+  );
 }

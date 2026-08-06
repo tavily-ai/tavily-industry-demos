@@ -77,7 +77,7 @@ async def stream_investment_research(
         workflow=WORKFLOW,
         lanes=build_lanes(request),
         research_stream=research_stream,
-        max_concurrency=3,
+        max_concurrency=5,
         finalize=lambda results, errors, sources: _meeting_brief(request, results, errors, sources),
     ):
         if event["type"] == "result":
