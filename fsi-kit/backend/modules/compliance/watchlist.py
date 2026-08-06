@@ -34,7 +34,9 @@ async def _screen_one(
 ) -> None:
     client_id = client["id"]
     async with semaphore:
-        await queue.put({"type": "client_start", "client_id": client_id, "client": client})
+        await queue.put(
+            {"type": "client_start", "client_id": client_id, "client": client}
+        )
         try:
             async for event in stream_agent_run(
                 agent=agent,
@@ -46,7 +48,14 @@ async def _screen_one(
                 await queue.put(event)
         except Exception as e:
             logger.exception("screening failed for %s", client_id)
-            await queue.put({"type": "error", "client_id": client_id, "client": client, "message": str(e)})
+            await queue.put(
+                {
+                    "type": "error",
+                    "client_id": client_id,
+                    "client": client,
+                    "message": str(e),
+                }
+            )
         finally:
             await queue.put({"type": "client_done", "client_id": client_id})
 
@@ -100,7 +109,9 @@ async def run_watchlist(max_clients: int | None = None) -> AsyncGenerator[str, N
     elapsed = round(time.time() - started, 2)
     counts = {"clear": 0, "review": 0, "escalate": 0, "error": 0}
     for r in results.values():
-        counts[r["verdict"].get("verdict", "error")] = counts.get(r["verdict"].get("verdict", "error"), 0) + 1
+        counts[r["verdict"].get("verdict", "error")] = (
+            counts.get(r["verdict"].get("verdict", "error"), 0) + 1
+        )
     counts["error"] += len(clients) - len(results)
 
     audit.record("watchlist_complete", elapsed_s=elapsed, counts=counts)
@@ -114,14 +125,16 @@ async def run_watchlist(max_clients: int | None = None) -> AsyncGenerator[str, N
         payload={"results": results, "audit_log": str(log_path)},
     )
 
-    yield _sse({
-        "type": "complete",
-        "run_id": run_id,
-        "elapsed_s": elapsed,
-        "counts": counts,
-        "results": results,
-        "audit_log": str(log_path),
-    })
+    yield _sse(
+        {
+            "type": "complete",
+            "run_id": run_id,
+            "elapsed_s": elapsed,
+            "counts": counts,
+            "results": results,
+            "audit_log": str(log_path),
+        }
+    )
 
 
 def _sse(payload: dict[str, Any]) -> str:

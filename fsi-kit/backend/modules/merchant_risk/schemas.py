@@ -80,7 +80,9 @@ class WebRiskContext(BaseModel):
     restricted_products: RestrictedProductsResearch | None = None
     reputation: ReputationResearch | None = None
     legal_regulatory: LegalRegulatoryResearch | None = None
-    web_context_level: Literal["insufficient_evidence", "no_material_indicators_found", "review_indicated"]
+    web_context_level: Literal[
+        "insufficient_evidence", "no_material_indicators_found", "review_indicated"
+    ]
     evidence_coverage: Literal["weak", "partial", "strong"]
     risk_indicators: list[MerchantEvidence] = Field(default_factory=list)
     evidence_gaps: list[str] = Field(default_factory=list)

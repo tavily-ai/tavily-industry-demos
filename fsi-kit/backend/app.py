@@ -63,15 +63,29 @@ async def get_config():
 async def get_modules():
     return {
         "modules": [
-            {"id": "compliance", "label": "Compliance Intelligence", "routes": ["/compliance/watchlist", "/compliance/investigator"]},
-            {"id": "investment-research", "label": "Investment Research", "routes": ["/investment-research"]},
-            {"id": "merchant-risk", "label": "Merchant Risk", "routes": ["/merchant-risk"]},
+            {
+                "id": "compliance",
+                "label": "Compliance Intelligence",
+                "routes": ["/compliance/watchlist", "/compliance/investigator"],
+            },
+            {
+                "id": "investment-research",
+                "label": "Investment Research",
+                "routes": ["/investment-research"],
+            },
+            {
+                "id": "merchant-risk",
+                "label": "Merchant Risk",
+                "routes": ["/merchant-risk"],
+            },
         ]
     }
 
 
 @app.get("/api/runs")
-async def list_run_history(kind: str | None = None, limit: int = Query(default=50, ge=1, le=100)):
+async def list_run_history(
+    kind: str | None = None, limit: int = Query(default=50, ge=1, le=100)
+):
     return {"runs": list_runs(kind=kind, limit=limit)}
 
 
@@ -85,4 +99,5 @@ async def get_run_detail(run_id: str):
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run("backend.app:app", host="0.0.0.0", port=8000, reload=True)

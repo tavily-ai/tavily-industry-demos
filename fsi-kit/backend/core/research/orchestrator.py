@@ -29,7 +29,9 @@ class ResearchLane:
     output_schema: dict[str, Any] | type[BaseModel]
 
     def schema(self) -> dict[str, Any]:
-        if isinstance(self.output_schema, type) and issubclass(self.output_schema, BaseModel):
+        if isinstance(self.output_schema, type) and issubclass(
+            self.output_schema, BaseModel
+        ):
             return self.output_schema.model_json_schema()
         return self.output_schema
 
@@ -76,7 +78,9 @@ def _parse_accumulated(value: Any) -> Any:
     return value
 
 
-def _event_parts(event: dict[str, Any]) -> tuple[list[dict[str, Any]], Any, list[dict[str, Any]]]:
+def _event_parts(
+    event: dict[str, Any],
+) -> tuple[list[dict[str, Any]], Any, list[dict[str, Any]]]:
     """Return progress records, structured content delta, and sources."""
     progress: list[dict[str, Any]] = []
     sources: list[dict[str, Any]] = []
@@ -89,7 +93,11 @@ def _event_parts(event: dict[str, Any]) -> tuple[list[dict[str, Any]], Any, list
         tool_calls = delta.get("tool_calls")
         if isinstance(tool_calls, dict):
             kind = tool_calls.get("type")
-            records = tool_calls.get("tool_call") if kind == "tool_call" else tool_calls.get("tool_response")
+            records = (
+                tool_calls.get("tool_call")
+                if kind == "tool_call"
+                else tool_calls.get("tool_response")
+            )
             if not isinstance(records, list):
                 records = []
             if kind == "tool_call":
@@ -97,15 +105,27 @@ def _event_parts(event: dict[str, Any]) -> tuple[list[dict[str, Any]], Any, list
                     if not isinstance(record, dict):
                         continue
                     name = record.get("name", "Research")
-                    queries = record.get("queries") if isinstance(record.get("queries"), list) else None
+                    queries = (
+                        record.get("queries")
+                        if isinstance(record.get("queries"), list)
+                        else None
+                    )
                     phases = {
                         "Planning": ("planning", "Planning research strategy"),
                         "WebSearch": ("searching", "Searching the public web"),
                         "Reflection": ("analyzing", "Analyzing retrieved evidence"),
                         "Generating": ("generating", "Generating structured findings"),
                     }
-                    phase, message = phases.get(str(name), ("researching", f"Running {name}"))
-                    progress.append({"phase": phase, "message": message, **({"queries": queries} if queries else {})})
+                    phase, message = phases.get(
+                        str(name), ("researching", f"Running {name}")
+                    )
+                    progress.append(
+                        {
+                            "phase": phase,
+                            "message": message,
+                            **({"queries": queries} if queries else {}),
+                        }
+                    )
             elif kind == "tool_response":
                 for record in records:
                     if isinstance(record, dict):
@@ -131,7 +151,14 @@ async def _run_lane(
     accumulated: dict[str, Any] = {}
     sources: list[dict[str, Any]] = []
     async with semaphore:
-        await queue.put({"type": "progress", "lane_id": lane.id, "phase": "starting", "message": f"Starting {lane.label}"})
+        await queue.put(
+            {
+                "type": "progress",
+                "lane_id": lane.id,
+                "phase": "starting",
+                "message": f"Starting {lane.label}",
+            }
+        )
         try:
             async for upstream in stream(lane.query, lane.schema()):
                 if not isinstance(upstream, dict):
@@ -142,20 +169,47 @@ async def _run_lane(
                 if found:
                     before = {item["url"] for item in normalize_sources(sources)}
                     sources = normalize_sources([*sources, *found])
-                    new_sources = [item for item in sources if item["url"] not in before]
+                    new_sources = [
+                        item for item in sources if item["url"] not in before
+                    ]
                     if new_sources:
-                        await queue.put({"type": "sources_found", "lane_id": lane.id, "sources": new_sources})
+                        await queue.put(
+                            {
+                                "type": "sources_found",
+                                "lane_id": lane.id,
+                                "sources": new_sources,
+                            }
+                        )
                 _merge_content(accumulated, content)
             parsed = _parse_accumulated(accumulated)
             # Validate complete lane output, but retain raw structured partials in
             # the error event if the upstream ended with an invalid shape.
-            if isinstance(lane.output_schema, type) and issubclass(lane.output_schema, BaseModel):
-                parsed = lane.output_schema.model_validate(parsed).model_dump(mode="json")
-            await queue.put({"type": "lane_complete", "lane_id": lane.id, "data": parsed, "sources": sources})
+            if isinstance(lane.output_schema, type) and issubclass(
+                lane.output_schema, BaseModel
+            ):
+                parsed = lane.output_schema.model_validate(parsed).model_dump(
+                    mode="json"
+                )
+            await queue.put(
+                {
+                    "type": "lane_complete",
+                    "lane_id": lane.id,
+                    "data": parsed,
+                    "sources": sources,
+                }
+            )
         except asyncio.CancelledError:
             raise
         except Exception as exc:
-            await queue.put({"type": "error", "lane_id": lane.id, "message": str(exc), "partial_data": _parse_accumulated(accumulated), "sources": sources})
+            await queue.put(
+                {
+                    "type": "error",
+                    "lane_id": lane.id,
+                    "message": str(exc),
+                    "partial_data": _parse_accumulated(accumulated),
+                    "sources": sources,
+                }
+            )
         finally:
             await queue.put({"type": "_lane_done", "lane_id": lane.id})
 
@@ -181,11 +235,19 @@ async def orchestrate_lanes(
         client = TavilyResearchClient()
         research_stream = client.stream
     if emit_start:
-        yield {"type": "start", "run_id": run_id, "workflow": workflow, "lanes": [{"id": lane.id, "label": lane.label} for lane in lanes]}
+        yield {
+            "type": "start",
+            "run_id": run_id,
+            "workflow": workflow,
+            "lanes": [{"id": lane.id, "label": lane.label} for lane in lanes],
+        }
 
     queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
     semaphore = asyncio.Semaphore(max(1, max_concurrency))
-    tasks = [asyncio.create_task(_run_lane(lane, research_stream, queue, semaphore)) for lane in lanes]
+    tasks = [
+        asyncio.create_task(_run_lane(lane, research_stream, queue, semaphore))
+        for lane in lanes
+    ]
     remaining = len(tasks)
     results: dict[str, Any] = {}
     errors: dict[str, str] = {}
@@ -201,7 +263,9 @@ async def orchestrate_lanes(
                 results[event["lane_id"]] = event["data"]
             elif event["type"] == "error":
                 errors[event["lane_id"]] = event["message"]
-            all_sources = normalize_sources([*all_sources, *(event.get("sources") or [])])
+            all_sources = normalize_sources(
+                [*all_sources, *(event.get("sources") or [])]
+            )
             yield event
         await asyncio.gather(*tasks, return_exceptions=True)
         if emit_terminal:
@@ -209,9 +273,24 @@ async def orchestrate_lanes(
                 final_data: dict[str, Any] = {"lanes": results, "lane_errors": errors}
             else:
                 maybe_result = finalize(results, errors, all_sources)
-                final_data = await maybe_result if inspect.isawaitable(maybe_result) else maybe_result
-            yield {"type": "result", "run_id": run_id, "workflow": workflow, "data": final_data, "sources": all_sources}
-            yield {"type": "complete", "run_id": run_id, "workflow": workflow, "elapsed_s": round(time.monotonic() - started, 2)}
+                final_data = (
+                    await maybe_result
+                    if inspect.isawaitable(maybe_result)
+                    else maybe_result
+                )
+            yield {
+                "type": "result",
+                "run_id": run_id,
+                "workflow": workflow,
+                "data": final_data,
+                "sources": all_sources,
+            }
+            yield {
+                "type": "complete",
+                "run_id": run_id,
+                "workflow": workflow,
+                "elapsed_s": round(time.monotonic() - started, 2),
+            }
     finally:
         for task in tasks:
             if not task.done():

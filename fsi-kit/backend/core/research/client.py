@@ -18,7 +18,9 @@ RESEARCH_URL = "https://api.tavily.com/research"
 DEFAULT_TIMEOUT = httpx.Timeout(connect=10.0, read=180.0, write=30.0, pool=10.0)
 
 
-async def parse_sse_json(chunks: AsyncIterable[bytes | str]) -> AsyncGenerator[dict[str, Any], None]:
+async def parse_sse_json(
+    chunks: AsyncIterable[bytes | str],
+) -> AsyncGenerator[dict[str, Any], None]:
     """Parse arbitrary SSE chunks into JSON objects."""
     decoder = codecs.getincrementaldecoder("utf-8")("replace")
     buffer = ""
@@ -57,7 +59,9 @@ async def parse_sse_json(chunks: AsyncIterable[bytes | str]) -> AsyncGenerator[d
             separator = re.search(r"\r?\n\r?\n|\r\r", buffer)
             if separator is None:
                 break
-            record = buffer[: separator.start()].replace("\r\n", "\n").replace("\r", "\n")
+            record = (
+                buffer[: separator.start()].replace("\r\n", "\n").replace("\r", "\n")
+            )
             buffer = buffer[separator.end() :]
             value, done = decode_record(record)
             if value is not None:
@@ -80,7 +84,9 @@ def _canonical_url(url: str) -> str:
     if not parts.scheme or not parts.netloc:
         return url.strip()
     path = parts.path.rstrip("/") or "/"
-    return urlunsplit((parts.scheme.lower(), parts.netloc.lower(), path, parts.query, ""))
+    return urlunsplit(
+        (parts.scheme.lower(), parts.netloc.lower(), path, parts.query, "")
+    )
 
 
 def normalize_sources(sources: Any) -> list[dict[str, Any]]:
@@ -139,7 +145,11 @@ def to_tavily_output_schema(schema: dict[str, Any]) -> dict[str, Any]:
         variants = node.get("anyOf")
         if isinstance(variants, list):
             selected = next(
-                (variant for variant in variants if isinstance(variant, dict) and variant.get("type") != "null"),
+                (
+                    variant
+                    for variant in variants
+                    if isinstance(variant, dict) and variant.get("type") != "null"
+                ),
                 {},
             )
             cleaned = clean(selected, root=root)
@@ -148,7 +158,13 @@ def to_tavily_output_schema(schema: dict[str, Any]) -> dict[str, Any]:
             return cleaned
 
         cleaned: dict[str, Any] = {}
-        if not root and node.get("type") in {"object", "string", "integer", "number", "array"}:
+        if not root and node.get("type") in {
+            "object",
+            "string",
+            "integer",
+            "number",
+            "array",
+        }:
             cleaned["type"] = node["type"]
         if isinstance(node.get("description"), str):
             cleaned["description"] = node["description"]
@@ -160,7 +176,9 @@ def to_tavily_output_schema(schema: dict[str, Any]) -> dict[str, Any]:
                 property_schema = clean(value)
                 if "description" not in property_schema:
                     title = value.get("title") if isinstance(value, dict) else None
-                    property_schema["description"] = str(title or key.replace("_", " ")).strip()
+                    property_schema["description"] = str(
+                        title or key.replace("_", " ")
+                    ).strip()
                 properties[key] = property_schema
             cleaned["properties"] = properties
         if isinstance(node.get("required"), list):
@@ -190,7 +208,9 @@ class TavilyResearchClient:
         self.timeout = timeout
         self.transport = transport
 
-    async def stream(self, query: str, output_schema: dict[str, Any]) -> AsyncGenerator[dict[str, Any], None]:
+    async def stream(
+        self, query: str, output_schema: dict[str, Any]
+    ) -> AsyncGenerator[dict[str, Any], None]:
         if not self.api_key:
             raise RuntimeError("TAVILY_API_KEY is not configured on the server")
         auth = self.api_key.strip()
@@ -208,13 +228,27 @@ class TavilyResearchClient:
             "Accept": "text/event-stream",
             "Content-Type": "application/json",
         }
-        async with httpx.AsyncClient(timeout=self.timeout, transport=self.transport) as client:
-            async with client.stream("POST", RESEARCH_URL, headers=headers, json=payload) as response:
+        async with httpx.AsyncClient(
+            timeout=self.timeout, transport=self.transport
+        ) as client:
+            async with client.stream(
+                "POST", RESEARCH_URL, headers=headers, json=payload
+            ) as response:
                 if response.status_code >= 400:
                     body = (await response.aread()).decode("utf-8", "replace")[:500]
-                    raise RuntimeError(f"Tavily Research returned HTTP {response.status_code}: {body}")
+                    raise RuntimeError(
+                        f"Tavily Research returned HTTP {response.status_code}: {body}"
+                    )
                 async for event in parse_sse_json(response.aiter_bytes()):
-                    if event.get("object") == "error" or event.get("type") == "error" or event.get("error"):
-                        message = event.get("error") or event.get("message") or "unknown upstream error"
+                    if (
+                        event.get("object") == "error"
+                        or event.get("type") == "error"
+                        or event.get("error")
+                    ):
+                        message = (
+                            event.get("error")
+                            or event.get("message")
+                            or "unknown upstream error"
+                        )
                         raise RuntimeError(f"Tavily Research error: {message}")
                     yield event

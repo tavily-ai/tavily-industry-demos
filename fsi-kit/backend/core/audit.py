@@ -20,7 +20,9 @@ class AuditTrail:
         self.events: list[dict[str, Any]] = []
         LOG_DIR.mkdir(exist_ok=True)
 
-    def record(self, event_type: str, client_id: str | None = None, **data: Any) -> dict[str, Any]:
+    def record(
+        self, event_type: str, client_id: str | None = None, **data: Any
+    ) -> dict[str, Any]:
         event = {
             "ts": round(time.time(), 3),
             "run_id": self.run_id,

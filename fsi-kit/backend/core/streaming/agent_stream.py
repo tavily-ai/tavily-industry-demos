@@ -17,7 +17,14 @@ TOOL_STAGES = {
 }
 
 # Only these tool-input keys are surfaced to the UI/audit log
-_INPUT_ALLOWLIST = {"query", "urls", "search_depth", "time_range", "include_domains", "extract_depth"}
+_INPUT_ALLOWLIST = {
+    "query",
+    "urls",
+    "search_depth",
+    "time_range",
+    "include_domains",
+    "extract_depth",
+}
 
 
 def _filter_tool_input(raw: dict[str, Any]) -> dict[str, Any]:
@@ -47,7 +54,9 @@ def _summarize_tool_output(output: Any) -> dict[str, Any]:
 
     failed = output.get("failed_results")
     if isinstance(failed, list) and failed:
-        summary["failed"] = [f.get("url") if isinstance(f, dict) else str(f) for f in failed]
+        summary["failed"] = [
+            f.get("url") if isinstance(f, dict) else str(f) for f in failed
+        ]
 
     return summary
 
@@ -101,9 +110,20 @@ async def stream_agent_run(
                         name = call.get("name", "tool")
                         args = _filter_tool_input(call.get("args") or {})
                         stage = TOOL_STAGES.get(name, f"Using {name}")
-                        detail = args.get("query") or ", ".join(args.get("urls", [])[:2]) or ""
-                        entry = audit.record("tool_call", client_id, tool=name, args=args)
-                        yield {"type": "stage", "client_id": client_id, "stage": stage, "detail": detail}
+                        detail = (
+                            args.get("query")
+                            or ", ".join(args.get("urls", [])[:2])
+                            or ""
+                        )
+                        entry = audit.record(
+                            "tool_call", client_id, tool=name, args=args
+                        )
+                        yield {
+                            "type": "stage",
+                            "client_id": client_id,
+                            "stage": stage,
+                            "detail": detail,
+                        }
                         yield {"type": "log", "client_id": client_id, "entry": entry}
 
                     if node_name == "tools":
@@ -115,7 +135,9 @@ async def stream_agent_run(
                             except (json.JSONDecodeError, TypeError):
                                 pass
                         summary = _summarize_tool_output(content)
-                        entry = audit.record("tool_result", client_id, tool=tool_name, **summary)
+                        entry = audit.record(
+                            "tool_result", client_id, tool=tool_name, **summary
+                        )
                         yield {"type": "log", "client_id": client_id, "entry": entry}
                         hits = summary.get("hits") or []
                         if hits:
@@ -129,7 +151,9 @@ async def stream_agent_run(
                 structured = node_data.get("structured_response")
                 if structured is not None:
                     final_structured = (
-                        structured.model_dump() if hasattr(structured, "model_dump") else dict(structured)
+                        structured.model_dump()
+                        if hasattr(structured, "model_dump")
+                        else dict(structured)
                     )
 
     except Exception as e:
@@ -139,7 +163,9 @@ async def stream_agent_run(
     elapsed = round(time.time() - started, 2)
 
     if final_error:
-        entry = audit.record("run_error", client_id, message=final_error, elapsed_s=elapsed)
+        entry = audit.record(
+            "run_error", client_id, message=final_error, elapsed_s=elapsed
+        )
         yield {"type": "log", "client_id": client_id, "entry": entry}
         yield {"type": "error", "client_id": client_id, "message": final_error}
         return
@@ -160,4 +186,9 @@ async def stream_agent_run(
         queries=queries,
     )
     yield {"type": "log", "client_id": client_id, "entry": entry}
-    yield {"type": "result", "client_id": client_id, "data": final_structured, "elapsed_s": elapsed}
+    yield {
+        "type": "result",
+        "client_id": client_id,
+        "data": final_structured,
+        "elapsed_s": elapsed,
+    }

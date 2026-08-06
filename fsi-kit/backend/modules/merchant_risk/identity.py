@@ -35,8 +35,8 @@ def identity_task(request: MerchantRiskRequest) -> str:
     return f"""Resolve this merchant's public-web identity for a scoped risk-research handoff.
 Submitted merchant name: {request.merchant_name}
 Submitted merchant category: {request.category_code}
-Submitted domain: {request.domain or 'not provided'}
-Submitted country: {request.country or 'not provided'}
+Submitted domain: {request.domain or "not provided"}
+Submitted country: {request.country or "not provided"}
 
 Stop after identity resolution. Do not research reputation, restricted products, or legal risk in this step."""
 

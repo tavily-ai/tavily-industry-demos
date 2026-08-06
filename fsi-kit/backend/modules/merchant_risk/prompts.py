@@ -6,8 +6,11 @@ import json
 from backend.core.research import ResearchLane
 
 from .schemas import (
-    CategoryFitResearch, LegalRegulatoryResearch, MerchantRiskRequest,
-    ReputationResearch, RestrictedProductsResearch,
+    CategoryFitResearch,
+    LegalRegulatoryResearch,
+    MerchantRiskRequest,
+    ReputationResearch,
+    RestrictedProductsResearch,
 )
 
 LANE_META = [
@@ -40,13 +43,32 @@ The unit of analysis is the merchant storefront/business represented by the subm
 Every indicator must include supporting source URLs. Absence of web evidence is an evidence gap, never proof of low risk.
 """
     specs = [
-        ("category_fit", "Category & Business-model Fit", CategoryFitResearch,
-         "Compare products, services, sales channels, and business model visibly offered by this exact merchant with the submitted category code. Use insufficient_evidence when coverage is inadequate."),
-        ("restricted_products", "Restricted Products & Services", RestrictedProductsResearch,
-         "Look only for evidence that this exact merchant offers prohibited, age-restricted, regulated, deceptive, or category-inconsistent products/services. Record scope and search gaps."),
-        ("reputation", "Reputation & Business Practices", ReputationResearch,
-         "Find credible patterns involving this merchant's consumer harm, deceptive practices, fulfillment, charge complaints, or material controversies. Distinguish isolated claims from patterns and parent-company issues from merchant issues."),
-        ("legal_regulatory", "Legal & Regulatory Context", LegalRegulatoryResearch,
-         "Find actions, regulator notices, licensing issues, sanctions, or enforcement that name or directly govern the resolved merchant/operator in the relevant jurisdiction. Do not imply a clean record from no results."),
+        (
+            "category_fit",
+            "Category & Business-model Fit",
+            CategoryFitResearch,
+            "Compare products, services, sales channels, and business model visibly offered by this exact merchant with the submitted category code. Use insufficient_evidence when coverage is inadequate.",
+        ),
+        (
+            "restricted_products",
+            "Restricted Products & Services",
+            RestrictedProductsResearch,
+            "Look only for evidence that this exact merchant offers prohibited, age-restricted, regulated, deceptive, or category-inconsistent products/services. Record scope and search gaps.",
+        ),
+        (
+            "reputation",
+            "Reputation & Business Practices",
+            ReputationResearch,
+            "Find credible patterns involving this merchant's consumer harm, deceptive practices, fulfillment, charge complaints, or material controversies. Distinguish isolated claims from patterns and parent-company issues from merchant issues.",
+        ),
+        (
+            "legal_regulatory",
+            "Legal & Regulatory Context",
+            LegalRegulatoryResearch,
+            "Find actions, regulator notices, licensing issues, sanctions, or enforcement that name or directly govern the resolved merchant/operator in the relevant jurisdiction. Do not imply a clean record from no results.",
+        ),
     ]
-    return [ResearchLane(lane_id, label, f"{common}\nAssigned lane: {instruction}", schema) for lane_id, label, schema, instruction in specs]
+    return [
+        ResearchLane(lane_id, label, f"{common}\nAssigned lane: {instruction}", schema)
+        for lane_id, label, schema, instruction in specs
+    ]
