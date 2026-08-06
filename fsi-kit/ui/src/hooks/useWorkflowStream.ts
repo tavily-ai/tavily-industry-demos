@@ -122,6 +122,10 @@ export function useWorkflowStream<TResult>(path: string, initialLanes: WorkflowL
           break;
         case "error": {
           const laneId = event.lane_id ?? event.category;
+          const eventSources = event.sources ?? [];
+          if (eventSources.length) {
+            setSources((current) => mergeSources(current, eventSources));
+          }
           if (laneId) {
             laneErrorsRef.current += 1;
             updateLane(laneId, (lane) => ({
@@ -129,6 +133,7 @@ export function useWorkflowStream<TResult>(path: string, initialLanes: WorkflowL
               status: "error",
               error: event.message,
               message: event.message,
+              sources: mergeSources(lane.sources, eventSources),
             }));
           } else {
             setError(event.message);

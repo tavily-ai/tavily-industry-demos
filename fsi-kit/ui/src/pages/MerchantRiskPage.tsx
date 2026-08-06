@@ -4,9 +4,7 @@ import {
   ArrowDown,
   CheckCircle2,
   Circle,
-  FileSearch,
   Fingerprint,
-  Info,
   Loader2,
   Play,
   Square,
@@ -209,6 +207,9 @@ function IdentityCheckpoint({
 
 function RiskReport({ result }: { result: MerchantRiskResult }) {
   const identity = result.resolved_identity;
+  const identityCaveats = identity
+    ? [...new Set([...result.identity_ambiguities, ...identity.ambiguities])]
+    : [];
   const needsReview = result.web_context_level === "review_indicated";
   const insufficient = result.web_context_level === "insufficient_evidence";
   const BannerIcon = needsReview || insufficient ? AlertTriangle : CheckCircle2;
@@ -264,12 +265,10 @@ function RiskReport({ result }: { result: MerchantRiskResult }) {
             )}
             <Subheading>Match basis</Subheading>
             <List items={identity.match_basis} />
-            {[...new Set([...result.identity_ambiguities, ...identity.ambiguities])].length > 0 && (
+            {identityCaveats.length > 0 && (
               <>
                 <Subheading>Identity caveats</Subheading>
-                <List
-                  items={[...new Set([...result.identity_ambiguities, ...identity.ambiguities])]}
-                />
+                <List items={identityCaveats} />
               </>
             )}
           </ReportSection>

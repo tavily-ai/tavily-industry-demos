@@ -125,6 +125,7 @@ export interface HandoffContext {
 export interface ResearchSource {
   url: string;
   title?: string;
+  favicon?: string;
   snippet?: string;
   content?: string;
   domain?: string;
@@ -177,6 +178,7 @@ export type NormalizedWorkflowEvent =
       lane_id?: string;
       category?: string;
       message: string;
+      sources?: ResearchSource[];
     }
   | {
       type: "result";

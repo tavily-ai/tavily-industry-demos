@@ -96,7 +96,7 @@ export default function MorningWatchlist({
   runs,
   isRunning,
   summary,
-  auditEntries,
+  auditEntries: _auditEntries,
   runHistory,
   activeRunId,
   onLoadRun,
