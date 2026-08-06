@@ -21,6 +21,8 @@
 
 ---
 
+> **Customizable starters** These kits are designed for you to adapt their prompts, schemas, sources, models, policies, UI, and controls to your use case. Validate generated results and add appropriate safeguards before production use.
+
 **Every folder is a complete, runnable project.** Grab just the kit you want — it has its own backend, frontend, environment setup, and docs.
 
 ## Kits

@@ -34,7 +34,7 @@ Enrich a sparse merchant onboarding case using public-web evidence. A focused La
 
 The result is **web risk context**, not an underwriting decision. Missing public-web evidence is reported as insufficient coverage rather than low risk.
 
-> **Demo only.** Results are generated from public-web research and language models. Do not use this kit for compliance, investment, underwriting, or other production decisions.
+> **Customizable starter kit.** Adapt the prompts, schemas, sources, models, policies, UI, and controls to your use case. Generated public-web results are illustrative; validate them and add appropriate security, privacy, compliance, and human-review safeguards before production use.
 
 ## Quickstart
 
