@@ -19,7 +19,7 @@ export default function ComplianceTabs() {
           className={({ isActive }) =>
             `inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all ${
               isActive
-                ? "bg-tavily-orange text-white shadow-sm"
+                ? "bg-tavily-green text-white shadow-sm"
                 : "text-ink-400 hover:bg-white/45 hover:text-ink-100"
             }`
           }

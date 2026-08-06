@@ -27,7 +27,7 @@ export default function KitHome() {
   return (
     <main className="pb-10">
       <header className="max-w-3xl py-8 md:py-14">
-        <p className="text-xs uppercase tracking-[.2em] text-tavily-orange font-semibold mb-3">
+        <p className="text-xs uppercase tracking-[.2em] text-tavily-green font-semibold mb-3">
           Financial Services Intelligence
         </p>
         <h1 className="font-display text-4xl md:text-5xl font-semibold text-ink-100 leading-tight">
@@ -46,14 +46,14 @@ export default function KitHome() {
             className="glass rounded-2xl p-6 min-h-[260px] flex flex-col group hover:-translate-y-1 transition-transform"
           >
             <div className="w-11 h-11 bg-white/60 rounded-xl flex items-center justify-center">
-              <Icon className="w-5 h-5 text-tavily-orange" />
+              <Icon className="w-5 h-5 text-tavily-green" />
             </div>
             <p className="text-[10px] uppercase tracking-[.16em] text-ink-500 font-semibold mt-7">
               {eyebrow}
             </p>
             <h2 className="font-display text-xl text-ink-100 font-semibold mt-2">{title}</h2>
             <p className="text-sm text-ink-400 mt-2 leading-relaxed">{copy}</p>
-            <span className="text-sm font-medium text-tavily-orange mt-auto pt-5 flex gap-2 items-center">
+            <span className="text-sm font-medium text-tavily-green mt-auto pt-5 flex gap-2 items-center">
               Open module{" "}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </span>

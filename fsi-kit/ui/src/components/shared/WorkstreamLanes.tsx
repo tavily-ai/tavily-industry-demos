@@ -38,7 +38,7 @@ export default function WorkstreamLanes({
               : lane.status === "error"
                 ? "text-risk-high"
                 : lane.status === "running"
-                  ? "text-tavily-orange"
+                  ? "text-tavily-green"
                   : "text-ink-500";
           return (
             <article

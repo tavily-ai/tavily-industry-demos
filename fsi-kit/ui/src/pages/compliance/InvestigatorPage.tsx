@@ -107,7 +107,7 @@ export default function InvestigatorPage() {
     <main>
       <header className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <div className="flex items-center gap-2 text-xs uppercase tracking-[.16em] text-tavily-orange font-semibold">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-[.16em] text-tavily-green font-semibold">
             <Search className="w-4 h-4" />
             Compliance intelligence
           </div>

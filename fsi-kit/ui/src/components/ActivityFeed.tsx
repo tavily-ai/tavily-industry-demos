@@ -50,7 +50,7 @@ function activityLine(entry: AuditEntry): {
 function ActivityIcon({ kind }: { kind: string }) {
   const cls = "w-3 h-3 flex-shrink-0 mt-0.5";
   if (kind === "search") return <Search className={`${cls} text-accent-500`} />;
-  if (kind === "read") return <ExternalLink className={`${cls} text-tavily-orange`} />;
+  if (kind === "read") return <ExternalLink className={`${cls} text-tavily-green`} />;
   if (kind === "done") return <CheckCircle2 className={`${cls} text-risk-low`} />;
   return <Activity className={`${cls} text-ink-500`} />;
 }

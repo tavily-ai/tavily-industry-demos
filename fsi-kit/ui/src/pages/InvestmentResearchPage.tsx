@@ -18,14 +18,14 @@ const INVESTMENT_LANES: WorkflowLaneDefinition[] = [
   { id: "scenarios", label: "Scenarios & counter-thesis" },
 ];
 const fieldClass =
-  "glass-input rounded-xl px-3 py-2.5 text-sm text-ink-100 placeholder:text-ink-500 outline-none focus:ring-2 focus:ring-tavily-orange/20 w-full";
+  "glass-input rounded-xl px-3 py-2.5 text-sm text-ink-100 placeholder:text-ink-500 outline-none focus:ring-2 focus:ring-tavily-green/20 w-full";
 function Bullets({ items }: { items?: string[] }) {
   if (!items?.length) return null;
   return (
     <ul className="space-y-2.5">
       {items.map((item, index) => (
         <li key={index} className="text-sm text-ink-300 leading-6 flex gap-3">
-          <span className="w-1.5 h-1.5 rounded-full bg-tavily-orange shrink-0 mt-2" />
+          <span className="w-1.5 h-1.5 rounded-full bg-tavily-green shrink-0 mt-2" />
           <span>{item}</span>
         </li>
       ))}
@@ -42,7 +42,7 @@ function Evidence({ items }: { items?: InvestmentEvidencePoint[] }) {
           key={`${item.claim}-${index}`}
           className="py-4 first:pt-0 last:pb-0 grid grid-cols-[24px_1fr] gap-3"
         >
-          <span className="w-6 h-6 rounded-full bg-tavily-orange/10 text-tavily-orange text-[11px] font-semibold flex items-center justify-center mt-0.5">
+          <span className="w-6 h-6 rounded-full bg-tavily-green/10 text-tavily-green text-[11px] font-semibold flex items-center justify-center mt-0.5">
             {index + 1}
           </span>
           <div className="min-w-0">
@@ -63,7 +63,7 @@ function Evidence({ items }: { items?: InvestmentEvidencePoint[] }) {
                     href={url}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[11px] font-medium text-tavily-orange hover:underline"
+                    className="text-[11px] font-medium text-tavily-green hover:underline"
                   >
                     Source {sourceIndex + 1} ↗
                   </a>
@@ -91,7 +91,7 @@ function BriefSection({
   return (
     <section className="border-t border-ink-700/40 py-7 first:border-t-0">
       <div className="flex gap-3 items-baseline mb-4">
-        <span className="text-xs font-mono font-semibold text-tavily-orange">{number}</span>
+        <span className="text-xs font-mono font-semibold text-tavily-green">{number}</span>
         <h3 className="font-display text-lg font-semibold text-ink-100">{title}</h3>
       </div>
       {intro && <p className="text-sm text-ink-300 leading-6 mb-5">{intro}</p>}
@@ -172,7 +172,7 @@ function MeetingBrief({ result }: { result: InvestmentResearchResult }) {
           </div>
         </header>
 
-        <section className="rounded-xl bg-tavily-orange/[.07] border-l-4 border-tavily-orange px-5 py-4 mb-2">
+        <section className="rounded-xl bg-tavily-green/[.07] border-l-4 border-tavily-green px-5 py-4 mb-2">
           <h3 className="text-[11px] uppercase tracking-[.14em] font-semibold text-ink-500">
             Executive summary
           </h3>
@@ -248,7 +248,7 @@ function MeetingBrief({ result }: { result: InvestmentResearchResult }) {
           <ol className="space-y-3">
             {result.discussion_questions.map((question, index) => (
               <li key={question} className="text-sm text-ink-300 leading-6 flex gap-3">
-                <span className="font-mono text-xs text-tavily-orange mt-1">
+                <span className="font-mono text-xs text-tavily-green mt-1">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <span>{question}</span>
@@ -317,7 +317,7 @@ export default function InvestmentResearchPage() {
   return (
     <main>
       <header className="mb-6">
-        <div className="flex items-center gap-2 text-xs uppercase tracking-[.16em] text-tavily-orange font-semibold">
+        <div className="flex items-center gap-2 text-xs uppercase tracking-[.16em] text-tavily-green font-semibold">
           <Briefcase className="w-4 h-4" />
           Investment research
         </div>
@@ -389,7 +389,7 @@ export default function InvestmentResearchPage() {
             <button
               type="submit"
               disabled={!topic.trim()}
-              className="h-[42px] rounded-xl bg-tavily-orange text-white px-5 text-sm font-semibold flex gap-2 items-center justify-center whitespace-nowrap disabled:opacity-40"
+              className="h-[42px] rounded-xl bg-tavily-green text-white px-5 text-sm font-semibold flex gap-2 items-center justify-center whitespace-nowrap disabled:opacity-40"
             >
               <Play className="w-4 h-4" /> Build brief
             </button>

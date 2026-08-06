@@ -30,14 +30,14 @@ const MERCHANT_LANES: WorkflowLaneDefinition[] = [
   { id: "legal_regulatory", label: "Legal & regulatory" },
 ];
 const fieldClass =
-  "glass-input rounded-xl px-3 py-2.5 text-sm text-ink-100 placeholder:text-ink-500 outline-none focus:ring-2 focus:ring-tavily-orange/20 w-full";
+  "glass-input rounded-xl px-3 py-2.5 text-sm text-ink-100 placeholder:text-ink-500 outline-none focus:ring-2 focus:ring-tavily-green/20 w-full";
 
 const List = ({ items, empty }: { items?: string[]; empty?: string }) =>
   items?.length ? (
     <ul className="space-y-2.5">
       {items.map((item, index) => (
         <li className="text-sm text-ink-300 leading-6 flex gap-3" key={index}>
-          <span className="w-1.5 h-1.5 rounded-full bg-tavily-orange shrink-0 mt-2" />
+          <span className="w-1.5 h-1.5 rounded-full bg-tavily-green shrink-0 mt-2" />
           <span>{item}</span>
         </li>
       ))}
@@ -55,7 +55,7 @@ function EvidenceRows({ items }: { items?: MerchantEvidence[] }) {
           key={`${item.finding}-${index}`}
           className="py-4 first:pt-0 last:pb-0 grid grid-cols-[24px_1fr] gap-3"
         >
-          <span className="w-6 h-6 rounded-full bg-tavily-orange/10 text-tavily-orange text-[11px] font-semibold flex items-center justify-center mt-0.5">
+          <span className="w-6 h-6 rounded-full bg-tavily-green/10 text-tavily-green text-[11px] font-semibold flex items-center justify-center mt-0.5">
             {index + 1}
           </span>
           <div className="min-w-0">
@@ -76,7 +76,7 @@ function EvidenceRows({ items }: { items?: MerchantEvidence[] }) {
                     href={url}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[11px] font-medium text-tavily-orange hover:underline"
+                    className="text-[11px] font-medium text-tavily-green hover:underline"
                   >
                     Evidence {i + 1} ↗
                   </a>
@@ -102,7 +102,7 @@ function ReportSection({
   return (
     <section className="border-t border-ink-700/40 py-7">
       <div className="flex gap-3 items-baseline mb-4">
-        <span className="text-xs font-mono font-semibold text-tavily-orange">{number}</span>
+        <span className="text-xs font-mono font-semibold text-tavily-green">{number}</span>
         <h3 className="font-display text-lg font-semibold text-ink-100">{title}</h3>
       </div>
       {children}
@@ -142,14 +142,14 @@ function IdentityCheckpoint({
       : status === "error"
         ? "text-risk-high"
         : status === "running"
-          ? "text-tavily-orange"
+          ? "text-tavily-green"
           : "text-ink-500";
   return (
     <section className="glass rounded-2xl p-5 md:p-7">
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-wrap justify-between gap-3 items-start">
           <div>
-            <p className="text-[10px] uppercase tracking-[.16em] font-semibold text-tavily-orange">
+            <p className="text-[10px] uppercase tracking-[.16em] font-semibold text-tavily-green">
               Step 1
             </p>
             <h2 className="font-display text-lg font-semibold text-ink-100 mt-1">
@@ -399,7 +399,7 @@ export default function MerchantRiskPage() {
   return (
     <main>
       <header className="mb-6">
-        <div className="flex items-center gap-2 text-xs uppercase tracking-[.16em] text-tavily-orange font-semibold">
+        <div className="flex items-center gap-2 text-xs uppercase tracking-[.16em] text-tavily-green font-semibold">
           <Fingerprint className="w-4 h-4" />
           Merchant risk
         </div>
@@ -471,7 +471,7 @@ export default function MerchantRiskPage() {
             <button
               type="submit"
               disabled={!name.trim() || !category.trim()}
-              className="h-[42px] rounded-xl bg-tavily-orange text-white px-5 text-sm font-semibold flex gap-2 items-center justify-center whitespace-nowrap disabled:opacity-40"
+              className="h-[42px] rounded-xl bg-tavily-green text-white px-5 text-sm font-semibold flex gap-2 items-center justify-center whitespace-nowrap disabled:opacity-40"
             >
               <Play className="w-4 h-4" /> Review web
             </button>
@@ -499,7 +499,7 @@ export default function MerchantRiskPage() {
           storedIdentity={workflow.result?.resolved_identity}
         />
         <div className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[.14em] text-ink-500">
-          <ArrowDown className="w-3.5 h-3.5 text-tavily-orange" />
+          <ArrowDown className="w-3.5 h-3.5 text-tavily-green" />
           {identityReady
             ? "Resolved scope handed to all four lanes"
             : "Research waits for the identity checkpoint"}
