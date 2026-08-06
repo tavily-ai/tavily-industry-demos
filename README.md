@@ -21,13 +21,15 @@
 
 ---
 
+> **Customizable starters** These kits are designed for you to adapt their prompts, schemas, sources, models, policies, UI, and controls to your use case. Validate generated results and add appropriate safeguards before production use.
+
 **Every folder is a complete, runnable project.** Grab just the kit you want — it has its own backend, frontend, environment setup, and docs.
 
 ## Kits
 
 | Kit                                       | Industry            | Use case                                                        |
 | ----------------------------------------- | ------------------- | --------------------------------------------------------------- |
-| [fsi-compliance](fsi-compliance/)         | Financial services  | Compliance & Onboarding — adverse media screening + EDD case files |
+| [fsi-kit](fsi-kit/)                       | Financial services  | Compliance, investment research, and merchant-risk intelligence |
 
 ## Use a kit
 
@@ -35,7 +37,7 @@ Each kit is self-contained. To take just one:
 
 ```bash
 # Easiest — copies one folder, no git history
-npx degit tavily-ai/tavily-industry-demos/fsi-compliance my-demo
+npx degit tavily-ai/tavily-industry-demos/fsi-kit my-demo
 ```
 
 Or with git sparse checkout:
@@ -43,10 +45,10 @@ Or with git sparse checkout:
 ```bash
 git clone --filter=blob:none --sparse https://github.com/tavily-ai/tavily-industry-demos
 cd tavily-industry-demos
-git sparse-checkout set fsi-compliance
+git sparse-checkout set fsi-kit
 ```
 
-Then follow the kit's own README — for example, [fsi-compliance/README.md](fsi-compliance/README.md).
+Then follow the kit's own README — for example, [fsi-kit/README.md](fsi-kit/README.md).
 
 ## Add a kit
 
