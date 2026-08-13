@@ -1,6 +1,6 @@
-# Financial Services Intelligence Kit
+# Financial Services & Insurance Kit
 
-An evidence-first collection of financial-services workflows powered by [Tavily](https://tavily.com). One FastAPI backend and routed React interface provide three focused modules while sharing live research, source provenance, run history, and streaming infrastructure.
+An evidence-first collection of financial services and insurance workflows powered by [Tavily](https://tavily.com). One FastAPI backend and routed React interface provide three focused modules while sharing live research, source provenance, run history, and streaming infrastructure.
 
 ## Modules
 
@@ -120,7 +120,7 @@ backend/
     merchant_risk/
 
 ui/src/
-  components/layout/       # shared FSI shell
+  components/layout/       # shared kit shell
   components/shared/       # workstreams, sources, history
   hooks/                   # normalized workflow SSE state
   pages/                   # routed module experiences

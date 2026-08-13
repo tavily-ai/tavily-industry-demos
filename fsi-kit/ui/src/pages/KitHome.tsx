@@ -28,14 +28,14 @@ export default function KitHome() {
     <main className="pb-10">
       <header className="max-w-3xl py-8 md:py-14">
         <p className="text-xs uppercase tracking-[.2em] text-tavily-green font-semibold mb-3">
-          Financial Services Intelligence
+          Financial Services & Insurance
         </p>
         <h1 className="font-display text-4xl md:text-5xl font-semibold text-ink-100 leading-tight">
           Evidence-first workflows, grounded in the live web
         </h1>
         <p className="text-base text-ink-400 mt-5 max-w-2xl">
-          Purpose-built FSI modules turn current public-web context into reviewable work products —
-          without hiding sources or uncertainty.
+          Purpose-built modules for financial services and insurance turn current public-web
+          context into reviewable work products — without hiding sources or uncertainty.
         </p>
       </header>
       <div className="grid lg:grid-cols-3 gap-4">

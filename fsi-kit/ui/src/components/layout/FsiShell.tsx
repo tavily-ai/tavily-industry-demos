@@ -62,13 +62,13 @@ export default function FsiShell() {
             <span className="hidden lg:block w-px h-7 bg-ink-500/20" />
             <span className="hidden lg:block">
               <span className="font-display font-semibold text-ink-100 block leading-tight">
-                FSI Intelligence Kit
+                Financial Services & Insurance
               </span>
             </span>
           </NavLink>
           <nav
             className="hidden md:flex glass rounded-xl p-1 gap-1 ml-auto"
-            aria-label="FSI modules"
+            aria-label="Financial Services & Insurance modules"
           >
             {modules.map((item) => (
               <NavLink
