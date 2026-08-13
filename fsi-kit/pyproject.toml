@@ -1,7 +1,7 @@
 [project]
 name = "fsi-kit"
 version = "0.1.0"
-description = "Evidence-first financial services intelligence kit powered by Tavily Research, Search, and Extract"
+description = "Evidence-first financial services and insurance kit powered by Tavily Research, Search, and Extract"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

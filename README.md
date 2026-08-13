@@ -27,9 +27,9 @@
 
 ## Kits
 
-| Kit                                       | Industry            | Use case                                                        |
-| ----------------------------------------- | ------------------- | --------------------------------------------------------------- |
-| [fsi-kit](fsi-kit/)                       | Financial services  | Compliance, investment research, and merchant-risk intelligence |
+| Kit                 | Industry                       | Use case                                                        |
+| ------------------- | ------------------------------ | --------------------------------------------------------------- |
+| [fsi-kit](fsi-kit/) | Financial Services & Insurance | Compliance, investment research, and merchant-risk intelligence |
 
 ## Use a kit
 

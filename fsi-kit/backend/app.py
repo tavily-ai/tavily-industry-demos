@@ -1,4 +1,4 @@
-"""FastAPI entry point for the Financial Services Intelligence Kit."""
+"""FastAPI entry point for the Financial Services & Insurance Kit."""
 
 import logging
 import sys
@@ -27,8 +27,8 @@ logging.basicConfig(
 )
 
 app = FastAPI(
-    title="Financial Services Intelligence Kit",
-    description="Evidence-first compliance, investment research, and merchant-risk workflows powered by Tavily",
+    title="Financial Services & Insurance Kit",
+    description="Evidence-first compliance, investment research, and merchant-risk workflows for financial services and insurance, powered by Tavily",
     version="2.0.0",
 )
 app.add_middleware(
