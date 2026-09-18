@@ -15,6 +15,7 @@ jobs:
           - vendor-supply-chain-risk
           - travel-hospitality-intelligence-agent/ui
           - tavily-chat
+          - fsi-kit/ui
     defaults:
       run:
         working-directory: ${{ matrix.directory }}

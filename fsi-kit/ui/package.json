@@ -6,6 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -20,6 +24,8 @@
     "@types/react-dom": "^18.2.19",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.17",
+    "oxfmt": "^0.68.0",
+    "oxlint": "^1.83.0",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",

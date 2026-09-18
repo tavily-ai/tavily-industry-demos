@@ -2,149 +2,143 @@
 
 An evidence-first collection of financial services and insurance workflows powered by [Tavily](https://tavily.com). One FastAPI backend and routed React interface provide three focused modules while sharing live research, source provenance, run history, and streaming infrastructure.
 
-## Modules
+Live research uses `TAVILY_API_KEY` and `OPENAI_API_KEY` on the server. The browser never sees or sends a key.
 
-### Compliance Intelligence
+## What it does
 
-- **Morning Watchlist** — bounded parallel adverse-media screening across a sample client roster.
-- **Investigator Search** — investigator-driven enhanced due diligence with source-backed findings.
+- **Compliance Intelligence** — screen a morning watchlist, then run investigator-driven enhanced due diligence with source-backed findings.
+- **Investment Research** — fan out five Tavily Research `mini` workstreams and synthesize a cited meeting brief.
+- **Merchant Risk** — resolve a merchant’s public-web identity, then surface evidence, ambiguity, coverage gaps, and next checks.
 
-Compliance keeps the existing iterative Tavily Search + Extract agent workflow because exact article verification and quoted passages are central to the review.
-
-### Investment Research
-
-Turn a topic and optional meeting context into a structured meeting brief. Five predictable Tavily Research `mini` workstreams run in parallel:
-
-- Official and policy developments
-- Economic and fundamental data
-- Market expectations
-- Portfolio and sector implications
-- Scenarios and counter-thesis
-
-The UI shows each workstream, searches, sources, partial failures, and the final source-backed brief.
-
-### Merchant Risk
-
-Enrich a sparse merchant onboarding case using public-web evidence. A focused LangChain agent using Tavily Search + Extract first verifies the merchant’s web identity and domain; that resolved scope is then handed to four parallel Tavily Research `mini` lanes covering:
-
-- Claimed category and observable business-model fit
-- Restricted products and services
-- Reputation and business practices
-- Legal and regulatory context
-
-The result is **web risk context**, not an underwriting decision. Missing public-web evidence is reported as insufficient coverage rather than low risk.
-
-> **Customizable starter kit.** Adapt the prompts, schemas, sources, models, policies, UI, and controls to your use case. Generated public-web results are illustrative; validate them and add appropriate security, privacy, compliance, and human-review safeguards before production use.
-
-## Quickstart
-
-### Prerequisites
-
-- Python 3.11+
-- [uv](https://docs.astral.sh/uv/)
-- [Bun](https://bun.sh/) or npm
-- Tavily API key
-- Nebius API key for the Compliance module
-
-### Configure
-
-```bash
-cp .env.sample .env
-```
-
-```dotenv
-TAVILY_API_KEY=tvly-your-key
-NEBIUS_API_KEY=your-nebius-key
-```
-
-Investment Research and Merchant Risk use Tavily Research `mini`. Compliance uses Tavily Search + Extract with the configured Nebius chat model.
-
-### Run
-
-Backend:
-
-```bash
-uv sync
-uv run backend/app.py
-```
-
-Frontend:
-
-```bash
-cd ui
-bun install
-bun dev
-```
-
-Open <http://localhost:5173>. Alternatively, `./run.sh` launches both processes in tmux.
-
-## Routes
-
-### Browser
-
-- `/` — module landing page
-- `/compliance/watchlist`
-- `/compliance/investigator`
-- `/investment-research`
-- `/merchant-risk`
-
-### API
-
-- `GET /api/modules`
-- `GET /api/config`
-- `GET /api/compliance/roster`
-- `POST /api/compliance/watchlist/stream`
-- `POST /api/compliance/investigate/stream`
-- `POST /api/investment-research/stream`
-- `POST /api/merchant-risk/stream`
-- `GET /api/runs?kind=...`
-- `GET /api/runs/{run_id}`
-
-Temporary aliases preserve the previous `/api/roster`, `/api/watchlist/stream`, and `/api/investigate/stream` contracts.
+Compliance uses iterative Tavily Search + Extract because quoted passages matter for review. Investment Research and Merchant Risk use Tavily Research `mini`. Merchant identity is resolved first by a LangChain agent with Search + Extract. Results are web context for a reviewer, not compliance, investment, or underwriting decisions.
 
 ## Architecture
 
 ```text
-backend/
-  app.py
-  core/
-    audit.py
-    db.py
-    llm.py
-    tools.py
-    research/              # one shared Tavily /research adapter + lane runner
-    streaming/             # Search/Extract agent event adapter
-  modules/
-    compliance/
-    investment_research/
-    merchant_risk/
-
-ui/src/
-  components/layout/       # shared kit shell
-  components/shared/       # workstreams, sources, history
-  hooks/                   # normalized workflow SSE state
-  pages/                   # routed module experiences
+React UI → POST /api/<module>/stream
+        ← real SSE events  ← Compliance: Tavily Search + Extract
+                           ← Investment / Merchant: Tavily Research mini
+                           ← Merchant identity: LangChain + Search / Extract
 ```
 
-Research prompts and Pydantic result contracts remain module-owned. The shared Research runtime is responsible only for calling Tavily, parsing upstream SSE, bounding concurrency, normalizing events, retaining partial results, and cancelling child work when a client disconnects.
+The UI connects to the API with `VITE_API_URL`. Stopping a run aborts the in-flight request.
 
-See [`REFACTOR_PLAN.md`](REFACTOR_PLAN.md) for the staged architecture and remaining hardening work.
+## Prerequisites
 
-## Development checks
+- [uv](https://docs.astral.sh/uv/) (Python 3.11 or later)
+- Node.js 18 or later
+- Tavily API key
+- OpenAI API key for Compliance and Merchant identity
+
+## Run locally
+
+1. Install backend dependencies:
+
+   ```bash
+   uv sync
+   ```
+
+2. Create `.env` from the example and set the required backend keys:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   ```env
+   TAVILY_API_KEY=your_tavily_key
+   OPENAI_API_KEY=your_openai_key
+   ```
+
+3. Configure the frontend:
+
+   ```bash
+   cp ui/.env.development.example ui/.env.development.local
+   cd ui && npm ci && cd ..
+   ```
+
+   Set `VITE_API_URL=http://localhost:8000` in `ui/.env.development.local`.
+
+4. Start the API in one terminal:
+
+   ```bash
+   uv run uvicorn backend.app:app --reload --port 8000
+   ```
+
+5. Start the UI in a second terminal:
+
+   ```bash
+   cd ui
+   npm run dev
+   ```
+
+Open [http://localhost:5173](http://localhost:5173). The API is available at [http://localhost:8000/docs](http://localhost:8000/docs).
+
+From `ui/`, `npm run lint` and `npm run fmt:check` run oxlint and oxfmt. Alternatively, `./setup.sh` installs dependencies, writes env files if they are missing, and can start both servers.
+
+## API
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` | `/` | Readiness. |
+| `GET` | `/api/config` | Provider and model labels, never the keys themselves. |
+| `GET` | `/api/modules` | Module ids, labels, and browser routes. |
+| `GET` | `/api/compliance/roster` | Sample watchlist roster. |
+| `POST` | `/api/compliance/watchlist/stream` | Parallel adverse-media screening. |
+| `POST` | `/api/compliance/investigate/stream` | Enhanced due diligence stream. |
+| `POST` | `/api/investment-research/stream` | Meeting-brief research stream. |
+| `POST` | `/api/merchant-risk/stream` | Identity resolution plus risk-lane research. |
+| `GET` | `/api/runs?kind=...` | Local run history. |
+| `GET` | `/api/runs/{run_id}` | Stored run detail. |
+
+Temporary aliases preserve the previous `/api/roster`, `/api/watchlist/stream`, and `/api/investigate/stream` contracts.
+
+Example request:
 
 ```bash
-# Backend
-.venv/bin/python -m compileall -q backend
-.venv/bin/python -m unittest discover -s backend/tests -v
-
-# Frontend
-cd ui
-bun run build
+curl -N -X POST http://localhost:8000/api/investment-research/stream \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "topic": "US regional bank credit conditions",
+    "meeting_objective": "Prepare a 20-minute investment committee brief"
+  }'
 ```
+
+Streaming endpoints return `text/event-stream`. Missing keys and invalid input return JSON errors before opening a stream. Stopping a run aborts in-flight work, although work already accepted by Tavily or OpenAI may still consume credits.
+
+## Configuration reference
+
+| Variable | Required | Used by |
+| --- | --- | --- |
+| `TAVILY_API_KEY` | Yes | Backend Search, Extract, and Research |
+| `OPENAI_API_KEY` | Yes | Compliance and merchant-identity chat model |
+| `VITE_API_URL` | Yes | Frontend API connection |
 
 ## Data and privacy
 
-- Tavily credentials remain server-side.
+- Tavily and OpenAI credentials remain server-side.
 - The shipped client roster is sample JSON under `backend/data/roster.json`.
 - Run history is stored locally in SQLite and audit logs are written under `logs/`; both are gitignored.
 - Do not submit confidential customer, transaction, portfolio, or case data to this demo without an approved data-handling design.
+
+## Make it yours
+
+This folder is a complete app. Copy it, then change:
+
+- `backend/modules/compliance/` — watchlist, investigation, and screening prompts
+- `backend/modules/investment_research/` — meeting-brief lanes, schemas, and prompts
+- `backend/modules/merchant_risk/` — identity resolution and risk-lane research
+- `backend/core/research/` — shared Tavily Research adapter
+- `backend/data/roster.json` — sample compliance roster
+- `ui/src/pages/` — routed module experiences
+
+No other kit is required:
+
+```bash
+npx degit tavily-ai/tavily-industry-demos/fsi-kit my-demo
+```
+
+Included brand assets and Suisse fonts do not grant a separate trademark or font redistribution license.
+
+## License
+
+[MIT](LICENSE)

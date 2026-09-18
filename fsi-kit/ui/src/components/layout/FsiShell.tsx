@@ -39,34 +39,47 @@ export default function FsiShell() {
         : { provider: config.provider, model: config.model }
       : null;
   return (
-    <div className="min-h-screen relative" style={{ backgroundColor: "var(--color-background)" }}>
-      <div
-        className="fixed inset-0 z-0 bg-cover bg-center"
-        style={{
-          backgroundImage: "url(/tavily-landscape.jpg)",
-          filter: "saturate(1.24) brightness(1.01) contrast(1.04)",
-          transform: "scale(1.03)",
-        }}
-      />
-      <div
-        className="fixed inset-0 z-0 pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(180deg,rgba(255,252,246,.78),rgba(255,252,246,.40) 50%,rgba(255,252,246,.66))",
-          backdropFilter: "blur(3px)",
-        }}
-      />
-      <header className="sticky top-0 z-30 border-b border-white/50 bg-white/30 backdrop-blur-xl">
-        <div className="setup-header max-w-7xl mx-auto px-5 py-3">
-          <a href="https://tavily.com" target="_blank" rel="noopener noreferrer" aria-label="Tavily website">
-            <img src="/tavily-by-nebius.svg" alt="Tavily by Nebius" className="w-36 h-12 object-contain" />
+    <div
+      className="min-h-screen relative isolate"
+      style={{ backgroundColor: "var(--color-background)" }}
+    >
+      <div className="landscape-background" aria-hidden="true">
+        <img src="/tavily-landscape.jpg" alt="" />
+        <div className="landscape-fade-top" />
+        <div className="landscape-fade-bottom" />
+      </div>
+      <header>
+        <nav className="site-nav setup-header max-w-6xl mx-auto px-6" aria-label="Main navigation">
+          <a
+            href="https://tavily.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="brand-link"
+            aria-label="Tavily website"
+          >
+            <img
+              src="/tavily-by-nebius.svg"
+              alt="Tavily by Nebius"
+              className="brand-logo"
+              width="362"
+              height="109"
+            />
           </a>
           <SetupPrompt />
-          <a href="https://github.com/tavily-ai/tavily-industry-demos/tree/main/fsi-kit" target="_blank" rel="noopener noreferrer" aria-label="View on GitHub" className="p-3 rounded-full hover:bg-black/5">
-            <img src="/github-icon.png" alt="" width="28" height="28" />
-          </a>
-        </div>
-        <div className="max-w-7xl mx-auto px-5 py-3 flex items-center gap-5">
+          <div className="nav-actions">
+            <a
+              href="https://github.com/tavily-ai/tavily-industry-demos/tree/main/fsi-kit"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="nav-link"
+              aria-label="View on GitHub"
+              title="View on GitHub"
+            >
+              <img src="/github-icon.png" alt="" className="github-logo" width="28" height="28" />
+            </a>
+          </div>
+        </nav>
+        <div className="max-w-6xl mx-auto px-6 pb-2 flex items-center gap-5">
           <NavLink to="/" className="flex items-center gap-3 shrink-0">
             <span>
               <span className="font-display font-semibold text-ink-100 block leading-tight">
@@ -105,7 +118,7 @@ export default function FsiShell() {
           </button>
         </div>
         {open && (
-          <nav className="md:hidden px-5 pb-3 flex flex-col gap-1">
+          <nav className="md:hidden px-6 pb-3 flex flex-col gap-1">
             {modules.map((item) => (
               <NavLink
                 key={item.to}
@@ -122,7 +135,7 @@ export default function FsiShell() {
           </nav>
         )}
       </header>
-      <div className="relative z-10 max-w-6xl mx-auto px-5 pt-4">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-2">
         <Outlet />
         <footer className="border-t border-white/50 pt-3 pb-4 mt-6 flex justify-between gap-4 flex-wrap text-[11px] text-ink-500">
           <span className="flex gap-2 items-center">

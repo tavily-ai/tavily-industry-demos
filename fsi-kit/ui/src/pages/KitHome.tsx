@@ -34,8 +34,8 @@ export default function KitHome() {
           Evidence-first workflows, grounded in the live web
         </h1>
         <p className="text-sm text-ink-400 mt-3 max-w-3xl">
-          Purpose-built modules for financial services and insurance turn current public-web
-          context into reviewable work products — without hiding sources or uncertainty.
+          Purpose-built modules for financial services and insurance turn current public-web context
+          into reviewable work products — without hiding sources or uncertainty.
         </p>
       </header>
       <div className="grid md:grid-cols-3 gap-4">
