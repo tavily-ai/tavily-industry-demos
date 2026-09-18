@@ -1,3 +1,4 @@
+import SetupPrompt from './SetupPrompt';
 import React, {useState, useEffect, useRef} from 'react';
 import {createRoot} from 'react-dom/client';
 import config from '../demo.config.mjs';
@@ -53,11 +54,12 @@ function App() {
   return <>
     <div className="landscape" aria-hidden="true" />
     <header className="topbar">
-      <nav className="site-nav" aria-label="Main navigation">
+      <nav className="site-nav setup-header" aria-label="Main navigation">
         <a href="https://tavily.com" target="_blank" rel="noopener noreferrer" className="brand-link" aria-label="Tavily website">
           <img src="/tavily-by-nebius.svg" alt="Tavily by Nebius" className="brand-logo" width="362" height="109" />
         </a>
-        <div className="nav-actions">
+        <SetupPrompt />
+      <div className="nav-actions">
           <a href={config.repository} target="_blank" rel="noopener noreferrer" className="nav-link" aria-label="View on GitHub" title="View on GitHub">
             <img src="/github-icon.png" alt="" className="github-logo" width="28" height="28" />
           </a>

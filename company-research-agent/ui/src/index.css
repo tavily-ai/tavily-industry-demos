@@ -59,7 +59,7 @@
   .app-shell { position: relative; isolation: isolate; min-height: 100svh; padding: 0 24px 64px; }
   /* Landscape and fades match chat-research.tavily.com. */
   .landscape-background { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: var(--color-background); }
-  .landscape-background > img { width: 100%; height: 100%; object-fit: cover; opacity: .7; }
+  .landscape-background > img { width: 100%; height: 100%; object-fit: cover; opacity: .90; filter: saturate(1.26) contrast(1.04); }
   .landscape-fade-top { position: absolute; top: 0; left: 0; right: 0; height: 50%; background: linear-gradient(to bottom, var(--color-background) 0%, var(--color-background) 10%, transparent 100%); }
   .landscape-fade-bottom { position: absolute; bottom: 0; left: 0; right: 0; height: 30%; background: linear-gradient(to top, var(--color-background) 0%, transparent 100%); }
   .research-workspace { max-width: 1000px; margin: 0 auto; }
@@ -119,7 +119,7 @@
   .research-submit:hover:not(:disabled)::after, .research-submit:focus-visible:not(:disabled)::after { animation: button-shine 850ms ease-out; }
   .research-submit:active:not(:disabled) { transform: scale(.98); }
   .research-submit:disabled { opacity: .45; cursor: not-allowed; }
-  .example-suggestions { display: flex; justify-content: center; flex-wrap: wrap; align-items: center; gap: 8px; max-width: 680px; margin: 22px auto 0; color: var(--color-black-60); font-size: 12px; }
+  .example-suggestions { display: flex; justify-content: center; flex-wrap: wrap; align-items: center; gap: 8px; max-width: 1000px; margin: 16px auto 0; color: var(--color-black-60); font-size: 12px; }
   .example-suggestions > span { flex-basis: 100%; text-align: center; margin-bottom: 4px; }
   .example-chip { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--color-black-10); border-radius: 999px; padding: 8px 12px; background: #fffcf699; backdrop-filter: blur(8px); color: var(--color-black); transition: background 150ms; }
   .example-chip:hover { background: var(--color-beige); }
@@ -169,7 +169,30 @@
   .brand-link:hover, .brand-link:focus-visible, .nav-link:hover, .nav-link:focus-visible { transform: none; }
 }
 
-.demo-footer { display: flex; justify-content: flex-end; align-items: center; margin-top: 32px; padding: 12px 0; }
+.demo-footer { display: flex; justify-content: flex-end; align-items: center; margin-top: 16px; padding: 8px 0; }
+
+@media (min-width: 761px) {
+  .app-shell { padding-bottom: 16px; }
+  .site-nav { min-height: 80px; }
+  .hero { max-width: 100%; padding: 18px 0 12px; }
+  .hero h1 { font-size: clamp(28px, 3.7vw, 44px); line-height: 1.12; white-space: nowrap; letter-spacing: -1.3px; }
+  .hero-description { max-width: 760px; margin-top: 12px; font-size: 15px; line-height: 1.5; }
+  .research-workspace > :not(header) { margin-top: 16px; }
+  .research-form { padding: 22px 28px; }
+  .research-form .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 16px; }
+  .company-name-input { min-height: 52px; }
+  .company-subfields { padding-top: 16px; }
+  .tavily-key-field { padding: 10px 12px; }
+  .field-label { margin-bottom: 6px; }
+  .example-suggestions { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+  .example-suggestions > span { grid-column: 1 / -1; margin-bottom: 2px; }
+  .example-suggestions .example-chip { justify-content: center; gap: 6px; padding: 6px 8px; font-size: 11px; white-space: nowrap; }
+  .example-suggestions .example-chip > svg { display: none; }
+}
+
+@media (min-width: 1000px) {
+  .example-suggestions { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+}
 
 .search-api-link { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; color: #8b887e; font-size: 10px; line-height: 1.5; white-space: nowrap; text-decoration: none; }
 .search-api-link:hover, .search-api-link:focus-visible { color: #2677ff; }
