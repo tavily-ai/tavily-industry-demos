@@ -1,0 +1,301 @@
+{
+  "title": "Sales Meeting Prep",
+  "input": {
+    "entity": "Shopify",
+    "context": "enterprise search",
+    "timeRange": "month"
+  },
+  "startedAt": "2026-09-17T13:28:41.138Z",
+  "completedAt": "2026-09-17T13:28:44.411Z",
+  "status": "complete",
+  "sections": [
+    {
+      "id": "company",
+      "title": "Company context",
+      "note": "Understand the business, products, and customers.",
+      "request": {
+        "query": "Shopify company overview business model products",
+        "search_depth": "advanced",
+        "max_results": 10,
+        "chunks_per_source": 4,
+        "include_domains": [],
+        "exclude_domains": [],
+        "topic": "general",
+        "include_answer": "basic",
+        "include_usage": true,
+        "include_raw_content": false,
+        "include_published_date": true
+      },
+      "status": "complete",
+      "summary": "Shopify is an e-commerce platform offering subscription-based services and merchant solutions. It generates revenue from subscription fees and transaction processing. Its products include online store management and POS systems.",
+      "sources": [
+        {
+          "url": "https://voip.filmhouseng.com/journal/shopify-inc-company-overview-business-model-and-growth-l1mm",
+          "title": "Shopify Inc: Company Overview, Business Model, and Growth | The Reel Line",
+          "content": "Skip to content\n\nIndustry News \n\n# Shopify Inc: Company Overview, Business Model, and Growth\n\nBy Ethan McAllister · Edited by Joon-Ho Kim 3 min read  190 views\n\nShopifyEcommerce PlatformOnline RetailBusiness ModelMerchant Solutions\n\n## Shopify Inc: The Company Behind the Platform\n\nShopify Inc is a Canadian multinational e-commerce company that provides businesses of all sizes with the tools to set up, manage, and gro…",
+          "score": 0.82761955,
+          "publishedDate": "Sat, 29 Aug 2026 00:00:00 GMT"
+        },
+        {
+          "url": "https://www.forbes.com/companies/shopify",
+          "title": "Shopify | Company Overview & News",
+          "content": "Shopify, Inc. is a global commerce company that provides essential internet infrastructure for commerce, offering trusted tools to start, scale, market, and run a retail business of any size. The Company's software enables merchants to run their business across all of their sales channels, including web and mobile storefronts, physical retail locations, social media storefronts and marketplaces. The Shopify platform …",
+          "score": 0.7906115,
+          "publishedDate": "Wed, 15 Jul 2026 00:00:00 GMT"
+        },
+        {
+          "url": "https://www.shopify.com/blog/what-is-a-product",
+          "title": "What Is a Product? Exploring Quality Goods and Services (2025) - Shopify",
+          "content": "Business products include customer relationship management (CRM) software, project management tools, and employee training programs. They're often subscription-based or offered as software-as-a-service (SaaS) models, allowing companies to try a new product and access the latest features and updates without significant upfront investment.\n\n## Service products\n\nService products involve an action, performance, or experi…",
+          "score": 0.78611463,
+          "publishedDate": "Fri, 26 Apr 2024 00:00:00 GMT"
+        },
+        {
+          "url": "https://medium.com/@kaseywagner/a-deep-dive-into-shopifys-business-model-94180c3c342c",
+          "title": "Medium",
+          "content": "## Shopify’s Business Model\n\nNow that we discussed how Shopify can help business owners, let’s take a look at how the platform has generated $2.10 billion dollars in revenue in 2021 with their successful business model.\n\nFirst things first, what’s a business model? A business model is defined as a set of planned activities designed to result in a profit in a marketplace. Looking at e-commerce business models specific…",
+          "score": 0.7507177,
+          "publishedDate": "Tue, 31 May 2022 22:36:50 GMT"
+        },
+        {
+          "url": "https://vizologi.com/business-strategy-canvas/shopify-business-model-canvas",
+          "title": "Business Strategy Canvas - Vizologi",
+          "content": "At the heart of Shopify's success is its innovative business model, which is rooted in providing an all-in-one solution for e-commerce. The platform offers a highly flexible and scalable environment where users can grow their business without facing limitations. One of Shopify's standout features is its ability to integrate with multiple sales channels, ensuring that merchants can reach their audience wherever they a…",
+          "score": 0.7443038,
+          "publishedDate": null
+        },
+        {
+          "url": "https://www.untaylored.com/post/how-shopify-makes-money-business-model-explained",
+          "title": "How Does Shopify Make Money? The Business Model and Revenue Streams Explained | Untaylored",
+          "content": "## What Is Shopify? A Quick Overview\n\nShopify is a comprehensive e-commerce platform that enables businesses of all sizes to create online stores, manage inventory, process payments, and sell across multiple channels. Founded in 2006 by Tobias Lütke, Daniel Weinand, and Scott Lake, the company started as an online snowboard shop before pivoting to provide the infrastructure that other businesses could use to launch t…",
+          "score": 0.7413937,
+          "publishedDate": "Mon, 02 Mar 2026 00:00:00 GMT"
+        },
+        {
+          "url": "https://www.shopify.com/blog/business-model",
+          "title": "Ecommerce Business Models: Types & Examples (2026) - Shopify",
+          "content": "#### Pros of digital products business model\n\n Lower overhead costs. You don’t hold any inventory or run up any shipping charges.\n Scalability. Orders can be delivered instantly, letting you be hands-off with fulfillment. As the business grows, you can easily convert tasks into automation to free up time.\n Extensive product offerings. There are various routes you can take: a freemium model where you provide products …",
+          "score": 0.70823324,
+          "publishedDate": "Thu, 09 Jan 2025 00:00:00 GMT"
+        },
+        {
+          "url": "https://www.gate.com/learn/articles/what-is-shopify-shop-stock-business-model-ai-commerce-and-key-growth-drivers",
+          "title": "What Is Shopify (SHOP) Stock: Business Model, AI ...",
+          "content": "Learn about Shopify's business model, revenue streams, AI commerce strategy, and key metrics including GMV, merchant solutions, and stock",
+          "score": 0.57006866,
+          "publishedDate": "Wed, 16 Sep 2026 13:00:00 GMT"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Shopify",
+          "title": "Shopify - Wikipedia",
+          "content": "Shopify Inc. is a Canadian multinational e-commerce company headquartered in Ottawa, Ontario that operates a cloud e-commerce management platform (CEMP) for retail point-of-sale systems. The company has over 5 million customers and processed US$292.3 billion in transactions in 2024, of which 57% was in the United States. Major customers include Tesla, LVMH, Nestlé, PepsiCo, AB InBev, Kraft Heinz, Lindt, Whole Foods M…",
+          "score": 0.5660431,
+          "publishedDate": "Fri, 15 May 2026 00:00:00 GMT"
+        },
+        {
+          "url": "https://www.shopify.com/blog/what-is-shopify",
+          "title": "What Is Shopify and How Does It Work? (2026)",
+          "content": "## What is Shopify?\n\nShopify is a commerce platform that helps you sell online and in person. Entrepreneurs, retailers, and global brands use Shopify to make sales, run stores, and grow their businesses.\n\nWith Shopify, you can create your first ecommerce website or manage a world-leading retail business.\n\nStart your business journey with a free trial.\n\n## How Shopify works\n\nShopify's tools and products work together …",
+          "score": 0.48879638,
+          "publishedDate": "Mon, 15 Dec 2025 00:00:00 GMT"
+        }
+      ],
+      "credits": 2,
+      "responseTime": 3.03
+    },
+    {
+      "id": "news",
+      "title": "Recent developments",
+      "note": "Find timely launches, partnerships, and growth signals.",
+      "request": {
+        "query": "Shopify announcements partnerships product launches",
+        "search_depth": "advanced",
+        "max_results": 10,
+        "chunks_per_source": 4,
+        "include_domains": [],
+        "exclude_domains": [],
+        "topic": "news",
+        "include_answer": "basic",
+        "include_usage": true,
+        "include_raw_content": false,
+        "include_published_date": true,
+        "time_range": "month",
+        "filter_by_published_date": true
+      },
+      "status": "complete",
+      "summary": "Shopify’s most recent announcements highlight a push into AI‑driven commerce, new partnership channels and expanded product tooling. In mid‑September 2026 the company unveiled the ChatGPT Ads app for its merchants, a collaboration with OpenAI that lets shop owners create, manage and track AI‑generated ad campaigns directly from the Shopify admin and ship those campaigns to ChatGPT’s advertising platform. Earlier in the month, Shopify announced it had partnered with the marketing technology firm AnyMind Group, which has been awarded Premier Partner status after launching a “Commerce DX Project” with Shopify Japan to unify e‑commerce and physical retail for Japanese enterprises. Shopify also rolled out a suite of AI‑enabled shopping experiences, including the Shopify Catalog—a new search infrastructure for agents and the Universal Commerce Protocol (UCP) that streamlines product discovery across channels—and the Claude Commerce Agents feature that lets conversational assistants browse live catalogs, build carts, and hand shoppers to Shopify checkout. In addition, the platform announced a partnership with Suta, a fellow e‑commerce network, to create the “Shopify Effect” and a collaboration with Meta’s Muse AI shopping agent to allow shoppers to order directly through Facebook and Instagram without visiting a merchant’s website. These initiatives collectively signal Shopify’s strategy of integrating AI agents, expanding partner ecosystems and enriching its core e‑commerce tooling.",
+      "sources": [
+        {
+          "url": "https://www.facebook.com/shopify/videos/tis-the-season-to-start-selling/1088082680848943",
+          "title": "Black Friday is coming! Launch your business on Shopify and get 1 ...",
+          "content": "This post celebrates the \"Shopify Effect,\" a partnership between the e- commerce platform Shopify and the e-commerce platform Suta. It highlights how Suta",
+          "score": 0.5749443,
+          "publishedDate": "Fri, 11 Sep 2026 13:00:00 GMT"
+        },
+        {
+          "url": "https://finance.biggo.com/news/da027e24-e7ec-49dc-9a5d-294b9ca05683",
+          "title": "OpenAI Rolls Out AI Tools for Advertisers, Tests Sponsored ...",
+          "content": "partnerships with HubSpot and Shopify as its first CRM and e-commerce partners respectively, with the Shopify app launching in international markets starting September 23. [...] An optional AI text customization feature is particularly noteworthy. It can dynamically adjust ad headlines and descriptions based on the contextual situation of the user's current conversation, making ad content more aligned with what the u…",
+          "score": 0.5271467,
+          "publishedDate": "Wed, 16 Sep 2026 16:05:23 GMT"
+        },
+        {
+          "url": "https://www.shopify.com/blog/seeding-marketing",
+          "title": "How a Product Seeding Marketing Campaign Works (2026) - Shopify",
+          "content": "### 2. Send out your products\n\nBe intentional when it’s time to reach out to your potential partners and offer sample products. Julianne Fraser, founder and CEO of the boutique marketing agency Dialogue NYC, recommends sending personalized communications rather than “blasting a thousand people with a mass email.”\n\nAt a panel at the April 2025 Combating the Creativity Crisis conference presented by Shopify in New York…",
+          "score": 0.5003668,
+          "publishedDate": "Tue, 08 Sep 2026 00:00:00 GMT"
+        },
+        {
+          "url": "https://anymindgroup.com/news/press-release/shopify-premier-partner-092026",
+          "title": "AnyMind Group becomes Premier Partner in the Shopify Partner Program",
+          "content": "AnyMind Group has continuously advanced its support for Shopify-focused capabilities. In 2024, the company received the “Rising Star Partner of the Year” award at the “Shopify Partner of the Year 2024 – Japan.” Following this, in 2025, AnyMind Group launched the “Commerce DX Project” in collaboration with Shopify Japan to help Japanese enterprises achieve “unified commerce” by seamlessly linking e-commerce with physi…",
+          "score": 0.49787658,
+          "publishedDate": "Wed, 16 Sep 2026 13:00:00 GMT"
+        },
+        {
+          "url": "https://retailboss.substack.com/p/this-week-in-retail-old-navy-expands",
+          "title": "This Week in Retail: Old Navy Expands Beauty to 500 Stores, Primark Opens at Mall of America, Huda Beauty Teams With Cardi B, Calvin Klein Taps Sadie Sink, Arc’teryx Launches System 0",
+          "content": "Image: Arc’teryx.\n\nArc’teryx introduced System 0 with the Sperro SV hardshell, scheduled for global availability from September 4 and designed for repair and eventual disassembly. The jacket combines GORE-TEX Pro fabric with nylon components developed for recyclability alongside Aquafil, bringing material recovery into the initial design brief. The commercial test extends beyond the launch: the framework needs repair…",
+          "score": 0.40584955,
+          "publishedDate": "Thu, 10 Sep 2026 13:00:00 GMT"
+        },
+        {
+          "url": "https://ppc.land/openai-lets-advertisers-run-chatgpt-ads-from-hubspot-and-shopify",
+          "title": "OpenAI lets advertisers run ChatGPT ads from HubSpot and Shopify",
+          "content": "HubSpot launches AEO tool as organic traffic drops 27% for its customers - The organic AI-search product that HubSpot now pairs with paid ChatGPT placement.\n ChatGPT Ads Manager now supports product feeds after checkout is killed - How Instant Checkout ended in March 2026 and product feeds moved into Ads Manager.\n OpenAI launches instant checkout for ChatGPT with Stripe partnership - The September 2025 Shopify and Et…",
+          "score": 0.34488514,
+          "publishedDate": "Thu, 17 Sep 2026 04:30:13 GMT"
+        },
+        {
+          "url": "https://247wallst.com/investing/2026/09/16/shopify-merchants-could-get-ai-orders-without-shoppers-visiting-their-websites",
+          "title": "Shopify Merchants Could Get AI Orders Without Shoppers ...",
+          "content": "Purchases through Muse require user approval, and Stripe’s Link handles checkout at launch. The announcement describes Shop Pay as a planned addition rather than a live integration. Barron’s framed the launch as good news for Shopify, but the argument only works conditionally: a shopper could authorize an order routed through an agent without ever loading the merchant’s storefront, and Shopify’s job is to keep the ch…",
+          "score": 0.29577932,
+          "publishedDate": "Wed, 16 Sep 2026 16:37:09 GMT"
+        },
+        {
+          "url": "https://www.flatlineagency.com/blog/shopify-post-launch-support-model",
+          "title": "Shopify Post-Launch Support: Handover or Partner? | Flatline Agency",
+          "content": "Include the operating model among the questions to ask a Shopify agency before discovery, while scope and commercial options are still open.\n\n## Which Shopify post-launch models can you choose?\n\nThe three practical models are full handover, retained agency partnership, and hybrid ownership. The right choice depends on internal capability, demand patterns, operational risk, and change cadence. Select the model per wor…",
+          "score": 0.2751253,
+          "publishedDate": "Thu, 03 Sep 2026 13:36:59 GMT"
+        },
+        {
+          "url": "https://fortune.com/2026/09/09/estee-lauder-ai-shopping-technology",
+          "title": "How beauty giant Estee Lauder’s top technologist is betting on ‘AI everywhere’ to fuel its turnaround",
+          "content": "Recommended Video\n\nThis week, the M.A.C and Clinique purveyor, which ranks #315 on the Fortune 500, announced Franz has been appointed to the newly expanded role of chief technology and transformation officer, where he will continue to oversee the global IT team, further integrate partnerships with Shopify and Accenture, promote more internal and external use of artificial intelligence, and be tasked with leading ent…",
+          "score": 0.2282859,
+          "publishedDate": "Thu, 10 Sep 2026 13:00:00 GMT"
+        },
+        {
+          "url": "https://smallbiztrends.com/shopify-unveils-tools-for-ai-driven-shopping-experiences-and-merchant-success",
+          "title": "Shopify Unveils Tools for AI-Driven Shopping Experiences and Merchant Success",
+          "content": "In today’s fast-paced marketplace, Shopify’s latest updates represent a significant leap forward for small business owners eager to embrace innovation. While it is important to approach these new technologies thoughtfully, they hold the potential to transform how merchants operate and connect with customers.\n\nFor detailed insights on all 150+ updates in the Spring ’26 Edition, visit Shopify’s official announcement.\n\n…",
+          "score": 0.19868572,
+          "publishedDate": "Sun, 30 Aug 2026 19:11:00 GMT"
+        }
+      ],
+      "credits": 2,
+      "responseTime": 0
+    },
+    {
+      "id": "opportunity",
+      "title": "Meeting angles",
+      "note": "Connect public signals with the problem you solve.",
+      "request": {
+        "query": "Shopify enterprise search initiatives challenges",
+        "search_depth": "advanced",
+        "max_results": 10,
+        "chunks_per_source": 4,
+        "include_domains": [],
+        "exclude_domains": [],
+        "topic": "general",
+        "include_answer": "basic",
+        "include_usage": true,
+        "include_raw_content": false,
+        "include_published_date": true,
+        "time_range": "month",
+        "filter_by_published_date": true
+      },
+      "status": "complete",
+      "summary": "Shopify faces challenges in enterprise search due to high AI-related costs and the need for advanced infrastructure. The company is managing these through model distillation and caching. Shopify's AI search shows promising conversion rates.",
+      "sources": [
+        {
+          "url": "https://www.investing.com/news/transcripts/shopify-at-goldman-sachs-conference-ai-may-widen-its-merchant-moat-93CH-4897026",
+          "title": "Shopify at Goldman Sachs conference: AI may widen its merchant moat",
+          "content": "## Key Takeaways\n\n   Shopify said AI search and agentic commerce are still early, but already showing stronger conversion and product-page traffic than traditional search.\n   Management argued that Shopify’s moat comes from its integrated platform, which handles many merchant functions in one system.\n   The company said merchant acquisition remains healthy, helped by AI tools that lower the barrier to starting and sc…",
+          "score": 0.15081534,
+          "publishedDate": "Thu, 10 Sep 2026 22:17:56 GMT"
+        },
+        {
+          "url": "https://www.ecorn.agency/blog/shopify-plus-support",
+          "title": "Shopify Plus Support: What It Includes and How to Choose",
+          "content": "## Choosing the Right Subscription or Package Model\n\nThe right support model follows the shape of your work. Don't buy a retainer because Shopify Plus sounds enterprise-grade. Don't force every need into a project if your team faces recurring incidents, frequent releases, and an active optimization roadmap.\n\n### Project-based support\n\nChoose project-based delivery for a defined initiative with a clear beginning and e…",
+          "score": 0.1436799,
+          "publishedDate": "Sun, 06 Sep 2026 01:00:00 GMT"
+        },
+        {
+          "url": "https://www.facebook.com/shopify/posts/shopifys-rapid-updates-help-represent-reach-new-markets-faster-want-that-same-pa/1552145906944795",
+          "title": "Shopify",
+          "content": "Log in\n\nLog in\n\nForgotten account?\n\n## Shopify's post\n\n  \n\n[](\n\n### Shopify\n\n19 August at 19:37 · \n\nShopify's rapid updates help Represent reach new markets faster. Want that same pace? Let's talk.\n\nVideo 1\n\nImage 1\n\n0:00 / 0:00\n\n[](\n\nSHOPIFY.COM Innovation starts here Ready to grow your business with Shopify Plus? Contact Shopify to get in touch and see how we can help you grow bigger, faster. [Learn more](\n\nImage 2…",
+          "score": 0.040666364,
+          "publishedDate": "Wed, 19 Aug 2026 00:00:00 GMT"
+        },
+        {
+          "url": "https://www.youtube.com/watch?v=EyikFLadGCg",
+          "title": "Google Search Is Dying — But What Replaces It?",
+          "content": "[13:46] taking huge amounts of information from websites while sending very little traffic back. Now those numbers are not perfect. Referral tracking can be messy\n[13:55] but the pattern there is quite important. AI search is taking content from the internet from human content creators. And the better the content on\n[14:04] the internet is, the better the AI search can become. But if AI search is removing too much tr…",
+          "score": 0.03852772,
+          "publishedDate": "Wed, 16 Sep 2026 00:00:00 GMT"
+        },
+        {
+          "url": "https://www.facebook.com/futurecommerce/videos/its-a-company-that-looks-like-its-starting-to-future-proof-itself-shopify-just-r/982521898136559",
+          "title": "“It's a company that looks like it's starting to future-proof itself ...",
+          "content": "Log In\n\nLog In\n\nForgot Account?\n\n# Video\n\nHome\n\nLive\n\nReels\n\nExplore\n\nMore\n\nHome\n\nLive\n\nReels\n\nExplore\n\nImage 1\n\nVideo 1\n\n0:00 / 0:00\n\n“It’s a company that looks like it’s starting to future-proof itself.”  Shopify just reported a monster quarter. Its agentic traffic tripled. Point-of-sale GMV was up 32% YOY. B2B GMV up 76%. Shop Pay GMV up 53%.  We dig into Shopify’s latest, our back-to-school forecasts, and Jack St…",
+          "score": 0.03733048,
+          "publishedDate": "Wed, 19 Aug 2026 00:00:00 GMT"
+        },
+        {
+          "url": "https://blog.google/products-and-platforms/products/search/back-to-school-study-tools",
+          "title": "5 new ways to level up your learning with Search - Google Blog",
+          "content": "Google\n\n5 new ways to level up your learning with Search\n\n### Innovation & AI\n\nLearn more:\n\n### Products & platforms\n\nLearn more:\n\n### Company news\n\nLearn more:\n\n### Innovation & AI\n\nModels & Research\n\nProducts\n\nInfrastructure & cloud\n\nTechnology\n\nLearn more:\n\n### Products & platforms\n\nProducts\n\nPlatforms\n\nDevices\n\nLearn more:\n\n### Company news\n\nOutreach & initiatives\n\nLeadership\n\nInside Google\n\nLearn more:\n\n# 5 new …",
+          "score": 0.035641678,
+          "publishedDate": "Wed, 19 Aug 2026 19:00:01 GMT"
+        },
+        {
+          "url": "https://www.cancergrandchallenges.org/conferences/spatial-biology",
+          "title": "Spatial biology",
+          "content": "In a first for the initiative, we’re announcing £5.25m in phase two funding from Cancer Research UK to members of Cancer Grand Challenges team IMAXT to establish a Spatial…",
+          "score": 0.031217646,
+          "publishedDate": "Thu, 03 Sep 2026 00:00:00 GMT"
+        },
+        {
+          "url": "https://www.nlrb.gov/es/search/case",
+          "title": "Case Search",
+          "content": "State Filters\n\n- [x] Alabama (5726) \n\n- [x] Alaska (1603) \n\n- [x] Arizona (7290) \n\n- [x] Arkansas (2784) \n\n- [x] California (65173) \n\n- [x] Colorado (7562) \n\n- [x] Connecticut (9637) \n\n- [x] Delaware (1314) \n\n- [x] District of Columbia (5521) \n\n- [x] Florida (14539) \n\n- [x] Georgia (8649) \n\n- [x] Guam (117) \n\n- [x] Hawaii (4794) \n\n- [x] Idaho (1053) \n\n- [x] Illinois (32480) \n\n- [x] Indiana (12101) \n\n- [x] Iowa (3449)…",
+          "score": 0.029695367,
+          "publishedDate": "Fri, 11 Sep 2026 23:00:00 GMT"
+        },
+        {
+          "url": "https://www.aljazeera.com/video/talk-to-al-jazeera/2026/9/13/guyanas-oil-boom-and-challenges",
+          "title": "Guyana's oil boom and challenges | Oil and Gas",
+          "content": "Despite the oil boom, inflation and the cost of living remain high. The opposition says the government is mishandling the oil wealth, but the president rejects those accusations.\n\nAli says that his government is striving to diversify other sectors of the economy to ensure long-term growth.\n\nIn this discussion, Guyana’s president says he’s not worried about United States intervention in neighbouring Venezuela, noting …",
+          "score": 0.021667069,
+          "publishedDate": "Sun, 13 Sep 2026 19:55:00 GMT"
+        }
+      ],
+      "credits": 2,
+      "responseTime": 2.7
+    }
+  ],
+  "questions": [
+    "Which current initiatives at Shopify are creating the most urgency for your team?",
+    "How does enterprise search fit into the priorities discussed in these sources?",
+    "What would a useful first project look like, and how would you measure its impact?"
+  ],
+  "note": "Conversation starters are suggested questions, not verified customer needs. Company context uses any-time search; the selected window applies to developments and meeting angles.",
+  "sourceCount": 29,
+  "credits": 6,
+  "sample": true
+}

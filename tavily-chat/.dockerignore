@@ -1,0 +1,13 @@
+node_modules
+dist
+.git
+.env
+.env.*
+test-results
+*.log
+.venv
+venv
+**/.venv
+**/venv
+**/node_modules
+**/__pycache__

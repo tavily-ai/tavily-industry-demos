@@ -16,7 +16,7 @@
 <p align="center">
   <a href="https://tavily.com"><img alt="Built with Tavily" src="https://img.shields.io/badge/built_with-Tavily-FF7300"></a>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-1F1E1E"></a>
-  <img alt="Kits: 1" src="https://img.shields.io/badge/kits-1-817FFF">
+  <img alt="Kits: 7" src="https://img.shields.io/badge/kits-7-817FFF">
 </p>
 
 ---
@@ -30,6 +30,14 @@
 | Kit                 | Industry                       | Use case                                                        |
 | ------------------- | ------------------------------ | --------------------------------------------------------------- |
 | [fsi-kit](fsi-kit/) | Financial Services & Insurance | Compliance, investment research, and merchant-risk intelligence |
+| [sales-meeting-prep](sales-meeting-prep/) | Sales & GTM | Web-sourced meeting briefs and customer context |
+| [company-research-agent](company-research-agent/) | Product & Competitive Intelligence | Company briefings and market research |
+| [market-researcher](market-researcher/) | Finance | Cited stock portfolio and investment research |
+| [vendor-supply-chain-risk](vendor-supply-chain-risk/) | Risk | Vendor events and supply-chain disruptions |
+| [travel-hospitality-intelligence-agent](travel-hospitality-intelligence-agent/) | Travel & Hospitality | Destination trends, demand, and disruptions |
+| [tavily-chat](tavily-chat/) | AI Assistants | Streaming web-grounded chat with citations |
+
+The six imported demos use the latest local development branches, including the author's open PR changes. See [MIGRATION.md](MIGRATION.md) for source commits and PR provenance.
 
 ## Use a kit
 
@@ -49,6 +57,8 @@ git sparse-checkout set fsi-kit
 ```
 
 Then follow the kit's own README — for example, [fsi-kit/README.md](fsi-kit/README.md).
+
+For any other demo, replace `fsi-kit` above with its folder name, then `cd` into that folder before following its README. Install dependencies and build from the individual demo directory. Docker build contexts and deployment root directories must also point to that demo's folder. Demos may use the same default ports; run them separately or configure different ports.
 
 ## Add a kit
 
