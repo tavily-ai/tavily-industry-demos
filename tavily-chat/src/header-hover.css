@@ -4,7 +4,9 @@
   padding: 0 8px;
   margin-left: -8px;
   border-radius: 12px;
-  transition: background 150ms, transform 150ms;
+  transition:
+    background 150ms,
+    transform 150ms;
 }
 
 .brand:hover,
@@ -17,7 +19,9 @@
   width: 48px;
   height: 48px;
   color: #000;
-  transition: background 150ms, transform 150ms;
+  transition:
+    background 150ms,
+    transform 150ms;
 }
 
 .github:hover,

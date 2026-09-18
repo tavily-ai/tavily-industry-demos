@@ -12,11 +12,11 @@ Use Tavily for real-time web search, clean URL extraction, website mapping and c
 
 Map Tavily usage to three different jobs:
 
-| Segment | Question it answers | Where the work runs | Status |
-| --- | --- | --- | --- |
-| CLI skills | "Which Tavily command should I run right now?" | In the agent's own terminal session | Available |
-| Build skills | "How do I add Tavily to this codebase?" | Inside the user's product code | Available |
-| Blueprints | "What's the finished deliverable and how do I produce it with Tavily?" | In the agent's session, producing an outcome or artifact | TBD / N/A today |
+| Segment      | Question it answers                                                    | Where the work runs                                      | Status          |
+| ------------ | ---------------------------------------------------------------------- | -------------------------------------------------------- | --------------- |
+| CLI skills   | "Which Tavily command should I run right now?"                         | In the agent's own terminal session                      | Available       |
+| Build skills | "How do I add Tavily to this codebase?"                                | Inside the user's product code                           | Available       |
+| Blueprints   | "What's the finished deliverable and how do I produce it with Tavily?" | In the agent's session, producing an outcome or artifact | TBD / N/A today |
 
 Use CLI skills when the agent itself needs web data now. Use `tavily-best-practices` when adding Tavily to product code that will keep running after the agent session ends. Do not claim that a separate Tavily Blueprints bundle exists today; route cited research deliverables through `tavily-research` / `tvly research` until Blueprints exist.
 
