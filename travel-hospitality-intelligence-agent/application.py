@@ -13,6 +13,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 
+from backend.static_ui import mount_ui
+
 from backend.classes.state import emit_event, job_status
 from backend.graph import Graph
 from backend.services.pdf_service import PDFService
@@ -58,11 +60,6 @@ def missing_keys_error():
     if not has_tavily:
         return "Set TAVILY_API_KEY in .env to start a live search."
     return "Set OPENAI_API_KEY in .env to start a live search."
-
-
-@app.get("/")
-async def ping():
-    return {"message": "Alive"}
 
 
 @app.get("/health")
@@ -211,6 +208,9 @@ async def generate_pdf(data: PDFGenerationRequest):
         raise
     except Exception as error:
         raise HTTPException(status_code=500, detail=str(error)) from error
+
+
+mount_ui(app, Path(__file__).parent / "ui" / "dist")
 
 
 if __name__ == "__main__":

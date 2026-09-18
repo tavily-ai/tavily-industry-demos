@@ -14,6 +14,7 @@ if str(project_dir) not in sys.path:
     sys.path.insert(0, str(project_dir))
 load_dotenv(project_dir / ".env")
 
+from backend.static_ui import mount_ui
 from backend.core.db import get_run, list_runs
 from backend.core.llm import MODEL, PROVIDER
 from backend.modules.compliance.router import router as compliance_router
@@ -46,7 +47,7 @@ app.include_router(investment_router)
 app.include_router(merchant_router)
 
 
-@app.get("/")
+@app.get("/health")
 async def health_check():
     return {"status": "healthy", "service": "fsi-kit"}
 
@@ -98,6 +99,9 @@ async def get_run_detail(run_id: str):
     if run is None:
         raise HTTPException(status_code=404, detail="run not found")
     return run
+
+
+mount_ui(app, project_dir / "ui" / "dist")
 
 
 if __name__ == "__main__":

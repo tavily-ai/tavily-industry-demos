@@ -13,7 +13,8 @@ import type { ResearchOutput, ResearchStatusType, SearchHit } from "./types";
 import { glassStyle, fadeInAnimation } from "./styles";
 import { consumeSSE } from "./stream";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL =
+  import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? "http://localhost:8000" : "");
 
 function App() {
   const [isResearching, setIsResearching] = useState(false);

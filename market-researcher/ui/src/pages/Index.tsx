@@ -14,7 +14,8 @@ const Index = () => {
   const [generationStatus, setGenerationStatus] = useState<string | null>(null);
   const [generationEvents, setGenerationEvents] = useState<string[]>([]);
 
-  const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const BASE_URL =
+    import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? "http://localhost:8000" : "");
 
   const handleGenerateReport = async (researchModel: ResearchModel) => {
     if (tickers.length === 0) return;

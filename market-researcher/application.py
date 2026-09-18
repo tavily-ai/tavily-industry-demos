@@ -10,6 +10,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 
+from backend.static_ui import mount_ui
+
 from backend.agent import StockDigestAgent
 
 env_path = Path(__file__).parent / ".env"
@@ -56,11 +58,6 @@ def validate_request(data: StockDigestRequest):
         raise HTTPException(status_code=400, detail="tickers must be a non-empty list")
     if data.research_model not in ("mini", "pro"):
         raise HTTPException(status_code=400, detail="research_model must be 'mini' or 'pro'")
-
-
-@app.get("/")
-async def ping():
-    return {"message": "Alive"}
 
 
 @app.get("/health")
@@ -123,6 +120,9 @@ async def stream_stock_digest(data: StockDigestRequest, request: Request):
             "X-Accel-Buffering": "no",
         },
     )
+
+
+mount_ui(app, Path(__file__).parent / "ui" / "dist")
 
 
 if __name__ == "__main__":

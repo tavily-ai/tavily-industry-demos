@@ -4,3 +4,7 @@ Thumbs.db
 
 artifacts/
 # Each kit manages its own ignores (see <kit>/.gitignore)
+
+# Python checks at the monorepo root
+__pycache__/
+*.py[cod]

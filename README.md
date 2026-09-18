@@ -95,6 +95,10 @@ Then follow the kit's own README — for example, [fsi-kit/README.md](fsi-kit/RE
 
 For any other demo, replace `fsi-kit` above with its folder name, then `cd` into that folder before following its README. Install dependencies and build from the individual demo directory. Docker build contexts and deployment root directories must also point to that demo's folder. Demos may use the same default ports; run them separately or configure different ports.
 
+## Deployment
+
+See [deployment setup](docs/DEPLOYMENT.md) for the shared CI/CD flow, container checks, and per-demo Helm tag updates.
+
 ## License
 
 [MIT](LICENSE)
