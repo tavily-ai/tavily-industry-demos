@@ -28,8 +28,6 @@ venv/
 ui/node_modules/
 ui/.npm
 ui/npm-debug.log*
-ui/yarn-debug.log*
-ui/yarn-error.log*
 ui/dist/
 
 # IDE
@@ -42,11 +40,7 @@ ui/dist/
 .DS_Store
 Thumbs.db
 
-# Project specific
+# Generated
 reports/*
-.langgraph/
-.elasticbeanstalk/
-README.md
-LICENSE
-*.md
-*.log 
+pdfs/
+*.log

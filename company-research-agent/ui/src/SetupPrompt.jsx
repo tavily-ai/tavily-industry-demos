@@ -1,4 +1,3 @@
-// Adapted from tavily-landing-v3/apps/web/src/components/HeroAgentField.
 import { useEffect, useId, useRef, useState } from "react";
 import "./setup-prompt.css";
 
@@ -20,16 +19,16 @@ const agents = [
 export default function SetupPrompt() {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState("");
-  const root = useRef<HTMLDivElement>(null);
-  const trigger = useRef<HTMLButtonElement>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const root = useRef(null);
+  const trigger = useRef(null);
+  const timer = useRef();
   const id = useId();
   useEffect(() => () => clearTimeout(timer.current), []);
   useEffect(() => {
     if (!open) return;
-    root.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
-    const outside = (event: MouseEvent) => {
-      if (!root.current?.contains(event.target as Node)) setOpen(false);
+    root.current?.querySelector('[role="menuitem"]')?.focus();
+    const outside = (event) => {
+      if (!root.current?.contains(event.target)) setOpen(false);
     };
     document.addEventListener("mousedown", outside);
     return () => document.removeEventListener("mousedown", outside);
@@ -58,8 +57,8 @@ export default function SetupPrompt() {
         }
         if (!open || !["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
         event.preventDefault();
-        const items = Array.from(root.current!.querySelectorAll<HTMLElement>('[role="menuitem"]'));
-        const index = items.indexOf(document.activeElement as HTMLElement);
+        const items = Array.from(root.current.querySelectorAll('[role="menuitem"]'));
+        const index = items.indexOf(document.activeElement);
         const next =
           event.key === "Home"
             ? 0

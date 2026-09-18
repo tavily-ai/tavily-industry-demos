@@ -124,6 +124,24 @@ curl -N -X POST http://localhost:8000/research \
 | `OPENAI_API_KEY` | Yes | Backend query generation, briefing, and report editing |
 | `VITE_API_URL` | Yes | Frontend API connection |
 
+## Make it yours
+
+This folder is a complete app. Copy it, then change:
+
+- `ui/src/components/ExamplePopup.tsx` and `ui/src/components/ResearchForm.tsx` — form fields and example chips
+- `backend/prompts.py` — query, briefing, and editor prompts
+- `backend/nodes/` — Tavily Search, Extract, and report assembly
+- `application.py` — HTTP API and SSE streaming
+- `ui/src/` — UI
+
+No other kit is required:
+
+```bash
+npx degit tavily-ai/tavily-industry-demos/company-research-agent my-demo
+```
+
+Included brand assets and Suisse fonts do not grant a separate trademark or font redistribution license.
+
 ## License
 
 [MIT](LICENSE)

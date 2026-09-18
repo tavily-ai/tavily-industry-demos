@@ -6,10 +6,10 @@ from typing import Any, Dict, List
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
-from tavily import AsyncTavilyClient
 
 from ...classes import ResearchState
 from ...classes.state import emit_event
+from ...tavily import async_tavily_client
 from ...utils.references import clean_title
 from ...prompts import QUERY_FORMAT_GUIDELINES
 
@@ -23,9 +23,9 @@ class BaseResearcher:
         if not tavily_key or not openai_key:
             raise ValueError("Missing API keys")
             
-        self.tavily_client = AsyncTavilyClient(api_key=tavily_key)
+        self.tavily_client = async_tavily_client(tavily_key)
         self.llm = ChatOpenAI(
-            model="gpt-5.1",
+            model="gpt-5.6-luna",
             temperature=0,
             streaming=True,
             api_key=openai_key

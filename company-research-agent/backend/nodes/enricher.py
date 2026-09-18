@@ -4,10 +4,10 @@ import os
 from typing import Dict, List
 
 from langchain_core.messages import AIMessage
-from tavily import AsyncTavilyClient
 
 from ..classes import ResearchState
 from ..classes.state import emit_event
+from ..tavily import async_tavily_client
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ class Enricher:
         tavily_key = tavily_api_key or os.getenv("TAVILY_API_KEY")
         if not tavily_key:
             raise ValueError("TAVILY_API_KEY environment variable is not set")
-        self.tavily_client = AsyncTavilyClient(api_key=tavily_key)
+        self.tavily_client = async_tavily_client(tavily_key)
         self.batch_size = 20
 
     async def fetch_single_content(self, url: str) -> Dict[str, str]:

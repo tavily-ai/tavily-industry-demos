@@ -29,7 +29,7 @@ class Editor:
         
         # Configure LangChain ChatOpenAI
         self.llm = ChatOpenAI(
-            model="gpt-4o",
+            model="gpt-5.6-luna",
             temperature=0,
             streaming=True,
             api_key=openai_key

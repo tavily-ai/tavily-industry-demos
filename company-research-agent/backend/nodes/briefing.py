@@ -29,7 +29,7 @@ class Briefing:
             raise ValueError("OPENAI_API_KEY environment variable is not set")
 
         self.llm = ChatOpenAI(
-            model="gpt-4o-mini",
+            model="gpt-5.6-luna",
             temperature=0,
             api_key=openai_key,
         )
