@@ -6,3 +6,5 @@ dist/
 .DS_Store
 *.log
 test-results/
+bun.lock
+bun.lockb

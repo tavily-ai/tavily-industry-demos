@@ -26,5 +26,7 @@ jobs:
           cache: npm
           cache-dependency-path: ${{ matrix.directory }}/package-lock.json
       - run: npm ci
+      - run: npm run lint --if-present
+      - run: npm run fmt:check --if-present
       - run: npm test --if-present
       - run: npm run build
