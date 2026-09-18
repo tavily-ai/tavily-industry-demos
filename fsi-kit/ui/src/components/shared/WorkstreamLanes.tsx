@@ -67,9 +67,7 @@ export default function WorkstreamLanes({
             <article
               key={lane.id}
               className={
-                variant === "list"
-                  ? "py-2.5 first:pt-0 last:pb-0"
-                  : "glass-subtle rounded-xl p-3"
+                variant === "list" ? "py-2.5 first:pt-0 last:pb-0" : "glass-subtle rounded-xl p-3"
               }
             >
               <div className="flex gap-2.5">
@@ -120,9 +118,13 @@ export default function WorkstreamLanes({
                             href={source.url}
                             target="_blank"
                             rel="noreferrer"
-                            title={`${sourceTitle(source)} · ${sourceDomain(source)}${source.snippet ? `
+                            title={`${sourceTitle(source)} · ${sourceDomain(source)}${
+                              source.snippet
+                                ? `
 
-${source.snippet}` : ""}`}
+${source.snippet}`
+                                : ""
+                            }`}
                             className="group inline-flex min-w-0 max-w-[240px] items-center gap-1.5 rounded-md border border-white/45 bg-white/25 px-2 py-1 hover:bg-white/50 transition-colors"
                           >
                             {source.favicon ? (
@@ -150,7 +152,6 @@ ${source.snippet}` : ""}`}
                       )}
                     </div>
                   )}
-
                 </div>
               </div>
             </article>

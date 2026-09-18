@@ -1,0 +1,263 @@
+{
+  "title": "Vendor & Supply Chain Risk",
+  "input": {
+    "entity": "TSMC",
+    "context": "Taiwan semiconductors",
+    "timeRange": "month"
+  },
+  "startedAt": "2026-09-18T16:42:45.579Z",
+  "completedAt": "2026-09-18T16:42:50.562Z",
+  "status": "complete",
+  "sections": [
+    {
+      "id": "business",
+      "title": "Business signals",
+      "note": "Review disclosures, financial pressures, and vendor news.",
+      "request": {
+        "query": "TSMC business financial disclosure news",
+        "search_depth": "advanced",
+        "max_results": 10,
+        "chunks_per_source": 4,
+        "topic": "news",
+        "include_answer": "basic",
+        "include_favicon": true,
+        "include_usage": true,
+        "time_range": "month"
+      },
+      "status": "complete",
+      "summary": "TSMC's financial disclosure indicates a robust performance with a 77% increase in second-quarter net profit, reaching approximately $22 billion. The company's market valuation is approaching $2 trillion, reflecting strong demand for its advanced chips in the AI economy. TSMC's global workforce has surpassed 90,000, with per-employee benefits spending increasing by over 70% in six years. The company continues to invest heavily in its Arizona operations, committing an additional $100 billion to expand its semiconductor manufacturing capacity. TSMC's latest quarterly results exceeded expectations, driven by strong demand for AI and high-performance-computing chips, with revenue and earnings per share projected to grow significantly in the coming years.",
+      "sources": [
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/taiwan-semiconductor-manufacturing-company-tsm-131831930.html",
+          "title": "Taiwan Semiconductor Manufacturing Company (TSM) Limited Continues to Deliver Stellar Financial Results",
+          "content": "> \"Taiwan Semiconductor Manufacturing Company Limited (NYSE:TSM) is the world's largest contract chipmaker and the leading manufacturer of advanced logic semiconductors used in modern AI accelerators. Shares rose 41.6% during the quarter as the company continues to report stellar financial results underpinned by AI demand with revenue growth of 35% year-on-year and EPS growth of 58%, with 66% gross margins and 58% op…",
+          "favicon": "https://s.yimg.com/cv/apiv2/default/finance/favicon-180x180.png",
+          "score": 0.81770587,
+          "publishedDate": "Tue, 01 Sep 2026 00:00:00 GMT"
+        },
+        {
+          "url": "https://azbigmedia.com/business/tsmc-will-invest-an-additional-100-billion-into-arizona-operations",
+          "title": "TSMC will invest an additional $100 billion into Arizona operations - AZ Big Media",
+          "content": "The expansion comes as demand for artificial intelligence continues to surge. TSMC manufactures many of the world’s most advanced chips for technology leaders including Apple and Nvidia, making the company a critical player in the rapidly growing AI economy.\n\nThe company’s financial performance reflects that demand. TSMC reported a 77% increase in second-quarter net profit, earning approximately $22 billion between A…",
+          "favicon": "https://azbigmedia.com/wp-content/uploads/2023/10/fav-150x150.png",
+          "score": 0.7050753,
+          "publishedDate": "Thu, 27 Aug 2026 13:20:20 GMT"
+        },
+        {
+          "url": "https://xenospectrum.com/en/tsmc-1-4nm-fab25-taichung-timeline-analysis",
+          "title": "TSMC's Taichung Fab Construction Is Accelerating, But 1.4nm Mass Production Still Targets 2028 | XenoSpectrum",
+          "content": "データを表で見る\n\n| Figures disclosed at 2025 symposium (%) | Figures disclosed at July 2026 earnings call (%) |\n --- |\n| Max speed increase at same power | 15 | 15 |\n| Max power reduction at same speed | 30 | 30 |\n| Logic density improvement | 20 | 20 |\n\nProjected Performance Gains of TSMC's A14 Node (vs. N2)Comparison based on TSMC's disclosed projections. At the 2026 earnings call, TSMC cited 10-15% speed improvement, 25-…",
+          "favicon": "https://xenospectrum.com/wp-content/uploads/2024/03/xs-logo-150x150.png",
+          "score": 0.69274646,
+          "publishedDate": "Fri, 11 Sep 2026 02:28:49 GMT"
+        },
+        {
+          "url": "https://www.bnnbloomberg.ca/markets/2026/09/10/stan-wongs-top-picks-for-sept-10-2026",
+          "title": "Stan Wong’s Top Picks for Sept. 10, 2026 – BNN Bloomberg",
+          "content": "From a technical perspective, TSMC trades comfortably above its rising 200-day moving average and recently moved above a shorter-term consolidation range. The shares continue to form a pattern of higher highs and higher lows, confirming positive momentum across multiple time frames. Industry-leading technology, limited competition, powerful AI demand and exceptional earnings growth make TSMC one of our top names in t…",
+          "favicon": "https://www.bnnbloomberg.ca/pf/resources/images/bnn-bloomberg/favicon.ico?d=229",
+          "score": 0.67885995,
+          "publishedDate": "Thu, 10 Sep 2026 17:12:58 GMT"
+        },
+        {
+          "url": "https://finance.biggo.com/news/0cc422a4-49ae-4cda-862c-cf272b38232a",
+          "title": "TSMC Global Workforce Surpasses 90,000; Per-Employee Benefits Spending Up Over 70% in Six Years — BigGo Finance",
+          "content": "According to data disclosed in the report, TSMC's global workforce reached 91,487 last year, a significant increase from 84,512 the previous year. Of these, 90,557 were regular employees and 930 were temporary staff. The global median total compensation was approximately NT$2.95 million (approximately $93,000), up NT$490,000 from NT$2.46 million the prior year — a nearly 20% year-over-year increase, setting another r…",
+          "favicon": "https://finance.biggo.com/icons/apple-touch-icon.png",
+          "score": 0.6580885,
+          "publishedDate": "Mon, 24 Aug 2026 21:05:25 GMT"
+        },
+        {
+          "url": "https://www.stocktitan.net/sec-filings/TSM/form-4-taiwan-semiconductor-manufacturing-co-ltd-insider-trading-acti-b9fadd6244eb.html",
+          "title": "TSMC VP acquires 8,175 shares in stock vesting | TSM Insider Trading",
+          "content": "Source:  View Original Filing on SEC EDGAR\n\n## Keep reading\n\n### More on TSM\n\n TSMC and Amkor Technology Announce Long Term Partnership to Accelerate Advanced Packaging in the United States Jun 16, 2026\n TSMC Debuts A13 Technology at 2026 North America Technology Symposium Apr 22, 2026\n TSMC Files Annual Report on Form 20-F for 2025 Apr 16, 2026\n\n### Trending in the feed\n\n Datavault AI Receives Initial $100 Million P…",
+          "favicon": "https://static.stocktitan.net/img/favicon/apple-touch-icon.png",
+          "score": 0.62934244,
+          "publishedDate": "Wed, 02 Sep 2026 10:15:33 GMT"
+        },
+        {
+          "url": "https://www.gurufocus.com/news/9086834/chinese-stocks-mixed-tsmc-tsm-rises-3-amid-fluctuating-market",
+          "title": "Chinese Stocks Mixed: TSMC (TSM) Rises 3% Amid Fluctuating Marke",
+          "content": "GF Value™ verdict: TSMC is currently priced at $430.26, which is 18.2% over its GF Value™ of $363.99.\n GF Score™: 98/100, indicating a strong overall performance based on various financial metrics.\n Financial Strength: TSMC boasts a financial strength rank of 9/10, showcasing its robust financial health.\n\n### What's Behind the News?\n\nThe recent performance of TSMC is significant in the context of the broader Chinese …",
+          "favicon": "https://www.gurufocus.com/favicon.ico",
+          "score": 0.6219319,
+          "publishedDate": "Thu, 17 Sep 2026 21:00:00 GMT"
+        },
+        {
+          "url": "https://www.taipeitimes.com/News/biz/archives/2026/08/31/2003863392",
+          "title": "TSMC Q2 employee bonuses rise more than 50% - Taipei Times",
+          "content": "Second-quarter earnings per share (EPS) rose to NT$27.25, compared with NT$15.36 a year earlier and NT$22.08 in the first quarter, TSMC said.\n\n  The record quarterly net profit reflected strong global demand for high-performance computing devices, Internet of Things applications and consumer electronics products, it said.\n\n  Employee bonuses for the first half of this year totaled NT$70.35 billion, 54.3 percent highe…",
+          "favicon": "https://www.taipeitimes.com/assets/images/TT_web_icon-mobile.jpg",
+          "score": 0.6213807,
+          "publishedDate": "Sun, 30 Aug 2026 16:00:00 GMT"
+        },
+        {
+          "url": "https://simplywall.st/community/narratives/us/semiconductors/nyse-tsm/taiwan-semiconductor-manufacturing/exo7invr-the-most-wonderful-monopoly-in-the-most-dangerous-neighbourhood-on-earth-kpzs/updates/2-an-august-2026-update-on-taiwan-semiconductor-manufacturing",
+          "title": "We Skipped a 23% Rally on Purpose. I'd Skip It Again.",
+          "content": "TSMC's June quarter was, by the standards of physical manufacturing, close to unbelievable. Gross margin of 67.7%. Operating margin of 60.3%. Remember, this is a company that builds things, in buildings, with machines that cost a few hundred million dollars apiece. Most factory owners would sell a kidney for a 30% gross margin. TSMC more than doubled it. [...] People make this business complicated because complicated…",
+          "favicon": "https://cdn.prod.website-files.com/648009cb318551f1806b36b4/6994e9bc8c4cc79b63beeb94_SWS%20webclip.png",
+          "score": 0.6021791,
+          "publishedDate": "Sat, 29 Aug 2026 00:00:00 GMT"
+        },
+        {
+          "url": "https://www.britannica.com/money/Taiwan-Semiconductor-Manufacturing-Co",
+          "title": "Taiwan Semiconductor Manufacturing Co. (TSMC)",
+          "content": "Read More\n\nImage 5: A photo of Advanced Micro Devices headquarters in Santa Clara, California, showing the company's logo on a sign outside a modern glass office building. Advanced Micro Devices, Inc.Image 6: Satya Nadella, Microsoft's chairman and CEO, delivering a keynote at the Microsoft Build 2025 conference in Seattle. Microsoft CorporationImage 7: Garage where William Hewlett and David Packard began their compa…",
+          "favicon": "https://www.britannica.com/favicon.png",
+          "score": 0.5928793,
+          "publishedDate": "Sat, 29 Aug 2026 04:00:00 GMT"
+        }
+      ],
+      "credits": 2,
+      "responseTime": 2.9
+    },
+    {
+      "id": "disruptions",
+      "title": "Operational disruptions",
+      "note": "Track logistics, outages, and supply constraints.",
+      "request": {
+        "query": "TSMC Taiwan semiconductors supply disruption",
+        "search_depth": "advanced",
+        "max_results": 10,
+        "chunks_per_source": 4,
+        "topic": "news",
+        "include_answer": "basic",
+        "include_favicon": true,
+        "include_usage": true,
+        "time_range": "month"
+      },
+      "status": "complete",
+      "summary": "TSMC's supply chain faces significant risks due to geopolitical tensions, particularly between China and Taiwan, and trade restrictions like the U.S. CHIPS and Science Act. Elon Musk's investment in Texas Terafab signals a push for supply chain diversification, while TSMC itself is expanding its U.S. capacity to mitigate risks. TSMC's suppliers, like Nichias, are also taking steps to build critical components in Taiwan to avoid disruptions. Despite these efforts, the semiconductor industry remains heavily reliant on TSMC's advanced manufacturing capabilities, making it difficult to find a complete replacement in the short term.",
+      "sources": [
+        {
+          "url": "https://finance.biggo.com/news/a27e681f-9bbc-4315-8d21-391665f41bb8",
+          "title": "Musk Warns of Taiwan Chip Supply Disruption, Invests $16.8 Billion in Texas Terafab as Self-Rescue — BigGo Finance",
+          "content": "Note: TSMC's U.S. investment figures and facility configuration are sourced from the company's public disclosures; Terafab's investment scale and timeline are sourced from documents submitted to Texas and Grimes County authorities.\n\n### Market Implications of Supply Chain Risk\n\nMusk's remarks highlight the structural risk of global AI chip supply chains being heavily concentrated in Taiwan. TSMC is the core manufactu…",
+          "favicon": "https://finance.biggo.com/icons/apple-touch-icon.png",
+          "score": 0.83452857,
+          "publishedDate": "Thu, 17 Sep 2026 05:25:32 GMT"
+        },
+        {
+          "url": "https://asia.nikkei.com/business/technology/exclusive-tsmc-supplier-nichias-to-build-key-chipmaking-tubes-in-taiwan",
+          "title": "Exclusive: TSMC supplier Nichias to build key chipmaking 'tubes' in Taiwan - Nikkei Asia",
+          "content": "Technology\n\n# Exclusive: TSMC supplier Nichias to build key chipmaking 'tubes' in Taiwan\n\nPartnership with Gold Stone Development aims to ease key chip supply chain bottleneck\n\n20260824 Nichias\n\nPFA tubes like those made by Nichias are essential for transporting chemicals throughout the chip production process. (Source photos by Yuki Nakao and screenshot from Nichias' website)\n\nCHENG TING-FANG\n\nAugust 25, 2026 11:36 …",
+          "favicon": "https://asia.nikkei.com/images/frontend/favicons/144x144.png",
+          "score": 0.81979275,
+          "publishedDate": "Tue, 25 Aug 2026 02:36:43 GMT"
+        },
+        {
+          "url": "https://www.instagram.com/reel/DcgJbr0zuc-",
+          "title": "Taiwan sits at the center of the modern technology supply ...",
+          "content": "Taiwan's strength in advanced manufacturing led by TSMC means disruptions to its semiconductor production could have consequences across technology industries",
+          "favicon": "https://static.cdninstagram.com/rsrc.php/yY/r/5OCV_xUyQ5h.webp",
+          "score": 0.81875163,
+          "publishedDate": "Fri, 28 Aug 2026 16:00:00 GMT"
+        },
+        {
+          "url": "https://www.facebook.com/alchetron/posts/taiwan-sits-at-the-center-of-the-modern-technology-supply-chain-it-accounts-for-/1491695042986896",
+          "title": "Taiwan sits at the center of the modern technology supply ...",
+          "content": "Taiwan's strength in advanced manufacturing led by TSMC means disruptions to its semiconductor production could have consequences across technology industries",
+          "favicon": "https://z-m-static.xx.fbcdn.net/rsrc.php/yj/r/rvjuhHLwc7B.ico",
+          "score": 0.81875163,
+          "publishedDate": "Fri, 28 Aug 2026 16:00:00 GMT"
+        },
+        {
+          "url": "https://www.britannica.com/money/Taiwan-Semiconductor-Manufacturing-Co",
+          "title": "Taiwan Semiconductor Manufacturing Co. (TSMC)",
+          "content": "Cyclical demand. Semiconductor sales are subject to boom-and-bust cycles, which can lead to fluctuations in revenue.\n   Geopolitical risks. China-Taiwan tensions and trade restrictions, such as the U.S. CHIPS and Science Act limiting sales to China, disrupt supply chains and threaten profitability.\n   Industry competition. Rival foundries, including Samsung, present ongoing challenges to TSMC’s market dominance.\n\n## …",
+          "favicon": "https://www.britannica.com/favicon.png",
+          "score": 0.75355774,
+          "publishedDate": "Sat, 29 Aug 2026 04:00:00 GMT"
+        },
+        {
+          "url": "https://www.tradingkey.com/news/market-movers/262166474-market-movers-tsm-20260914",
+          "title": "Taiwan Semiconductor Manufacturing Co Ltd Stock (TSM) Opened Down by 3.26% on Sep 14: What Signal Does It Send?",
+          "content": "Tariff Headwinds and Cross-Border Trade Vulnerabilities: Heightened policy discussion surrounding U.S. semiconductor tariffs and stringent export controls creates friction for TSMC's primary North American client base, threatening to elevate supply chain costs and disrupt advanced node ordering patterns.\n Overseas Fab Execution and Geographic Cost Disadvantages: Aggressive geographic diversification, including multi-…",
+          "favicon": "https://www.tradingkey.com/apple-touch-icon.png",
+          "score": 0.75268626,
+          "publishedDate": "Mon, 14 Sep 2026 16:00:00 GMT"
+        },
+        {
+          "url": "https://nationalinterest.org/blog/techland/why-taiwans-silicon-shield-is-failing",
+          "title": "Why Taiwan's Silicon Shield Is Failing - The National Interest",
+          "content": "Chinese capability parity poses a future threat to Taiwan. The silicon shield will lose its power if China can meet its own demand for mature node chips domestically. The possibility of disruption causes political and financial instability in Taiwan. In the event of a natural disaster, an unexpected geopolitical shock, or even a Chinese military invasion, it would paralyze TSMC’s operations and affect all sectors of …",
+          "favicon": "https://nationalinterest.org/wp-content/uploads/2024/11/cropped-favicon-150x150.png",
+          "score": 0.6760432,
+          "publishedDate": "Mon, 07 Sep 2026 11:00:00 GMT"
+        },
+        {
+          "url": "https://english.cw.com.tw/article/article.action?id=5000",
+          "title": "What Is Taiwan’s “Silicon Shield”—and Does It Still Protect Taiwan in 2026?｜Politics & Society｜2026-09-15｜web only",
+          "content": "The question is no longer simply whether Taiwan still has a silicon shield.\n\nIt is whether Taiwan can transform that shield into a broader and more durable system of economic security.\n\n## FAQ\n\n### What does “silicon shield” mean?\n\nThe silicon shield is the theory that Taiwan’s importance to the global semiconductor industry raises the economic cost of a conflict over the island and therefore contributes to deterrenc…",
+          "favicon": "https://english.cw.com.tw/assets_new/img/apple-icon-144x144.png",
+          "score": 0.64719695,
+          "publishedDate": "Mon, 14 Sep 2026 16:00:00 GMT"
+        },
+        {
+          "url": "https://www.tomshardware.com/tech-industry/china-strategically-slows-exports-of-critical-materials-used-in-semiconductor-fabrication-to-taiwan-germanium-and-quartz-exports-to-the-region-also-threaten-optical-and-robotics-supply-chain",
+          "title": "China strategically slows exports of critical materials used in semiconductor fabrication to Taiwan — germanium and quartz exports to the region also threaten optical and robotics supply chain | Tom's Hardware",
+          "content": "# China strategically slows exports of critical materials used in semiconductor fabrication to Taiwan — germanium and quartz exports to the region also threaten optical and robotics supply chain\n\nOnly Taiwanese supply chains?\n\nChina is slowing or restricting shipments of materials based on germanium and quartz to Taiwan, which creates supply constraints for multiple industries on the island, according to Nikkei. Comp…",
+          "favicon": "https://vanilla.futurecdn.net/tomshardware/1744556/apple-touch-icon.png",
+          "score": 0.59824234,
+          "publishedDate": "Tue, 25 Aug 2026 13:00:00 GMT"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/taiwan-semiconductor-manufacturing-tsm-could-130609996.html",
+          "title": "Taiwan Semiconductor Manufacturing (TSM) Could Be 9% Above Fair Value As Capex Plans Grow",
+          "content": "Read the complete narrative.\n\nThe narrative leans on very strong recent margins and ambitious long term growth and profitability assumptions. It also embeds a specific discount rate that reflects geopolitical risk and still arrives at a fair value below today's share price. The full story is in how those cash flow paths and required returns balance out across its bear, base and bull cases.\n\nResult: Fair Value of $378…",
+          "favicon": "https://s.yimg.com/cv/apiv2/default/finance/favicon-180x180.png",
+          "score": 0.5760895,
+          "publishedDate": "Thu, 03 Sep 2026 00:00:00 GMT"
+        }
+      ],
+      "credits": 2,
+      "responseTime": 4.81
+    },
+    {
+      "id": "sanctions",
+      "title": "Official risk sources",
+      "note": "Search sanctions and trade-restriction publications.",
+      "request": {
+        "query": "TSMC sanctions export restrictions",
+        "search_depth": "advanced",
+        "max_results": 10,
+        "chunks_per_source": 4,
+        "topic": "general",
+        "include_answer": "basic",
+        "include_favicon": true,
+        "include_usage": true,
+        "include_domains": ["ofac.treasury.gov", "bis.gov", "gov.uk", "consilium.europa.eu"]
+      },
+      "status": "complete",
+      "summary": null,
+      "sources": [
+        {
+          "url": "https://data.consilium.europa.eu/doc/document/ST-8799-2022-INIT/en/pdf",
+          "title": "SWD Chips Act v15 - Data",
+          "content": "the US had blocked Dutch-based ASML from shipping its EUV lithography equipment to China’s major foundry, SMIC, preventing SMIC from advancing and growing to full capacity. At the same time, US chipmakers have had to shift their orders from SMIC to TSMC. Also faced with US sanctions, some Chinese chipmakers have been stockpiling in order to meet future demand. As a volume business for TSMC, compared with automotive (…",
+          "favicon": null,
+          "score": 0.48733237,
+          "publishedDate": null
+        },
+        {
+          "url": "https://www.bis.gov/press-release/commerce-strengthens-export-controls-restrict-chinas-capability-produce-advanced-semiconductors-military",
+          "title": "Lock",
+          "content": "“The PRC’s Military-Civil Fusion strategy presents a significant risk that advanced node semiconductors will be used in military applications that threaten the security of the United States, as well as the security of our allies and partners,” said Assistant Secretary of Commerce for Export Administration Thea D. Rozman Kendler. “These rules build on previous actions taken in service of our longstanding goal: protect…",
+          "favicon": "https://www.bis.gov/favicon.ico",
+          "score": 0.3936186,
+          "publishedDate": null
+        }
+      ],
+      "credits": 2,
+      "responseTime": 3.8
+    }
+  ],
+  "questions": [
+    "Which reported events could affect TSMC's delivery commitments to us?",
+    "What inventory, alternate supplier, or routing options should procurement validate?",
+    "Do legal entity names and ownership require a separate sanctions screening?"
+  ],
+  "note": "Signals for follow-up, not a supplier risk score. Official-source search is not a complete sanctions screening, and no results must not be treated as clearance. Sanctions and trade searches use any time. This is an on-demand snapshot.",
+  "sourceCount": 21,
+  "credits": 6
+}

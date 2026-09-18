@@ -17,7 +17,7 @@ router = APIRouter(tags=["merchant-risk"])
 async def merchant_risk_stream(request: MerchantRiskRequest):
     missing = [
         name
-        for name in ("TAVILY_API_KEY", "NEBIUS_API_KEY")
+        for name in ("TAVILY_API_KEY", "OPENAI_API_KEY")
         if not (os.getenv(name) or "").strip()
     ]
     if missing:

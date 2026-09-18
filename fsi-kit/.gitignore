@@ -6,12 +6,16 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+.pytest_cache/
+.ruff_cache/
 
 # Node
 node_modules/
 
 # Environment
 .env
+.env.development.local
+ui/.env.development.local
 
 # OS
 .DS_Store
