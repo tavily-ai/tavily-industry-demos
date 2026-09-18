@@ -24,7 +24,7 @@ uv sync
 echo -e "${GREEN}✓ Python dependencies installed${NC}"
 
 echo -e "\n${BLUE}Installing Node.js dependencies...${NC}"
-cd UI
+cd ui
 npm ci
 if [ ! -f .env.development.local ]; then
     cp .env.development.example .env.development.local
@@ -58,7 +58,7 @@ if [[ $start_servers =~ ^[Yy]$ ]]; then
     backend_pid=$!
     sleep 2
     echo -e "\n${GREEN}Starting frontend server...${NC}"
-    cd UI
+    cd ui
     npm run dev &
     frontend_pid=$!
     cd ..
@@ -70,6 +70,6 @@ if [[ $start_servers =~ ^[Yy]$ ]]; then
 else
     echo -e "\n${BOLD}To start the application manually:${NC}"
     echo "   uv run uvicorn application:app --reload --port 8080"
-    echo "   cd UI && npm run dev"
+    echo "   cd ui && npm run dev"
     echo -e "\nAccess the application at ${BOLD}http://localhost:3000${NC}"
 fi

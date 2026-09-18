@@ -84,7 +84,7 @@ npm run build
 npm start
 ```
 
-The tests use mock upstream responses and cover parallel execution, stream framing, cancellation, validation, partial failures, empty results, domain filtering, safe source URLs, and credential redaction. They do not consume API credits. GitHub Actions runs lint, format check, tests, and a production build on pushes and pull requests.
+The tests use mock upstream responses and cover parallel execution, stream framing, cancellation, validation, partial failures, empty results, domain filtering, safe source URLs, and credential redaction. They do not consume API credits.
 
 For a container:
 

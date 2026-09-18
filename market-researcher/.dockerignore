@@ -25,10 +25,10 @@ htmlcov/
 venv/
 
 # Node.js
-UI/node_modules/
-UI/.npm
-UI/npm-debug.log*
-UI/dist/
+ui/node_modules/
+ui/.npm
+ui/npm-debug.log*
+ui/dist/
 
 # IDE
 .idea/

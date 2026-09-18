@@ -1,9 +1,9 @@
 # Stage 1: Build Frontend
 FROM node:20-slim AS frontend-builder
 WORKDIR /app/ui
-COPY UI/package*.json ./
+COPY ui/package*.json ./
 RUN npm ci
-COPY UI/ ./
+COPY ui/ ./
 RUN npm run build
 
 # Stage 2: Backend runtime with uv
@@ -20,7 +20,7 @@ RUN uv sync --frozen --no-dev --no-install-project
 
 COPY backend/ ./backend/
 COPY application.py .
-COPY --from=frontend-builder /app/ui/dist/ ./UI/dist/
+COPY --from=frontend-builder /app/ui/dist/ ./ui/dist/
 
 RUN mkdir -p reports \
     && useradd -m -u 1000 appuser \

@@ -11,7 +11,7 @@ jobs:
         directory:
           - sales-meeting-prep
           - company-research-agent/ui
-          - market-researcher/UI
+          - market-researcher/ui
           - vendor-supply-chain-risk
           - travel-hospitality-intelligence-agent/ui
           - tavily-chat

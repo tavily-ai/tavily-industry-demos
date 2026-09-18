@@ -37,8 +37,6 @@
 | [travel-hospitality-intelligence-agent](travel-hospitality-intelligence-agent/) | Travel & Hospitality | Destination trends, demand, and disruptions |
 | [tavily-chat](tavily-chat/) | AI Assistants | Streaming web-grounded chat with citations |
 
-The six imported demos use the latest local development branches, including the author's open PR changes. See [MIGRATION.md](MIGRATION.md) for source commits and PR provenance.
-
 ## Use a kit
 
 Each kit is self-contained. To take just one:

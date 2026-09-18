@@ -2,7 +2,7 @@
 
 An agentic research tool that turns a small stock portfolio into a sourced daily digest. The FastAPI backend runs Tavily Research per ticker and OpenAI metric extraction; the React interface streams live progress and lets you export the finished report as a PDF.
 
-![Stock Portfolio Researcher interface](UI/public/portfolio-researcher.png)
+![Stock Portfolio Researcher landing page](static/app-screenshot.png)
 
 Live research uses `TAVILY_API_KEY` and `OPENAI_API_KEY` on the server. The browser never sees or sends a key.
 
@@ -55,11 +55,11 @@ The UI connects to the API with `VITE_API_URL`. Stopping a run aborts the in-fli
 3. Configure the frontend:
 
    ```bash
-   cp UI/.env.development.example UI/.env.development.local
-   cd UI && npm ci && cd ..
+   cp ui/.env.development.example ui/.env.development.local
+   cd ui && npm ci && cd ..
    ```
 
-   Set `VITE_API_URL=http://localhost:8080` in `UI/.env.development.local`.
+   Set `VITE_API_URL=http://localhost:8080` in `ui/.env.development.local`.
 
 4. Start the API in one terminal:
 
@@ -70,17 +70,17 @@ The UI connects to the API with `VITE_API_URL`. Stopping a run aborts the in-fli
 5. Start the UI in a second terminal:
 
    ```bash
-   cd UI
+   cd ui
    npm run dev
    ```
 
 Open [http://localhost:3000](http://localhost:3000). The API is available at [http://localhost:8080/docs](http://localhost:8080/docs).
 
-From `UI/`, `npm run lint` and `npm run fmt:check` run oxlint and oxfmt.
+From `ui/`, `npm run lint` and `npm run fmt:check` run oxlint and oxfmt.
 
 ## Docker
 
-After creating the root `.env` and `UI/.env.development.local` files, run:
+After creating the root `.env` and `ui/.env.development.local` files, run:
 
 ```bash
 docker compose up --build
@@ -123,12 +123,12 @@ Research can take a few minutes, particularly when using the `pro` model. Financ
 
 This folder is a complete app. Copy it, then change:
 
-- `UI/src/components/TickerInput.tsx` — ticker picker and research model toggle
+- `ui/src/components/TickerInput.tsx` — ticker picker and research model toggle
 - `backend/prompts.py` — research and metric-extraction prompts
 - `backend/models.py` — report schema sent to Tavily Research
 - `backend/agent.py` — Tavily Research, Search, and OpenAI assembly
 - `application.py` — HTTP API and SSE streaming
-- `UI/src/` — UI
+- `ui/src/` — UI
 
 No other kit is required:
 
