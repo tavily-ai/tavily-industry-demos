@@ -1,21 +1,19 @@
 import asyncio
 import json
 import logging
-import os
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from typing import Callable, Dict, List, Optional, TypeVar
 
-from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, StateGraph
-from models import (Source, State, StockDigestOutput, StockReport,
-                    TavilyMetrics, get_stock_report_schema)
-from prompts import METRICS_PROMPT, RESEARCH_PROMPT
 from tavily import AsyncTavilyClient, TavilyClient
 
-load_dotenv()
+from backend.models import (Source, State, StockDigestOutput, StockReport,
+                            TavilyMetrics, get_stock_report_schema)
+from backend.prompts import METRICS_PROMPT, RESEARCH_PROMPT
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -38,12 +36,10 @@ def _create_error_report(ticker: str) -> StockReport:
 
 
 class StockDigestAgent:
-    def __init__(self, research_model: str = "mini", tavily_api_key: Optional[str] = None):
-        api_key = os.getenv("OPENAI_API_KEY")
-        resolved_tavily_api_key = tavily_api_key or os.getenv("TAVILY_API_KEY")
-        self.openai_llm = ChatOpenAI(model="gpt-5-mini", api_key=api_key)
-        self.tavily_client = TavilyClient(api_key=resolved_tavily_api_key)
-        self.async_tavily_client = AsyncTavilyClient(api_key=resolved_tavily_api_key)
+    def __init__(self, research_model: str = "mini"):
+        self.openai_llm = ChatOpenAI(model="gpt-5.6-luna")
+        self.tavily_client = TavilyClient(client_name="public-usecases--market-researcher")
+        self.async_tavily_client = AsyncTavilyClient(client_name="public-usecases--market-researcher")
         self.current_date = datetime.now().strftime("%Y-%m-%d")
         self.research_model = research_model  # "mini" or "pro"
 
@@ -326,21 +322,27 @@ class StockDigestAgent:
         pending = {asyncio.create_task(run_with_limit(ticker)) for ticker in tickers}
         reports: Dict[str, StockReport] = {}
 
-        while pending:
-            try:
-                yield await asyncio.wait_for(events.get(), timeout=0.1)
-            except asyncio.TimeoutError:
-                pass
+        try:
+            while pending:
+                try:
+                    yield await asyncio.wait_for(events.get(), timeout=0.1)
+                except asyncio.TimeoutError:
+                    pass
 
-            finished = {task for task in pending if task.done()}
-            for task in finished:
-                pending.remove(task)
-                ticker, report = task.result()
-                reports[ticker] = report
-                yield {"type": "progress", "message": f"{ticker}: digest section completed"}
+                finished = {task for task in pending if task.done()}
+                for task in finished:
+                    pending.remove(task)
+                    ticker, report = task.result()
+                    reports[ticker] = report
+                    yield {"type": "progress", "message": f"{ticker}: digest section completed"}
 
-        while not events.empty():
-            yield events.get_nowait()
+            while not events.empty():
+                yield events.get_nowait()
 
-        ordered_reports = {ticker: reports[ticker] for ticker in tickers if ticker in reports}
-        yield {"type": "complete", "digest": StockDigestOutput(reports=ordered_reports).model_dump()}
+            ordered_reports = {ticker: reports[ticker] for ticker in tickers if ticker in reports}
+            yield {"type": "complete", "digest": StockDigestOutput(reports=ordered_reports).model_dump()}
+        finally:
+            for task in pending:
+                task.cancel()
+            if pending:
+                await asyncio.gather(*pending, return_exceptions=True)

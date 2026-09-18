@@ -1,0 +1,32 @@
+# Stage 1: Build Frontend
+FROM node:20-slim AS frontend-builder
+WORKDIR /app/ui
+COPY UI/package*.json ./
+RUN npm ci
+COPY UI/ ./
+RUN npm run build
+
+# Stage 2: Backend runtime with uv
+FROM python:3.11-slim
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev --no-install-project
+
+COPY backend/ ./backend/
+COPY application.py .
+COPY --from=frontend-builder /app/ui/dist/ ./UI/dist/
+
+RUN mkdir -p reports \
+    && useradd -m -u 1000 appuser \
+    && chown -R appuser:appuser /app
+USER appuser
+
+ENV PYTHONUNBUFFERED=1 PORT=8080 PATH="/app/.venv/bin:$PATH"
+EXPOSE 8080
+CMD ["uvicorn", "application:app", "--host", "0.0.0.0", "--port", "8080"]

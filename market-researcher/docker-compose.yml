@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PORT=8080
+    volumes:
+      - ./reports:/app/reports
+      - ./backend:/app/backend
+      - ./application.py:/app/application.py
+    env_file:
+      - .env
+
+  frontend:
+    image: node:20-slim
+    working_dir: /ui
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./UI:/ui
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:8080

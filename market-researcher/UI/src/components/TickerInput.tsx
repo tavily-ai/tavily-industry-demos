@@ -1,19 +1,18 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { toast } from "@/hooks/use-toast";
+import { Loader2, Plus, TrendingUp, X } from "lucide-react";
+import React, { KeyboardEvent, useEffect, useMemo, useState } from "react";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { toast } from '@/hooks/use-toast';
-import { Eye, EyeOff, KeyRound, Loader2, Plus, TrendingUp, X } from 'lucide-react';
-import React, { KeyboardEvent, useEffect, useMemo, useState } from 'react';
-
-export type ResearchModel = 'mini' | 'pro';
+export type ResearchModel = "mini" | "pro";
 
 interface TickerInputProps {
   tickers: string[];
   onTickersChange: (tickers: string[]) => void;
-  onGenerateReport: (model: ResearchModel, tavilyApiKey: string) => void;
+  onGenerateReport: (model: ResearchModel) => void;
   isGenerating: boolean;
   generationStatus?: string | null;
 }
@@ -25,19 +24,20 @@ export const TickerInput: React.FC<TickerInputProps> = ({
   isGenerating,
   generationStatus,
 }) => {
-  const [inputValue, setInputValue] = useState('');
-  const [researchModel, setResearchModel] = useState<ResearchModel>('mini');
-  const [tavilyApiKey, setTavilyApiKey] = useState('');
-  const [showTavilyApiKey, setShowTavilyApiKey] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [researchModel, setResearchModel] = useState<ResearchModel>("mini");
   const [loadingStep, setLoadingStep] = useState(0);
 
-  const loadingMessages = useMemo(() => [
-    'Starting portfolio research…',
-    `Researching ${tickers[0] || 'your selected stocks'}…`,
-    'Gathering market performance and financial data…',
-    'Reviewing risks, catalysts, and price outlook…',
-    'Compiling your portfolio digest…',
-  ], [tickers]);
+  const loadingMessages = useMemo(
+    () => [
+      "Starting portfolio research…",
+      `Researching ${tickers[0] || "your selected stocks"}…`,
+      "Gathering market performance and financial data…",
+      "Reviewing risks, catalysts, and price outlook…",
+      "Compiling your portfolio digest…",
+    ],
+    [tickers],
+  );
 
   useEffect(() => {
     if (!isGenerating) {
@@ -53,7 +53,7 @@ export const TickerInput: React.FC<TickerInputProps> = ({
 
   const addTicker = () => {
     const ticker = inputValue.trim().toUpperCase();
-    
+
     if (!ticker) {
       toast({
         title: "Invalid ticker",
@@ -91,11 +91,11 @@ export const TickerInput: React.FC<TickerInputProps> = ({
     }
 
     onTickersChange([...tickers, ticker]);
-    setInputValue('');
+    setInputValue("");
   };
 
   const removeTicker = (tickerToRemove: string) => {
-    onTickersChange(tickers.filter(ticker => ticker !== tickerToRemove));
+    onTickersChange(tickers.filter((ticker) => ticker !== tickerToRemove));
     toast({
       title: "Ticker removed",
       description: `${tickerToRemove} has been removed from your list`,
@@ -103,18 +103,48 @@ export const TickerInput: React.FC<TickerInputProps> = ({
   };
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       addTicker();
     }
   };
 
   const popularTickers = [
-    'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA', 'NFLX',
-    'AMD', 'AVGO', 'ORCL', 'CRM', 'ADBE', 'INTC', 'QCOM', 'IBM',
-    'JPM', 'V', 'MA', 'BRK.B', 'JNJ', 'UNH', 'XOM', 'CVX',
-    'WMT', 'COST', 'KO', 'PEP', 'DIS', 'NKE', 'MCD', 'BA',
-    'CAT', 'GE', 'PLTR',
+    "AAPL",
+    "MSFT",
+    "GOOGL",
+    "AMZN",
+    "NVDA",
+    "META",
+    "TSLA",
+    "NFLX",
+    "AMD",
+    "AVGO",
+    "ORCL",
+    "CRM",
+    "ADBE",
+    "INTC",
+    "QCOM",
+    "IBM",
+    "JPM",
+    "V",
+    "MA",
+    "BRK.B",
+    "JNJ",
+    "UNH",
+    "XOM",
+    "CVX",
+    "WMT",
+    "COST",
+    "KO",
+    "PEP",
+    "DIS",
+    "NKE",
+    "MCD",
+    "BA",
+    "CAT",
+    "GE",
+    "PLTR",
   ];
 
   const addPopularTicker = (ticker: string) => {
@@ -125,37 +155,6 @@ export const TickerInput: React.FC<TickerInputProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="api-key-field">
-        <Label htmlFor="tavily-api-key" className="flex items-center gap-2 text-sm font-medium">
-          <KeyRound className="h-4 w-4" />
-          Tavily API key <span className="api-key-required">Required</span>
-        </Label>
-        <div className="api-key-input-wrap">
-          <Input
-            id="tavily-api-key"
-            type={showTavilyApiKey ? 'text' : 'password'}
-            value={tavilyApiKey}
-            onChange={(event) => setTavilyApiKey(event.target.value)}
-            placeholder="tvly-..."
-            autoComplete="off"
-            spellCheck={false}
-            required
-            aria-required="true"
-            disabled={isGenerating}
-          />
-          <button
-            type="button"
-            className="api-key-visibility"
-            onClick={() => setShowTavilyApiKey((shown) => !shown)}
-            aria-label={showTavilyApiKey ? 'Hide Tavily API key' : 'Show Tavily API key'}
-            disabled={isGenerating}
-          >
-            {showTavilyApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
-        </div>
-        <p>Required to run research. Used only for this request and never saved by this app.</p>
-      </div>
-
       {/* Input Section */}
       <div className="flex gap-2">
         <Input
@@ -166,8 +165,8 @@ export const TickerInput: React.FC<TickerInputProps> = ({
           className="flex-1 text-lg"
           disabled={isGenerating}
         />
-        <Button 
-          onClick={addTicker} 
+        <Button
+          onClick={addTicker}
           variant="outline"
           disabled={!inputValue.trim() || isGenerating}
           className="rounded-xl border-[color:var(--tavily-line)] bg-[#fffcf699] hover:bg-[#ede6db]"
@@ -178,7 +177,9 @@ export const TickerInput: React.FC<TickerInputProps> = ({
 
       {/* Popular Tickers */}
       <div>
-        <p className="mb-3 text-center text-sm text-[color:var(--tavily-ink-muted)]">Explore popular stocks</p>
+        <p className="mb-3 text-center text-sm text-[color:var(--tavily-ink-muted)]">
+          Explore popular stocks
+        </p>
         <div className="ticker-cloud">
           {popularTickers.map((ticker) => (
             <Button
@@ -198,9 +199,7 @@ export const TickerInput: React.FC<TickerInputProps> = ({
       {/* Selected Tickers */}
       {tickers.length > 0 && (
         <div>
-          <p className="text-sm text-gray-600 mb-2">
-            Selected tickers ({tickers.length}/5):
-          </p>
+          <p className="text-sm text-gray-600 mb-2">Selected tickers ({tickers.length}/5):</p>
           <div className="flex flex-wrap gap-2">
             {tickers.map((ticker) => (
               <Badge
@@ -229,36 +228,40 @@ export const TickerInput: React.FC<TickerInputProps> = ({
             Research Model
           </Label>
           <p className="text-xs text-gray-500">
-            {researchModel === 'pro' ? 'Pro: Deeper analysis, slower' : 'Mini: Fast analysis'}
+            {researchModel === "pro" ? "Pro: Deeper analysis, slower" : "Mini: Fast analysis"}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className={`text-xs ${researchModel === 'mini' ? 'font-medium' : 'text-gray-400'}`}>Mini</span>
+          <span className={`text-xs ${researchModel === "mini" ? "font-medium" : "text-gray-400"}`}>
+            Mini
+          </span>
           <Switch
             id="research-model"
-            checked={researchModel === 'pro'}
-            onCheckedChange={(checked) => setResearchModel(checked ? 'pro' : 'mini')}
+            checked={researchModel === "pro"}
+            onCheckedChange={(checked) => setResearchModel(checked ? "pro" : "mini")}
             disabled={isGenerating}
           />
-          <span className={`text-xs ${researchModel === 'pro' ? 'font-medium' : 'text-gray-400'}`}>Pro</span>
+          <span className={`text-xs ${researchModel === "pro" ? "font-medium" : "text-gray-400"}`}>
+            Pro
+          </span>
         </div>
       </div>
 
       {/* Generate Button */}
       <Button
-        onClick={() => onGenerateReport(researchModel, tavilyApiKey.trim())}
-        disabled={tickers.length === 0 || !tavilyApiKey.trim() || isGenerating}
-        className="research-submit h-12 w-full text-base"
+        onClick={() => onGenerateReport(researchModel)}
+        disabled={tickers.length === 0 || isGenerating}
+        className="research-submit h-12 w-full text-base [&_svg]:size-5"
       >
         {isGenerating ? (
           <>
-            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+            <Loader2 className="animate-spin" />
             {generationStatus || loadingMessages[loadingStep]}
           </>
         ) : (
           <>
-            <TrendingUp className="mr-2 h-5 w-5" />
-            Get Daily Digest ({tickers.length} {tickers.length === 1 ? 'ticker' : 'tickers'})
+            <TrendingUp />
+            {`Get Daily Digest (${tickers.length} ${tickers.length === 1 ? "ticker" : "tickers"})`}
           </>
         )}
       </Button>

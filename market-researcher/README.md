@@ -1,130 +1,143 @@
 # Stock Portfolio Researcher
 
-Research a small portfolio of stocks with Tavily, then review a grounded daily digest with financial metrics, key risks, price outlooks, and linked sources.
+An agentic research tool that turns a small stock portfolio into a sourced daily digest. The FastAPI backend runs Tavily Research per ticker and OpenAI metric extraction; the React interface streams live progress and lets you export the finished report as a PDF.
 
 ![Stock Portfolio Researcher interface](UI/public/portfolio-researcher.png)
+
+Live research uses `TAVILY_API_KEY` and `OPENAI_API_KEY` on the server. The browser never sees or sends a key.
 
 ## What it does
 
 - Research up to five tickers at a time from a curated picker or a custom symbol.
 - Stream live Tavily Research activity to the interface, including planning, searches, and report generation.
 - Produce structured per-stock reports: current performance, key insights, risk assessment, recommendation, and price outlook.
-- Enrich reports with finance-oriented search results and OpenAI structured extraction for metrics such as current price, CAGR, Sharpe ratio, drawdown, and two-year highs/lows.
+- Enrich reports with finance-oriented Search results and OpenAI structured extraction for metrics such as current price, CAGR, Sharpe ratio, drawdown, and two-year highs/lows.
 - Show source links, company icons, and export the completed digest as a PDF.
 
-## Requirements
+## Architecture
 
-- Python 3.9+
-- Node.js 20+
-- A [Tavily API key](https://app.tavily.com/home)
-- An OpenAI API key
+```text
+React form → POST /api/stock-digest/stream → Tavily Research (up to 5 tickers)
+           ← real SSE events  ← Tavily Search + OpenAI metric extraction
+```
 
-## Quick start
+The backend starts up to five Tavily Research streams concurrently, forwards their interleaved planning/search/report events to the browser, and sends the completed structured digest as the final event.
 
-1. Create a root `.env` file from the sample.
+Tavily Research receives a JSON schema generated from the `StockReport` Pydantic model. The current streaming event flow follows Tavily's [Research streaming documentation](https://docs.tavily.com/documentation/api-reference/endpoint/research-streaming).
 
-   ```bash
-   cp .env-sample .env
-   ```
+The UI connects to the API with `VITE_API_URL`. Stopping a run aborts the in-flight request.
 
-2. Add the OpenAI key required by the backend for metrics extraction.
+## Prerequisites
 
-   ```dotenv
-   OPENAI_API_KEY=sk-...
-   ```
+- [uv](https://docs.astral.sh/uv/) (Python 3.11 or later)
+- Node.js 18 or later
+- Tavily and OpenAI API keys on the backend
 
-   The live UI requires each user to enter their Tavily API key before starting research. The key is sent only with that request and is not saved by the app.
+## Run locally
 
-3. Start the backend.
+1. Install backend dependencies:
 
    ```bash
-   cd backend
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   uvicorn app:app --reload --host 127.0.0.1 --port 8080
+   uv sync
    ```
 
-4. In a second terminal, start the frontend.
+2. Create `.env` from the example and set the required backend keys:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   ```env
+   TAVILY_API_KEY=your_tavily_key
+   OPENAI_API_KEY=your_openai_key
+   ```
+
+3. Configure the frontend:
+
+   ```bash
+   cp UI/.env.development.example UI/.env.development.local
+   cd UI && npm ci && cd ..
+   ```
+
+   Set `VITE_API_URL=http://localhost:8080` in `UI/.env.development.local`.
+
+4. Start the API in one terminal:
+
+   ```bash
+   uv run uvicorn application:app --reload --port 8080
+   ```
+
+5. Start the UI in a second terminal:
 
    ```bash
    cd UI
-   npm install
    npm run dev
    ```
 
-5. Open [http://127.0.0.1:3000](http://127.0.0.1:3000).
+Open [http://localhost:3000](http://localhost:3000). The API is available at [http://localhost:8080/docs](http://localhost:8080/docs).
 
-The frontend targets `http://127.0.0.1:8080` by default. To use another backend, create `UI/.env` with:
+From `UI/`, `npm run lint` and `npm run fmt:check` run oxlint and oxfmt.
 
-```dotenv
-VITE_BACKEND_URL=http://your-host:8080
+## Docker
+
+After creating the root `.env` and `UI/.env.development.local` files, run:
+
+```bash
+docker compose up --build
 ```
 
-## How research works
-
-The primary UI workflow uses `POST /api/stock-digest/stream`, an SSE endpoint. The backend starts up to five Tavily Research streams concurrently, forwards their interleaved planning/search/report events to the browser, and sends the completed structured digest as the final event.
-
-```text
-Browser
-  │ POST /api/stock-digest/stream
-  ▼
-FastAPI SSE endpoint
-  ├── Tavily Research stream ──► live progress events
-  ├── Tavily finance search
-  └── OpenAI structured metric extraction
-  ▼
-Completed portfolio digest + source links
-```
-
-Tavily Research receives a JSON schema generated from the `StockReport` Pydantic model. This keeps the report fields consistent while grounding the research in sourced web results. The current streaming event flow follows Tavily's [Research streaming documentation](https://docs.tavily.com/documentation/api-reference/endpoint/research-streaming).
+This exposes the API on port `8080` and the UI on port `3000`.
 
 ## API
 
-### `POST /api/stock-digest/stream`
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` | `/health` | Readiness and whether server keys are configured, never the keys themselves. |
+| `POST` | `/api/stock-digest/stream` | Run research and stream SSE events on the same response. |
+| `POST` | `/api/stock-digest` | Non-streaming JSON digest for direct API consumers. |
 
-Primary endpoint used by the UI. Responds as `text/event-stream`.
+Example request:
 
-```json
-{
-  "tickers": ["AAPL", "MSFT"],
-  "research_model": "mini"
-}
+```bash
+curl -N -X POST http://localhost:8080/api/stock-digest/stream \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "tickers": ["AAPL", "MSFT"],
+    "research_model": "mini"
+  }'
 ```
 
-The stream emits `progress`, `complete`, and `error` events. The `complete` event contains the digest payload.
+`POST /api/stock-digest/stream` returns `text/event-stream` with named `progress`, `complete`, and `error` events. Missing keys and invalid input return JSON errors before opening a stream. Stopping a search aborts in-flight work, although work already accepted by Tavily or OpenAI may still consume credits.
 
-### `POST /api/stock-digest`
+Research can take a few minutes, particularly when using the `pro` model. Financial information is generated from live web research and should be independently verified before making investment decisions.
 
-Non-streaming endpoint retained for direct API consumers. It runs the LangGraph workflow and returns the completed digest as JSON.
+## Configuration reference
 
-### `GET /`
+| Variable | Required | Used by |
+| --- | --- | --- |
+| `TAVILY_API_KEY` | Yes | Backend Research and Search |
+| `OPENAI_API_KEY` | Yes | Backend metric extraction |
+| `VITE_API_URL` | Yes | Frontend API connection |
 
-Health check. Returns:
+## Make it yours
 
-```json
-{ "message": "Alive" }
+This folder is a complete app. Copy it, then change:
+
+- `UI/src/components/TickerInput.tsx` — ticker picker and research model toggle
+- `backend/prompts.py` — research and metric-extraction prompts
+- `backend/models.py` — report schema sent to Tavily Research
+- `backend/agent.py` — Tavily Research, Search, and OpenAI assembly
+- `application.py` — HTTP API and SSE streaming
+- `UI/src/` — UI
+
+No other kit is required:
+
+```bash
+npx degit tavily-ai/tavily-industry-demos/market-researcher my-demo
 ```
 
-## Project structure
+Included brand assets and Suisse fonts do not grant a separate trademark or font redistribution license.
 
-```text
-market-researcher/
-├── backend/
-│   ├── app.py          # FastAPI and SSE endpoints
-│   ├── agent.py        # Tavily, OpenAI, LangGraph, and streaming logic
-│   ├── models.py       # Pydantic output models and Tavily schema
-│   ├── prompts.py      # Research and metric-extraction prompts
-│   └── requirements.txt
-├── UI/
-│   ├── public/         # Tavily visual assets and README screenshot
-│   └── src/            # React interface and PDF export utility
-├── .env-sample
-└── README.md
-```
+## License
 
-## Notes
-
-- Research can take a few minutes, particularly when using the `pro` model.
-- Financial information is generated from live web research and should be independently verified before making investment decisions.
-- API usage can incur charges from Tavily and OpenAI.
+[MIT](LICENSE)

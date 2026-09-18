@@ -23,12 +23,12 @@ export interface TavilyStockMetrics {
 export interface StockReport {
   ticker: string;
   company_name: string;
-  summary: string;  // Step 1 from prompt: summary of most important insights
-  current_performance: string;  // Step 2 from prompt
-  key_insights: string[];  // Step 3 from prompt
-  recommendation: string;  // Step 4 from prompt
-  risk_assessment: string;  // Step 5 from prompt
-  price_outlook: string;  // Step 6 from prompt
+  summary: string; // Step 1 from prompt: summary of most important insights
+  current_performance: string; // Step 2 from prompt
+  key_insights: string[]; // Step 3 from prompt
+  recommendation: string; // Step 4 from prompt
+  risk_assessment: string; // Step 5 from prompt
+  price_outlook: string; // Step 6 from prompt
   market_cap?: number;
   pe_ratio?: number;
   sources: Source[];
@@ -61,4 +61,4 @@ export interface StockDigestResponse {
 
 export interface StockDigestRequest {
   tickers: string[];
-} 
+}
