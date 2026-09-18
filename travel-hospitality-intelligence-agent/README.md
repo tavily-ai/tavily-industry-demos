@@ -1,74 +1,146 @@
 # Travel Intelligence Agent
 
-A simple, source-backed research agent for travel and hospitality teams. Enter a destination to monitor demand signals, destination trends, events, local sentiment, and real-time disruption risks.
+An agentic research tool that turns a destination into a structured, source-backed travel intelligence brief. The FastAPI backend coordinates specialized research and synthesis steps; the React interface streams progress and lets you export the finished report as a PDF.
 
-![Travel Intelligence Agent showing Chicago as the destination, Family travel as the focus, and Upcoming events and festivals as the research priority](docs/images/app-screenshot.jpg)
+![Travel Intelligence Agent landing page](static/app-screenshot.png)
 
 ## What it does
 
-- Runs four focused Tavily Search research lanes in parallel: destination demand, pricing and capacity, trends and events, and disruptions and sentiment.
-- Uses an agentic loop: an LLM creates focused queries, Tavily retrieves and scores live web sources, the agent curates and extracts the strongest sources, then compiles a travel intelligence brief.
-- Streams progress to the browser and exports the finished brief as a PDF.
-- Supports a per-session Tavily API key and optional MongoDB persistence.
+- Researches destination demand, pricing and capacity, trends and events, and disruptions and sentiment.
+- Uses Tavily Search and Extract to find, score, and enrich source material.
+- Synthesizes category briefings and the final report with OpenAI.
+- Streams real completion events to the browser on `POST /research`.
+- Supports PDF export.
+
+Live research uses `TAVILY_API_KEY` and `OPENAI_API_KEY` on the server. The browser never sees or sends a key.
 
 ## Architecture
 
 ```text
-React + Vite UI
-      │  POST /research
-      ▼
-FastAPI application
-      │
-      ▼
-Travel intelligence graph
-  query agents → Tavily Search → curate → extract → brief → report
+React form → POST /research → analyzers → collector → curator → briefing → editor
+           ← real SSE events  ← Tavily Search / Extract and OpenAI
 ```
+
+Research graph:
+
+```text
+analyzers → collector → curator → briefing → editor
+      ├── Tavily Search: query discovery and source scoring
+      ├── Tavily Extract: page enrichment
+      └── OpenAI: search queries, category briefings, and final editing
+```
+
+The UI connects to the API with `VITE_API_URL`. Stopping a run aborts the in-flight request.
+
+## Prerequisites
+
+- [uv](https://docs.astral.sh/uv/) (Python 3.11 or later)
+- Node.js 18 or later
+- Tavily and OpenAI API keys on the backend
 
 ## Run locally
 
 1. Install backend dependencies:
 
    ```bash
-   uv venv .venv
-   uv pip install -r requirements.txt
+   uv sync
    ```
 
-2. Create `.env` and set the model keys:
-
-   ```env
-   OPENAI_API_KEY=your_openai_key
-   # Optional backend fallback. Visitors can also supply a session key in the UI.
-   TAVILY_API_KEY=your_tavily_key
-   # MONGODB_URI=optional_connection_string
-   ```
-
-3. Start the API:
+2. Create `.env` from the example and set the required backend keys:
 
    ```bash
-   .venv/bin/uvicorn application:app --reload --port 8000
+   cp .env.example .env
    ```
 
-4. In another terminal, start the UI:
+   ```env
+   TAVILY_API_KEY=your_tavily_key
+   OPENAI_API_KEY=your_openai_key
+   ```
+
+3. Configure the frontend:
+
+   ```bash
+   cp ui/.env.development.example ui/.env.development.local
+   cd ui && npm ci && cd ..
+   ```
+
+   Set `VITE_API_URL=http://localhost:8000` in `ui/.env.development.local`.
+
+4. Start the API in one terminal:
+
+   ```bash
+   uv run uvicorn application:app --reload --port 8000
+   ```
+
+5. Start the UI in a second terminal:
 
    ```bash
    cd ui
-   npm install
    npm run dev
    ```
 
-Open [http://localhost:5174](http://localhost:5174).
+Open [http://localhost:5174](http://localhost:5174). The API is available at [http://localhost:8000/docs](http://localhost:8000/docs).
+
+From `ui/`, `npm run lint` and `npm run fmt:check` run oxlint and oxfmt.
+
+## Docker
+
+After creating the root `.env` and `ui/.env.development.local` files, run:
+
+```bash
+docker compose up --build
+```
+
+This exposes the API on port `8000` and the UI on port `5174`.
 
 ## API
 
-`POST /research`
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` | `/health` | Readiness and whether server keys are configured, never the keys themselves. |
+| `POST` | `/research` | Run research and stream SSE events on the same response. |
+| `POST` | `/generate-pdf` | Generate a PDF from report Markdown. |
 
-```json
-{
-  "destination": "Kyoto, Japan",
-  "travel_segment": "Boutique hotels and guided tours",
-  "source_market": "North America",
-  "tavily_api_key": "tvly-..."
-}
+Example request:
+
+```bash
+curl -N -X POST http://localhost:8000/research \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "destination": "Kyoto, Japan",
+    "travel_segment": "Boutique hotels and guided tours",
+    "research_priorities": "Upcoming events and festivals"
+  }'
 ```
 
-The response returns a job ID. Connect to `GET /research/{job_id}/stream` for live progress and the completed report.
+`POST /research` returns `text/event-stream` with JSON `data:` frames, including `query_generated`, `search_result`, `curation`, `enrichment`, `briefing_complete`, `report_chunk`, `complete`, and `error`. Missing keys and invalid input return JSON errors before opening a stream. Stopping a search aborts in-flight work, although work already accepted by Tavily or OpenAI may still consume credits.
+
+## Configuration reference
+
+| Variable | Required | Used by |
+| --- | --- | --- |
+| `TAVILY_API_KEY` | Yes | Backend Search and Extract |
+| `OPENAI_API_KEY` | Yes | Backend query generation, briefing, and report editing |
+| `VITE_API_URL` | Yes | Frontend API connection |
+
+## Make it yours
+
+This folder is a complete app. Copy it, then change:
+
+- `ui/src/components/ResearchForm.tsx` and `ui/src/data/cities.ts` — form fields, destinations, and example chips
+- `backend/prompts.py` — query, briefing, and editor prompts
+- `backend/nodes/` — Tavily Search, Extract, and report assembly
+- `application.py` — HTTP API and SSE streaming
+- `ui/src/` — UI
+
+No other kit is required:
+
+```bash
+npx degit tavily-ai/tavily-industry-demos/travel-hospitality-intelligence-agent my-demo
+```
+
+Included brand assets and Suisse fonts do not grant a separate trademark or font redistribution license.
+
+## License
+
+[MIT](LICENSE)

@@ -1,6 +1,6 @@
-import { ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
-import type { EnrichmentCounts } from '../types';
-import { glassStyle } from '../styles';
+import { ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import type { EnrichmentCounts, LaneKey } from "../types";
+import { glassStyle } from "../styles";
 
 interface CurationExtractionProps {
   enrichmentCounts: EnrichmentCounts | undefined;
@@ -10,66 +10,60 @@ interface CurationExtractionProps {
   loaderColor: string;
 }
 
+const LANES: Array<[LaneKey, string]> = [
+  ["destination", "Destination demand"],
+  ["trends", "Trends and events"],
+  ["pricing", "Pricing and demand"],
+  ["disruptions", "Disruptions and sentiment"],
+];
+
 const CurationExtraction = ({
   enrichmentCounts,
   isExpanded,
   onToggleExpand,
   isResetting,
-  loaderColor
+  loaderColor,
 }: CurationExtractionProps) => {
-  const categories = [
-    ['company', 'Demand'],
-    ['industry', 'Events'],
-    ['financial', 'Pricing'],
-    ['news', 'Disruptions'],
-  ] as const;
   return (
-    <div 
+    <div
       className={`${glassStyle.card} transition-all duration-300 ease-in-out ${
-        isResetting ? 'opacity-0 transform -translate-y-4' : 'opacity-100 transform translate-y-0'
+        isResetting ? "opacity-0 transform -translate-y-4" : "opacity-100 transform translate-y-0"
       }`}
     >
-      <div 
-        className="flex items-center justify-between cursor-pointer"
-        onClick={onToggleExpand}
-      >
-        <h2 className="text-xl font-semibold text-gray-900">
-          Source curation and extraction
-        </h2>
+      <div className="flex items-center justify-between cursor-pointer" onClick={onToggleExpand}>
+        <h2 className="text-xl font-semibold text-gray-900">Curation and Extraction</h2>
         <button className="text-gray-600 hover:text-gray-900 transition-colors">
-          {isExpanded ? (
-            <ChevronUp className="h-6 w-6" />
-          ) : (
-            <ChevronDown className="h-6 w-6" />
-          )}
+          {isExpanded ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
         </button>
       </div>
 
-      <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
-        isExpanded ? 'mt-4 max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
-      }`}>
+      <div
+        className={`overflow-hidden transition-all duration-500 ease-in-out ${
+          isExpanded ? "mt-4 max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {categories.map(([category, label]) => {
-            const counts = enrichmentCounts?.[category as keyof EnrichmentCounts];
+          {LANES.map(([category, label]) => {
+            const counts = enrichmentCounts?.[category];
             return (
-              <div key={category} className="backdrop-blur-2xl bg-white/95 border border-gray-200/50 rounded-xl p-3 shadow-none">
+              <div
+                key={category}
+                className="backdrop-blur-2xl bg-white/95 border border-gray-200/50 rounded-xl p-3 shadow-none"
+              >
                 <h3 className="text-sm font-medium text-gray-700 mb-2">{label}</h3>
                 <div className="text-gray-900">
                   <div className="text-2xl font-bold mb-1">
                     {counts ? (
-                      <span className="text-[#2677FF]">
-                        {counts.enriched}
-                      </span>
+                      <span className="text-[#2677FF]">{counts.enriched}</span>
                     ) : (
-                      <Loader2 className="animate-spin h-6 w-6 mx-auto loader-icon" style={{ stroke: loaderColor }} />
+                      <Loader2
+                        className="animate-spin h-6 w-6 mx-auto loader-icon"
+                        style={{ stroke: loaderColor }}
+                      />
                     )}
                   </div>
                   <div className="text-sm text-gray-600">
-                    {counts ? (
-                      `selected from ${counts.total}`
-                    ) : (
-                      "waiting..."
-                    )}
+                    {counts ? `selected from ${counts.total}` : "waiting..."}
                   </div>
                 </div>
               </div>
@@ -80,7 +74,9 @@ const CurationExtraction = ({
 
       {!isExpanded && enrichmentCounts && (
         <div className="mt-2 text-sm text-gray-600">
-          {Object.values(enrichmentCounts).reduce((acc, curr) => acc + curr.enriched, 0)} documents enriched from {Object.values(enrichmentCounts).reduce((acc, curr) => acc + curr.total, 0)} total
+          {Object.values(enrichmentCounts).reduce((acc, curr) => acc + curr.enriched, 0)} documents
+          enriched from {Object.values(enrichmentCounts).reduce((acc, curr) => acc + curr.total, 0)}{" "}
+          total
         </div>
       )}
     </div>

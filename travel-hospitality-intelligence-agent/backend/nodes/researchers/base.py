@@ -6,10 +6,10 @@ from typing import Any, Dict, List
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
-from tavily import AsyncTavilyClient
 
 from ...classes import ResearchState
-from ...classes.state import job_status
+from ...classes.state import emit_event
+from ...tavily import async_tavily_client
 from ...utils.references import clean_title
 from ...prompts import QUERY_FORMAT_GUIDELINES
 
@@ -19,13 +19,13 @@ class BaseResearcher:
     def __init__(self, tavily_api_key: str | None = None):
         tavily_key = tavily_api_key or os.getenv("TAVILY_API_KEY")
         openai_key = os.getenv("OPENAI_API_KEY")
-        
+
         if not tavily_key or not openai_key:
             raise ValueError("Missing API keys")
-            
-        self.tavily_client = AsyncTavilyClient(api_key=tavily_key)
+
+        self.tavily_client = async_tavily_client(tavily_key)
         self.llm = ChatOpenAI(
-            model="gpt-5.1",
+            model="gpt-5.6-luna",
             temperature=0,
             streaming=True,
             api_key=openai_key
@@ -43,74 +43,57 @@ class BaseResearcher:
         self._analyst_type = value
 
     async def generate_queries(self, state: Dict, prompt: str):
-        """Generate search queries and yield events as they're created"""
-        company = state.get("company", "Unknown Company")
-        industry = state.get("industry", "Unknown Industry")
-        research_priorities = state.get("research_priorities", "Unknown")
+        destination = state.get("destination", "Unknown destination")
+        travel_segment = state.get("travel_segment") or "not specified"
+        research_priorities = state.get("research_priorities") or "not specified"
         current_year = datetime.now().year
         job_id = state.get("job_id")
-        
+
         logger.info(f"=== GENERATE_QUERIES START: job_id={job_id}, analyst={self.analyst_type} ===")
         if not job_id:
             logger.warning(f"⚠️ NO JOB_ID in state! Keys: {list(state.keys())}")
-        
+
         try:
-            logger.info(f"Generating queries for {company} as {self.analyst_type}, job_id={job_id}")
-            
-            # Create prompt template using LangChain
+            logger.info(f"Generating queries for {destination} as {self.analyst_type}, job_id={job_id}")
+
             query_prompt = ChatPromptTemplate.from_messages([
-                ("system", "You are researching the travel destination {company}. The operator's travel segment is {industry}; the user's research priorities are {research_priorities}."),
-                ("user", """Researching {company} in {year}, as of {date}.
+                ("system", "You are researching {destination} as a travel destination. Travel focus: {travel_segment}. Research priorities: {research_priorities}."),
+                ("user", """Researching {destination} in {year}, as of {date}.
 {task_prompt}
 {format_guidelines}""")
             ])
-            
-            # Create LCEL chain
+
             chain = query_prompt | self.llm
-            
+
             queries = []
             current_query = ""
             current_query_number = 1
 
-            # Stream queries using LangChain's astream
             async for chunk in chain.astream({
-                "company": company,
-                "industry": industry,
+                "destination": destination,
+                "travel_segment": travel_segment,
                 "research_priorities": research_priorities,
                 "year": current_year,
                 "date": datetime.now().strftime("%B %d, %Y"),
                 "task_prompt": prompt,
-                "format_guidelines": QUERY_FORMAT_GUIDELINES.format(company=company)
+                "format_guidelines": QUERY_FORMAT_GUIDELINES.format(destination=destination)
             }):
                 current_query += chunk.content
-                
-                # Yield query generation progress
+
                 event = {
                     "type": "query_generating",
                     "query": current_query,
                     "query_number": current_query_number,
                     "category": self.analyst_type
                 }
-                
-                # Update job status if job_id provided
-                if job_id:
-                    try:
-                        logger.info(f"job_id={job_id}, job_id in job_status={job_id in job_status}")
-                        if job_id in job_status:
-                            job_status[job_id]["events"].append(event)
 
-                        else:
-                            logger.warning(f"job_id {job_id} not found in job_status. Available keys: {list(job_status.keys())[:3]}")
-                    except Exception as e:
-                        logger.error(f"Error appending event: {e}")
-                
+                emit_event(job_id, event)
                 yield event
-                
-                # Parse completed queries on newline
+
                 if '\n' in current_query:
                     parts = current_query.split('\n')
                     current_query = parts[-1]
-                    
+
                     for query in parts[:-1]:
                         query = query.strip()
                         if query:
@@ -121,123 +104,146 @@ class BaseResearcher:
                                 "query_number": len(queries),
                                 "category": self.analyst_type
                             }
-                            
-                            # Update job status if job_id provided
-                            if job_id:
-                                try:
-                                    if job_id in job_status:
-                                        job_status[job_id]["events"].append(event)
-                                    else:
-                                        logger.warning(f"job_id {job_id} not found in job_status for query_generated")
-                                except Exception as e:
-                                    logger.error(f"Error appending query_generated event: {e}")
-                            
+
+                            emit_event(job_id, event)
                             yield event
                             current_query_number += 1
 
-            # Add remaining query
             if current_query.strip():
                 queries.append(current_query.strip())
-                yield {
+                event = {
                     "type": "query_generated",
                     "query": current_query.strip(),
                     "query_number": len(queries),
                     "category": self.analyst_type
                 }
-            
-            if not queries:
-                raise ValueError(f"No queries generated for {company}")
+                emit_event(job_id, event)
+                yield event
 
-            queries = queries[:2]  # Fast mode: two focused queries per analyst
+            if not queries:
+                raise ValueError(f"No queries generated for {destination}")
+
+            queries = queries[:2]
             logger.info(f"Final queries for {self.analyst_type}: {queries}")
-            
+
             yield {"type": "queries_complete", "queries": queries, "count": len(queries)}
-            
+
         except Exception as e:
-            logger.error(f"Error generating queries for {company}: {e}")
+            logger.error(f"Error generating queries for {destination}: {e}")
             raise RuntimeError(f"Fatal API error - query generation failed: {str(e)}") from e
 
     def _get_search_params(self) -> Dict[str, Any]:
-        """Get search parameters based on analyst type"""
         params = {
             "search_depth": "advanced",
             "include_raw_content": False,
-            "max_results": 3
+            "include_favicon": True,
+            "max_results": 3,
         }
-        
-        topic_map = {
-            "news_analyzer": "news",
-            "financial_analyzer": "finance"
-        }
-        
-        if topic := topic_map.get(self.analyst_type):
-            params["topic"] = topic
-            
+
+        if self.analyst_type == "disruptions_analyzer":
+            params["topic"] = "news"
+
         return params
-    
+
     def _process_search_result(self, result: Dict[str, Any], query: str) -> Dict[str, Any]:
-        """Process a single search result into standardized format"""
         if not result.get("content") or not result.get("url"):
             return {}
-            
+
         url = result.get("url")
         title = clean_title(result.get("title", "")) if result.get("title") else ""
-        
-        # Reset empty or invalid titles
+
         if not title or title.lower() == url.lower():
             title = ""
-        
+
         return {
             "title": title,
             "content": result.get("content", ""),
             "query": query,
             "url": url,
             "source": "web_search",
-            "score": result.get("score", 0.0)
+            "score": result.get("score", 0.0),
+            "favicon": result.get("favicon") or "",
         }
 
     async def search_documents(self, state: ResearchState, queries: List[str]):
-        """Execute all Tavily searches in parallel and yield events"""
+        job_id = state.get("job_id")
         if not queries:
             logger.error("No valid queries to search")
             yield {"type": "error", "error": "No valid queries to search"}
             return
 
-        # Yield start event
-        yield {
+        start = {
             "type": "search_started",
             "message": f"Searching {len(queries)} queries",
-            "total_queries": len(queries)
+            "total_queries": len(queries),
+            "category": self.analyst_type,
         }
+        emit_event(job_id, start)
+        yield start
 
-        # Execute all searches in parallel
         search_params = self._get_search_params()
-        search_tasks = [self.tavily_client.search(query, **search_params) for query in queries]
 
+        async def search_one(query: str):
+            try:
+                response = await self.tavily_client.search(query, **search_params)
+                return query, response, None
+            except Exception as error:
+                return query, None, error
+
+        merged_docs = {}
+        tasks = [asyncio.create_task(search_one(query)) for query in queries]
         try:
-            results = await asyncio.gather(*search_tasks, return_exceptions=True)
-        except Exception as e:
-            logger.error(f"Error during parallel search execution: {e}")
-            yield {"type": "error", "error": str(e)}
+            for finished in asyncio.as_completed(tasks):
+                query, response, error = await finished
+                if error is not None or response is None:
+                    logger.error("Search failed for query '%s': %s", query, error)
+                    event = {
+                        "type": "query_error",
+                        "query": query,
+                        "error": str(error),
+                        "category": self.analyst_type,
+                    }
+                    emit_event(job_id, event)
+                    yield event
+                    continue
+
+                for item in response.get("results", []):
+                    doc = self._process_search_result(item, query)
+                    if not doc or doc["url"] in merged_docs:
+                        continue
+                    merged_docs[doc["url"]] = doc
+                    snippet = " ".join(doc["content"].split())
+                    if len(snippet) > 220:
+                        snippet = snippet[:220].rsplit(" ", 1)[0] + "…"
+                    event = {
+                        "type": "search_result",
+                        "title": doc["title"] or doc["url"],
+                        "url": doc["url"],
+                        "favicon": doc.get("favicon") or "",
+                        "content": snippet,
+                        "query": query,
+                        "category": self.analyst_type,
+                        "score": doc["score"],
+                    }
+                    emit_event(job_id, event)
+                    yield event
+        except Exception as error:
+            logger.error("Error during parallel search execution: %s", error)
+            event = {"type": "error", "error": str(error)}
+            emit_event(job_id, event)
+            yield event
             return
 
-        # Process and merge results
-        merged_docs = {}
-        for query, result in zip(queries, results):
-            if isinstance(result, Exception):
-                logger.error(f"Search failed for query '{query}': {result}")
-                yield {"type": "query_error", "query": query, "error": str(result)}
-                continue
-                
-            for item in result.get("results", []):
-                if doc := self._process_search_result(item, query):
-                    merged_docs[doc["url"]] = doc
-
-        # Yield completion event
-        yield {
+        complete = {
             "type": "search_complete",
             "message": f"Found {len(merged_docs)} documents",
             "total_documents": len(merged_docs),
             "queries_processed": len(queries),
-            "merged_docs": merged_docs
+            "category": self.analyst_type,
+            "merged_docs": merged_docs,
         }
+        emit_event(
+            job_id,
+            {key: value for key, value in complete.items() if key != "merged_docs"},
+        )
+        yield complete

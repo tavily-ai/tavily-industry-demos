@@ -6,88 +6,98 @@ import {
   ResearchForm,
   ResearchQueries,
   CurationExtraction,
-  ResearchBriefings
-} from './components';
-import type { ResearchOutput, ResearchStatusType } from './types';
-import { glassStyle, fadeInAnimation } from './styles';
-import type { TravelResearchFormData } from './components/ResearchForm';
+  ResearchBriefings,
+  SearchResults,
+} from "./components";
+import type { LaneKey, ResearchOutput, ResearchStatusType, SearchHit } from "./types";
+import { glassStyle, fadeInAnimation } from "./styles";
+import { consumeSSE } from "./stream";
+import type { TravelResearchFormData } from "./components/ResearchForm";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-function App() {
+const emptyBriefings = {
+  destination: false,
+  trends: false,
+  pricing: false,
+  disruptions: false,
+};
 
+const SEARCH_STEPS = [
+  "grounding",
+  "destination_analyst",
+  "pricing_analyst",
+  "trends_analyst",
+  "disruptions_scanner",
+  "collector",
+];
+
+function App() {
   const [isResearching, setIsResearching] = useState(false);
   const [status, setStatus] = useState<ResearchStatusType | null>(null);
   const [output, setOutput] = useState<ResearchOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isComplete, setIsComplete] = useState(false);
-  const eventSourceRef = useRef<EventSource | null>(null);
+  const controllerRef = useRef<AbortController | null>(null);
+  const [hasTavilyKey, setHasTavilyKey] = useState<boolean | null>(null);
+  const [hasOpenAIKey, setHasOpenAIKey] = useState<boolean | null>(null);
   const [originalDestination, setOriginalDestination] = useState<string>("");
-  const [currentPhase, setCurrentPhase] = useState<'search' | 'enrichment' | 'briefing' | 'complete' | null>(null);
+  const [currentPhase, setCurrentPhase] = useState<
+    "search" | "enrichment" | "briefing" | "complete" | null
+  >(null);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const statusRef = useRef<HTMLDivElement>(null);
-  const [queries, setQueries] = useState<Array<{ text: string; number: number; category: string }>>([]);
-  const [streamingQueries, setStreamingQueries] = useState<Record<string, { text: string; number: number; category: string; isComplete: boolean }>>({});
+  const [queries, setQueries] = useState<Array<{ text: string; number: number; category: string }>>(
+    [],
+  );
+  const [streamingQueries, setStreamingQueries] = useState<
+    Record<string, { text: string; number: number; category: string; isComplete: boolean }>
+  >({});
   const [isQueriesExpanded, setIsQueriesExpanded] = useState(true);
-  const [enrichmentCounts, setEnrichmentCounts] = useState<{
-    company: { total: number; enriched: number };
-    industry: { total: number; enriched: number };
-    financial: { total: number; enriched: number };
-    news: { total: number; enriched: number };
-  } | undefined>(undefined);
-  const [briefingStatus, setBriefingStatus] = useState({
-    company: false,
-    industry: false,
-    financial: false,
-    news: false
-  });
+  const [searchHits, setSearchHits] = useState<SearchHit[]>([]);
+  const [isSearchHitsExpanded, setIsSearchHitsExpanded] = useState(true);
+  const [enrichmentCounts, setEnrichmentCounts] = useState<
+    | {
+        destination: { total: number; enriched: number };
+        trends: { total: number; enriched: number };
+        pricing: { total: number; enriched: number };
+        disruptions: { total: number; enriched: number };
+      }
+    | undefined
+  >(undefined);
+  const [briefingStatus, setBriefingStatus] = useState(emptyBriefings);
   const [isEnrichmentExpanded, setIsEnrichmentExpanded] = useState(true);
   const [isBriefingExpanded, setIsBriefingExpanded] = useState(true);
   const [hasScrolledToStatus, setHasScrolledToStatus] = useState(false);
   const [isReportStreaming, setIsReportStreaming] = useState(false);
-
-  // Add new state for color cycling
   const [loaderColor, setLoaderColor] = useState("#2677FF");
-  
-  // Scroll helper function
+
   const scrollToStatus = () => {
     if (!hasScrolledToStatus && statusRef.current) {
       const yOffset = -20;
       const y = statusRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      window.scrollTo({ top: y, behavior: "smooth" });
       setHasScrolledToStatus(true);
     }
   };
 
-  // Add useEffect for color cycling
   useEffect(() => {
     if (!isResearching) return;
-    
-    const colors = [
-      "#2677FF", // Blue
-      "#8FBCFA", // Light Blue
-      "#FE363B", // Red
-      "#FF9A9D", // Light Red
-      "#FDBB11", // Yellow
-      "#F6D785", // Light Yellow
-    ];
-    
+
+    const colors = ["#2677FF", "#8FBCFA", "#FE363B", "#FF9A9D", "#FDBB11", "#F6D785"];
     let currentIndex = 0;
-    
     const interval = setInterval(() => {
       currentIndex = (currentIndex + 1) % colors.length;
       setLoaderColor(colors[currentIndex]);
     }, 1000);
-    
+
     return () => clearInterval(interval);
   }, [isResearching]);
 
   const resetResearch = () => {
     setIsResetting(true);
-    
-    // Use setTimeout to create a smooth transition
     setTimeout(() => {
       setStatus(null);
       setOutput(null);
@@ -96,14 +106,11 @@ function App() {
       setCurrentPhase(null);
       setQueries([]);
       setStreamingQueries({});
+      setSearchHits([]);
       setEnrichmentCounts(undefined);
-      setBriefingStatus({
-        company: false,
-        industry: false,
-        financial: false,
-        news: false
-      });
+      setBriefingStatus(emptyBriefings);
       setIsQueriesExpanded(true);
+      setIsSearchHitsExpanded(true);
       setIsEnrichmentExpanded(true);
       setIsBriefingExpanded(true);
       setHasScrolledToStatus(false);
@@ -112,372 +119,335 @@ function App() {
     }, 300);
   };
 
-  // Stream research results via SSE
-  const streamResults = (jobId: string) => {
-    const eventSource = new EventSource(`${API_URL}/research/${jobId}/stream`);
-    eventSourceRef.current = eventSource;
+  const applyEvent = (data: Record<string, unknown>) => {
+    const getStepName = (nodeName: string): string => {
+      const stepMap: Record<string, string> = {
+        grounding: "Search",
+        destination_analyst: "Search",
+        pricing_analyst: "Search",
+        trends_analyst: "Search",
+        disruptions_scanner: "Search",
+        collector: "Search",
+        curator: "Enriching",
+        enricher: "Enriching",
+        briefing: "Briefing",
+        editor: "Finalizing",
+      };
+      return stepMap[nodeName] || nodeName;
+    };
 
-    eventSource.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        
-        // Helper function to map node names to user-friendly step names
-        const getStepName = (nodeName: string): string => {
-          const stepMap: Record<string, string> = {
-            'grounding': 'Search',
-            'financial_analyst': 'Search',
-            'news_scanner': 'Search',
-            'industry_analyst': 'Search',
-            'company_analyst': 'Search',
-            'collector': 'Search',
-            'curator': 'Enriching',
-            'enricher': 'Enriching',
-            'briefing': 'Briefing',
-            'editor': 'Finalizing'
-          };
-          return stepMap[nodeName] || nodeName;
-        };
+    if (data.type === "progress" && data.step) {
+      const step = String(data.step);
+      setStatus({
+        step: getStepName(step),
+        message: `Processing ${step}...`,
+      });
 
-        // Handle progress events from backend (node transitions)
-        if (data.type === 'progress' && data.step) {
-          const stepName = getStepName(data.step);
-          setStatus({
-            step: stepName,
-            message: `Processing ${data.step}...`
-          });
-          
-          // Update phase based on step
-          if (['grounding', 'financial_analyst', 'news_scanner', 'industry_analyst', 'company_analyst', 'collector'].includes(data.step)) {
-            setCurrentPhase('search');
-          } else if (['curator', 'enricher'].includes(data.step)) {
-            setCurrentPhase('enrichment');
-          } else if (data.step === 'briefing') {
-            setCurrentPhase('briefing');
-          }
-          
-          scrollToStatus();
-        }
-        
-        // Direct event-to-phase mapping
-        if (data.type === 'query_generating') {
-          // Show query being generated and update streaming queries
-          setCurrentPhase('search');
-          setStatus({
-            step: 'Search',
-            message: `Query ${data.query_number}: ${data.query}`
-          });
-          // Update streaming queries with current partial query
-          const key = `${data.category}_${data.query_number}`;
-          setStreamingQueries(prev => ({
-            ...prev,
-            [key]: {
-              text: data.query,
-              number: data.query_number,
-              category: data.category,
-              isComplete: false
-            }
-          }));
-        } else if (data.type === 'query_generated') {
-          // Show completed query and move to queries list
-          setCurrentPhase('search');
-          setStatus({
-            step: 'Search',
-            message: `Generated: ${data.query}`
-          });
-          // Add to completed queries
-          setQueries(prev => [...prev, {
-            text: data.query,
-            number: data.query_number,
-            category: data.category
-          }]);
-          // Remove from streaming queries
-          const key = `${data.category}_${data.query_number}`;
-          setStreamingQueries(prev => {
-            const updated = { ...prev };
-            delete updated[key];
-            return updated;
-          });
-          scrollToStatus();
-        } else if (data.type === 'research_init') {
-          // Show research initialization
-          setCurrentPhase('search');
-          setStatus({
-            step: 'Initializing',
-            message: data.message || `Initiating destination research for ${data.destination || 'your destination'}`
-          });
-        } else if (data.type === 'crawl_start') {
-          // Show website crawl starting
-          setCurrentPhase('search');
-          setStatus({
-            step: 'Website Crawl',
-            message: data.message || 'Crawling company website'
-          });
-        } else if (data.type === 'curation') {
-          // Show curation progress - transition to enrichment phase
-          setCurrentPhase('enrichment');
-          setStatus({
-            step: 'Curating data',
-            message: data.message || `Curating ${data.category} documents`
-          });
-          // Initialize enrichment counts when curation starts for a category
-          if (data.category) {
-            setEnrichmentCounts(prev => ({
-              ...prev,
-              [data.category]: {
-                total: data.total || 0,
-                enriched: 0
-              }
-            } as typeof enrichmentCounts));
-          }
-          // Collapse queries section when moving to enrichment
-          setTimeout(() => {
-            setIsQueriesExpanded(false);
-          }, 1000);
-          scrollToStatus();
-        } else if (data.type === 'enrichment') {
-          // Show enrichment progress
-          setCurrentPhase('enrichment');
-          setStatus({
-            step: 'Enriching',
-            message: data.message || 'Enriching documents with additional content'
-          });
-          // Update enriched count if provided
-          if (data.category && data.enriched !== undefined) {
-            const category = data.category as 'company' | 'industry' | 'financial' | 'news';
-            setEnrichmentCounts(prev => {
-              if (!prev) return prev;
-              return {
-                ...prev,
-                [category]: {
-                  total: prev[category]?.total || data.total || 0,
-                  enriched: data.enriched
-                }
-              } as typeof enrichmentCounts;
-            });
-          }
-        } else if (data.type === 'briefing_start') {
-          // Show briefing generation starting
-          setCurrentPhase('briefing');
-          setStatus({
-            step: 'Generating briefings',
-            message: `Creating ${data.category} briefing from ${data.total_docs} documents`
-          });
-          // Collapse enrichment section when moving to briefing
-          setTimeout(() => {
-            setIsEnrichmentExpanded(false);
-          }, 1000);
-          scrollToStatus();
-        } else if (data.type === 'briefing_complete') {
-          // Show briefing completion and mark category as complete
-          setCurrentPhase('briefing');
-          setStatus({
-            step: 'Briefing complete',
-            message: `${data.category} briefing generated (${data.content_length} characters)`
-          });
-          // Mark briefing as complete for this category
-          if (data.category) {
-            setBriefingStatus(prev => {
-              const newBriefingStatus = {
-                ...prev,
-                [data.category]: true
-              };
-              
-              // Check if all briefings are complete
-              const allBriefingsComplete = Object.values(newBriefingStatus).every(status => status);
-              
-              // Collapse briefing section when all briefings are complete
-              if (allBriefingsComplete) {
-                setTimeout(() => {
-                  setIsBriefingExpanded(false);
-                }, 2000);
-              }
-              
-              return newBriefingStatus;
-            });
-          }
-        } else if (data.type === 'report_compilation') {
-          // Show report compilation
-          setCurrentPhase('briefing');
-          setStatus({
-            step: 'Finalizing report',
-            message: data.message || 'Compiling final report'
-          });
-        } else if (data.type === 'report_chunk' && data.chunk) {
-          // Stream report chunks as they arrive
-          setIsReportStreaming(true);
-          setOutput((prev) => {
-            const currentReport = prev?.details?.report || '';
-            return {
-              summary: "",
-              details: { report: currentReport + data.chunk },
-            };
-          });
-          setStatus({
-            step: 'Finalizing report',
-            message: 'Generating final report...'
-          });
-        } else if (data.type === 'complete' && data.report) {
-          setIsReportStreaming(false);
-          setOutput({
-            summary: "",
-            details: { report: data.report },
-          });
-          setStatus({ step: "Complete", message: "Research completed successfully" });
-          setIsComplete(true);
-          setIsResearching(false);
-          eventSource.close();
-        } else if (data.type === 'error') {
-          setError(data.error);
-          setIsResearching(false);
-          eventSource.close();
-        }
-      } catch (err) {
-        console.error('Error parsing SSE data:', err);
+      if (SEARCH_STEPS.includes(step)) {
+        setCurrentPhase("search");
+      } else if (["curator", "enricher"].includes(step)) {
+        setCurrentPhase("enrichment");
+      } else if (step === "briefing") {
+        setCurrentPhase("briefing");
       }
-    };
 
-    eventSource.onerror = () => {
-      setError('Connection lost or server error');
+      scrollToStatus();
+    }
+
+    if (data.type === "query_generating") {
+      setCurrentPhase("search");
+      setStatus({
+        step: "Search",
+        message: `Query ${data.query_number}: ${data.query}`,
+      });
+      const key = `${data.category}_${data.query_number}`;
+      setStreamingQueries((prev) => ({
+        ...prev,
+        [key]: {
+          text: String(data.query || ""),
+          number: Number(data.query_number || 0),
+          category: String(data.category || ""),
+          isComplete: false,
+        },
+      }));
+    } else if (data.type === "query_generated") {
+      setCurrentPhase("search");
+      setStatus({
+        step: "Search",
+        message: `Generated: ${data.query}`,
+      });
+      setQueries((prev) => [
+        ...prev,
+        {
+          text: String(data.query || ""),
+          number: Number(data.query_number || 0),
+          category: String(data.category || ""),
+        },
+      ]);
+      const key = `${data.category}_${data.query_number}`;
+      setStreamingQueries((prev) => {
+        const updated = { ...prev };
+        delete updated[key];
+        return updated;
+      });
+      scrollToStatus();
+    } else if (data.type === "search_started") {
+      setCurrentPhase("search");
+      setStatus({
+        step: "Search",
+        message: String(data.message || "Searching the web"),
+      });
+    } else if (data.type === "search_result" && data.url) {
+      setCurrentPhase("search");
+      const url = String(data.url);
+      setStatus({
+        step: "Search",
+        message: String(data.title || url),
+      });
+      setSearchHits((prev) => {
+        if (prev.some((hit) => hit.url === url)) return prev;
+        return [
+          ...prev,
+          {
+            title: String(data.title || url),
+            url,
+            favicon: String(data.favicon || ""),
+            content: String(data.content || ""),
+            query: String(data.query || ""),
+            category: String(data.category || ""),
+          },
+        ];
+      });
+    } else if (data.type === "search_complete") {
+      setCurrentPhase("search");
+      setStatus({
+        step: "Search",
+        message: String(data.message || "Search complete"),
+      });
+    } else if (data.type === "research_init") {
+      setCurrentPhase("search");
+      setStatus({
+        step: "Initializing",
+        message: String(data.message || `Initiating research for ${data.destination}`),
+      });
+    } else if (data.type === "curation") {
+      setCurrentPhase("enrichment");
+      setStatus({
+        step: "Curating data",
+        message: String(data.message || `Curating ${data.category} documents`),
+      });
+      if (data.category) {
+        const category = String(data.category) as LaneKey;
+        setEnrichmentCounts(
+          (prev) =>
+            ({
+              ...prev,
+              [category]: {
+                total: Number(data.total || 0),
+                enriched: 0,
+              },
+            }) as typeof enrichmentCounts,
+        );
+      }
+      setTimeout(() => {
+        setIsQueriesExpanded(false);
+      }, 1000);
+      scrollToStatus();
+    } else if (data.type === "enrichment") {
+      setCurrentPhase("enrichment");
+      setStatus({
+        step: "Enriching",
+        message: String(data.message || "Enriching documents with additional content"),
+      });
+      if (data.category && data.enriched !== undefined) {
+        const category = String(data.category) as LaneKey;
+        setEnrichmentCounts((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            [category]: {
+              total: prev[category]?.total || Number(data.total || 0),
+              enriched: Number(data.enriched),
+            },
+          } as typeof enrichmentCounts;
+        });
+      }
+    } else if (data.type === "briefing_start") {
+      setCurrentPhase("briefing");
+      setStatus({
+        step: "Generating briefings",
+        message: `Creating ${data.category} briefing from ${data.total_docs} documents`,
+      });
+      setTimeout(() => {
+        setIsEnrichmentExpanded(false);
+      }, 1000);
+      scrollToStatus();
+    } else if (data.type === "briefing_complete") {
+      setCurrentPhase("briefing");
+      setStatus({
+        step: "Briefing complete",
+        message: `${data.category} briefing generated (${data.content_length} characters)`,
+      });
+      if (data.category) {
+        const category = String(data.category) as LaneKey;
+        setBriefingStatus((prev) => {
+          const newBriefingStatus = {
+            ...prev,
+            [category]: true,
+          };
+          if (Object.values(newBriefingStatus).every((value) => value)) {
+            setTimeout(() => {
+              setIsBriefingExpanded(false);
+            }, 2000);
+          }
+          return newBriefingStatus;
+        });
+      }
+    } else if (data.type === "report_compilation") {
+      setCurrentPhase("briefing");
+      setStatus({
+        step: "Finalizing report",
+        message: String(data.message || "Compiling final report"),
+      });
+    } else if (data.type === "report_chunk" && data.chunk) {
+      setIsReportStreaming(true);
+      setOutput((prev) => {
+        const currentReport = prev?.details?.report || "";
+        return {
+          summary: "",
+          details: { report: currentReport + String(data.chunk) },
+        };
+      });
+      setStatus({
+        step: "Finalizing report",
+        message: "Generating final report...",
+      });
+    } else if (data.type === "complete" && data.report) {
+      setIsReportStreaming(false);
+      setOutput({
+        summary: "",
+        details: { report: String(data.report) },
+      });
+      setStatus({ step: "Complete", message: "Research completed successfully" });
+      setIsComplete(true);
       setIsResearching(false);
-      eventSource.close();
-    };
+    }
   };
 
-  // Cleanup SSE on unmount
   useEffect(() => {
-    return () => {
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-        eventSourceRef.current = null;
-      }
-    };
+    fetch(`${API_URL}/health`)
+      .then((response) => response.json())
+      .then((data) => {
+        setHasTavilyKey(Boolean(data.hasTavilyKey));
+        setHasOpenAIKey(Boolean(data.hasOpenAIKey));
+      })
+      .catch(() => {
+        setHasTavilyKey(false);
+        setHasOpenAIKey(false);
+      });
+    return () => controllerRef.current?.abort();
   }, []);
 
-  // Create a custom handler for the form that receives form data
-  const handleFormSubmit = async (formData: TravelResearchFormData) => {
+  const liveReady = hasTavilyKey === true && hasOpenAIKey === true;
 
-    // Clear any existing errors first
+  const handleFormSubmit = async (formData: TravelResearchFormData) => {
     setError(null);
 
-    // If research is complete, reset the UI first
     if (isComplete) {
       resetResearch();
-      await new Promise(resolve => setTimeout(resolve, 300)); // Wait for reset animation
+      await new Promise((resolve) => setTimeout(resolve, 300));
     }
 
-    // Clear any existing SSE connection
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-      eventSourceRef.current = null;
-    }
+    controllerRef.current?.abort();
+    const abort = new AbortController();
+    controllerRef.current = abort;
 
     setIsResearching(true);
     setOriginalDestination(formData.destination);
     setStatus({
       step: "Processing",
-      message: "Starting research..."
+      message: "Starting research...",
     });
 
     try {
-      const url = `${API_URL}/research`;
-
-      const requestData = {
-        destination: formData.destination,
-        travel_segment: formData.travelSegment || undefined,
-        research_priorities: formData.researchPriorities || undefined,
-        tavily_api_key: formData.tavilyApiKey.trim(),
-      };
-
-      const response = await fetch(url, {
+      const response = await fetch(`${API_URL}/research`, {
         method: "POST",
         mode: "cors",
         credentials: "omit",
         headers: {
-          Accept: "application/json",
+          Accept: "text/event-stream",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestData),
+        body: JSON.stringify({
+          destination: formData.destination,
+          travel_segment: formData.travelSegment || undefined,
+          research_priorities: formData.researchPriorities || undefined,
+        }),
+        signal: abort.signal,
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.job_id) {
-        streamResults(data.job_id);
-      } else {
-        throw new Error("No job ID received");
-      }
+      await consumeSSE(response, applyEvent);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to start research");
+      if (err instanceof Error && err.name === "AbortError") {
+        setError("Research stopped. Completed results remain below.");
+      } else {
+        setError(err instanceof Error ? err.message : "Failed to start research");
+      }
+    } finally {
       setIsResearching(false);
+      controllerRef.current = null;
     }
   };
 
-  // Add new function to handle PDF generation
   const handleGeneratePdf = async () => {
     if (!output || isGeneratingPdf) return;
-    
+
     setIsGeneratingPdf(true);
     try {
       const response = await fetch(`${API_URL}/generate-pdf`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           report_content: output.details.report,
-          company_name: originalDestination || output.details.report
+          company_name: originalDestination || output.details.report,
         }),
       });
-      
+
       if (!response.ok) {
-        throw new Error('Failed to generate PDF');
+        throw new Error("Failed to generate PDF");
       }
-      
-      // Get the blob from the response
+
       const blob = await response.blob();
-      
-      // Create a URL for the blob
       const url = window.URL.createObjectURL(blob);
-      
-      // Create a temporary link element
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = `${originalDestination || 'travel_intelligence_brief'}.pdf`;
-      
-      // Append to body, click, and remove
+      link.download = `${originalDestination || "travel_intelligence_brief"}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
-      // Clean up the URL
       window.URL.revokeObjectURL(url);
-      
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      setError(error instanceof Error ? error.message : 'Failed to generate PDF');
+    } catch (pdfError) {
+      console.error("Error generating PDF:", pdfError);
+      setError(pdfError instanceof Error ? pdfError.message : "Failed to generate PDF");
     } finally {
       setIsGeneratingPdf(false);
     }
   };
 
-  // Add new function to handle copying to clipboard
   const handleCopyToClipboard = async () => {
     if (!output?.details?.report) return;
-    
+
     try {
       await navigator.clipboard.writeText(output.details.report);
       setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+      setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy text: ', err);
-      setError('Failed to copy to clipboard');
+      console.error("Failed to copy text: ", err);
+      setError("Failed to copy to clipboard");
     }
   };
-
 
   return (
     <div className="app-shell">
@@ -487,27 +457,35 @@ function App() {
         <div className="landscape-fade-bottom" />
       </div>
       <div className="research-workspace">
-        {/* Header Component */}
         <Header />
 
-        {/* Form Section */}
-        <ResearchForm 
+        <ResearchForm
           onSubmit={handleFormSubmit}
+          onStop={() => controllerRef.current?.abort()}
           isResearching={isResearching}
+          liveReady={liveReady}
           glassStyle={glassStyle}
           loaderColor={loaderColor}
         />
 
-        {/* Error Message */}
+        {!liveReady && hasTavilyKey !== null && (
+          <div
+            className={`${glassStyle.card} border-[#FE363B]/30 bg-[#FE363B]/10 ${fadeInAnimation.fadeIn} font-sans`}
+          >
+            <p className="text-[#FE363B]">
+              Set TAVILY_API_KEY and OPENAI_API_KEY in the server .env to run a live search.
+            </p>
+          </div>
+        )}
+
         {error && (
-          <div 
-            className={`${glassStyle.card} border-[#FE363B]/30 bg-[#FE363B]/10 ${fadeInAnimation.fadeIn} ${isResetting ? 'opacity-0 transform -translate-y-4' : 'opacity-100 transform translate-y-0'} font-sans`}
+          <div
+            className={`${glassStyle.card} border-[#FE363B]/30 bg-[#FE363B]/10 ${fadeInAnimation.fadeIn} ${isResetting ? "opacity-0 transform -translate-y-4" : "opacity-100 transform translate-y-0"} font-sans`}
           >
             <p className="text-[#FE363B]">{error}</p>
           </div>
         )}
 
-        {/* Status Box */}
         <ResearchStatus
           status={status}
           error={error}
@@ -519,14 +497,20 @@ function App() {
           statusRef={statusRef}
         />
 
-        {/* Research Report - always at the top when available */}
+        <SearchResults
+          hits={searchHits}
+          isExpanded={isSearchHitsExpanded}
+          onToggleExpand={() => setIsSearchHitsExpanded(!isSearchHitsExpanded)}
+          isResetting={isResetting}
+        />
+
         {output && output.details && (
           <ResearchReport
             output={{
               summary: output.summary,
               details: {
-                report: output.details.report || ''
-              }
+                report: output.details.report || "",
+              },
             }}
             isResetting={isResetting}
             isStreaming={isReportStreaming}
@@ -540,8 +524,7 @@ function App() {
           />
         )}
 
-        {/* Research Briefings - show once briefing starts and keep visible */}
-        {(currentPhase === 'briefing' || currentPhase === 'complete') && (
+        {(currentPhase === "briefing" || currentPhase === "complete") && (
           <ResearchBriefings
             briefingStatus={briefingStatus}
             isExpanded={isBriefingExpanded}
@@ -550,18 +533,19 @@ function App() {
           />
         )}
 
-        {/* Curation and Extraction - show once enrichment starts and keep visible */}
-        {(currentPhase === 'enrichment' || currentPhase === 'briefing' || currentPhase === 'complete') && enrichmentCounts && (
-          <CurationExtraction
-            enrichmentCounts={enrichmentCounts}
-            isExpanded={isEnrichmentExpanded}
-            onToggleExpand={() => setIsEnrichmentExpanded(!isEnrichmentExpanded)}
-            isResetting={isResetting}
-            loaderColor={loaderColor}
-          />
-        )}
+        {(currentPhase === "enrichment" ||
+          currentPhase === "briefing" ||
+          currentPhase === "complete") &&
+          enrichmentCounts && (
+            <CurationExtraction
+              enrichmentCounts={enrichmentCounts}
+              isExpanded={isEnrichmentExpanded}
+              onToggleExpand={() => setIsEnrichmentExpanded(!isEnrichmentExpanded)}
+              isResetting={isResetting}
+              loaderColor={loaderColor}
+            />
+          )}
 
-        {/* Research Queries - always at the bottom when visible */}
         {(queries.length > 0 || Object.keys(streamingQueries).length > 0) && (
           <ResearchQueries
             queries={queries}
@@ -573,7 +557,12 @@ function App() {
           />
         )}
         <footer className="demo-footer">
-          <a className="search-api-link" href="https://docs.tavily.com/documentation/api-reference/endpoint/search" target="_blank" rel="noopener noreferrer">
+          <a
+            className="search-api-link"
+            href="https://docs.tavily.com/documentation/api-reference/endpoint/search"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Search API docs <span aria-hidden="true">↗</span>
           </a>
         </footer>

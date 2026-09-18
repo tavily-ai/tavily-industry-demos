@@ -7,28 +7,25 @@ class Collector:
     """Collects and organizes all research data before curation."""
 
     async def collect(self, state: ResearchState) -> ResearchState:
-        """Collect and verify all research data is present."""
-        company = state.get('company', 'Unknown Company')
-        msg = [f"📦 Collecting research data for {company}:"]
-        
-        # Check each type of research data
+        destination = state.get('destination', 'Unknown destination')
+        msg = [f"📦 Collecting research data for {destination}:"]
+
         research_types = {
-            'financial_data': '💰 Financial',
-            'news_data': '📰 News',
-            'industry_data': '🏭 Industry',
-            'company_data': '🏢 Company'
+            'destination_data': '📍 Destination demand',
+            'trends_data': '📅 Trends and events',
+            'pricing_data': '💰 Pricing and demand',
+            'disruptions_data': '⚠️ Disruptions and sentiment'
         }
-        
+
         for data_field, label in research_types.items():
             data = state.get(data_field, {})
             if data:
                 msg.append(f"• {label}: {len(data)} documents collected")
             else:
                 msg.append(f"• {label}: No data found")
-        
-        # Update state with collection message
+
         state.setdefault('messages', []).append(AIMessage(content="\n".join(msg)))
-        
+
         return state
 
     async def run(self, state: ResearchState) -> ResearchState:

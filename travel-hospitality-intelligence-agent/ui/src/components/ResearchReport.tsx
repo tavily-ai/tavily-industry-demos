@@ -1,8 +1,8 @@
 import ReactMarkdown from "react-markdown";
-import rehypeRaw from 'rehype-raw';
-import remarkGfm from 'remark-gfm';
-import { Check, Copy, Download, Loader2 } from 'lucide-react';
-import type { GlassStyle, AnimationStyle } from '../types';
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
+import { Check, Copy, Download, Loader2 } from "lucide-react";
+import type { GlassStyle, AnimationStyle } from "../types";
 
 interface ResearchReportProps {
   output: {
@@ -32,13 +32,13 @@ const ResearchReport = ({
   isGeneratingPdf,
   isCopied,
   onCopyToClipboard,
-  onGeneratePdf
+  onGeneratePdf,
 }: ResearchReportProps) => {
   if (!output || !output.details) return null;
 
   return (
-    <div 
-      className={`${glassStyle.card} ${fadeInAnimation.fadeIn} ${isResetting ? 'opacity-0 transform -translate-y-4' : 'opacity-100 transform translate-y-0'} font-sans`}
+    <div
+      className={`${glassStyle.card} ${fadeInAnimation.fadeIn} ${isResetting ? "opacity-0 transform -translate-y-4" : "opacity-100 transform translate-y-0"} font-sans`}
     >
       {isStreaming && (
         <div className="flex items-center gap-2 mb-4 px-4 py-2 bg-[#2677FF]/10 rounded-lg border border-[#2677FF]/20">
@@ -54,11 +54,7 @@ const ResearchReport = ({
               aria-label={isCopied ? "Report copied" : "Copy report"}
               className="report-action"
             >
-              {isCopied ? (
-                <Check className="h-5 w-5" />
-              ) : (
-                <Copy className="h-5 w-5" />
-              )}
+              {isCopied ? <Check className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
             </button>
             <button
               onClick={onGeneratePdf}
@@ -86,36 +82,42 @@ const ResearchReport = ({
             rehypePlugins={[rehypeRaw]}
             remarkPlugins={[remarkGfm]}
             components={{
-              div: ({node, ...props}) => (
+              div: ({ node: _node, ...props }) => (
                 <div className="space-y-4 text-gray-800" {...props} />
               ),
-              h1: ({node, children, ...props}) => (
-                <h1 className="font-bold text-gray-900 break-words whitespace-pre-wrap text-2xl sm:text-3xl mb-6 mt-4" {...props}>
+              h1: ({ node: _node, children, ...props }) => (
+                <h1
+                  className="font-bold text-gray-900 break-words whitespace-pre-wrap text-2xl sm:text-3xl mb-6 mt-4"
+                  {...props}
+                >
                   {children}
                 </h1>
               ),
-              h2: ({node, ...props}) => (
-                <h2 className="text-xl font-semibold text-gray-900 first:mt-2 mt-8 mb-4 pb-2 border-b border-gray-200" {...props} />
+              h2: ({ node: _node, ...props }) => (
+                <h2
+                  className="text-xl font-semibold text-gray-900 first:mt-2 mt-8 mb-4 pb-2 border-b border-gray-200"
+                  {...props}
+                />
               ),
-              h3: ({node, ...props}) => (
+              h3: ({ node: _node, ...props }) => (
                 <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3" {...props} />
               ),
-              p: ({node, children, ...props}) => (
-                <p className="text-gray-800 my-2" {...props}>{children}</p>
+              p: ({ node: _node, children, ...props }) => (
+                <p className="text-gray-800 my-2" {...props}>
+                  {children}
+                </p>
               ),
-              ul: ({node, ...props}) => (
+              ul: ({ node: _node, ...props }) => (
                 <ul className="text-gray-800 space-y-1 list-disc pl-6" {...props} />
               ),
-              li: ({node, ...props}) => (
-                <li className="text-gray-800" {...props} />
-              ),
-              a: ({node, href, ...props}) => (
-                <a 
+              li: ({ node: _node, ...props }) => <li className="text-gray-800" {...props} />,
+              a: ({ node: _node, href, ...props }) => (
+                <a
                   href={href}
                   className="text-[#2677FF] hover:text-[#8FBCFA] underline decoration-[#2677FF] hover:decoration-[#8FBCFA] cursor-pointer transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
-                  {...props} 
+                  {...props}
                 />
               ),
             }}

@@ -1,6 +1,6 @@
-from .financial import FinancialAnalyst
-from .news import NewsScanner
-from .industry import IndustryAnalyzer
-from .company import CompanyAnalyzer
+from .destination import DestinationAnalyzer
+from .disruptions import DisruptionsScanner
+from .pricing import PricingAnalyzer
+from .trends import TrendsAnalyzer
 
-__all__ = ["FinancialAnalyst", "NewsScanner", "IndustryAnalyzer", "CompanyAnalyzer"] 
+__all__ = ["DestinationAnalyzer", "DisruptionsScanner", "PricingAnalyzer", "TrendsAnalyzer"]

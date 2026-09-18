@@ -10,11 +10,22 @@ export type ResearchOutput = {
   };
 };
 
+export type LaneKey = "destination" | "trends" | "pricing" | "disruptions";
+
 export type EnrichmentCounts = {
-  company: { total: number; enriched: number };
-  industry: { total: number; enriched: number };
-  financial: { total: number; enriched: number };
-  news: { total: number; enriched: number };
+  destination: { total: number; enriched: number };
+  trends: { total: number; enriched: number };
+  pricing: { total: number; enriched: number };
+  disruptions: { total: number; enriched: number };
+};
+
+export type SearchHit = {
+  title: string;
+  url: string;
+  favicon: string;
+  content: string;
+  query: string;
+  category: string;
 };
 
 export type GlassStyle = {
@@ -32,7 +43,7 @@ export type ResearchStatusProps = {
   status: ResearchStatusType | null;
   error: string | null;
   isComplete: boolean;
-  currentPhase: 'search' | 'enrichment' | 'briefing' | 'complete' | null;
+  currentPhase: "search" | "enrichment" | "briefing" | "complete" | null;
   isResetting: boolean;
   glassStyle: GlassStyle;
   loaderColor: string;
@@ -57,4 +68,4 @@ export type ResearchQueriesProps = {
   onToggleExpand: () => void;
   isResetting: boolean;
   glassStyle: string;
-}; 
+};

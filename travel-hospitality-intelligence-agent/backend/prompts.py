@@ -1,6 +1,6 @@
 """Prompts for the Travel & Hospitality Intelligence Agent."""
 
-DESTINATION_BRIEFING_PROMPT = """Create a concise operational briefing for the travel destination {company}. {industry} is the operator's travel segment and {research_priorities} describes the user's research priorities.
+DESTINATION_BRIEFING_PROMPT = """Create a concise operational briefing for the travel destination {destination}. Travel focus: {travel_segment}. Research priorities: {research_priorities}.
 
 Use these exact headings:
 
@@ -15,7 +15,7 @@ Use these exact headings:
 
 Use only evidence in the supplied sources. Each bullet must be a complete, specific fact. Do not mention missing information. Return only the briefing in markdown."""
 
-INDUSTRY_BRIEFING_PROMPT = """Create a concise destination-trends and events briefing for {company}. {industry} is the operator's travel segment and {research_priorities} describes the user's research priorities.
+TRENDS_BRIEFING_PROMPT = """Create a concise destination-trends and events briefing for {destination}. Travel focus: {travel_segment}. Research priorities: {research_priorities}.
 
 Use these exact headings:
 
@@ -30,7 +30,7 @@ Use these exact headings:
 
 Use only evidence in the supplied sources. Sort dated events soonest first. Return only the briefing in markdown."""
 
-FINANCIAL_BRIEFING_PROMPT = """Create a concise pricing and demand briefing for {company}. {industry} is the operator's travel segment and {research_priorities} describes the user's research priorities.
+PRICING_BRIEFING_PROMPT = """Create a concise pricing and demand briefing for {destination}. Travel focus: {travel_segment}. Research priorities: {research_priorities}.
 
 Use these exact headings:
 
@@ -45,7 +45,7 @@ Use these exact headings:
 
 Use only evidence in the supplied sources. Avoid invented numbers. Return only the briefing in markdown."""
 
-NEWS_BRIEFING_PROMPT = """Create a concise disruption and local-sentiment briefing for {company}. {industry} is the operator's travel segment and {research_priorities} describes the user's research priorities.
+DISRUPTIONS_BRIEFING_PROMPT = """Create a concise disruption and local-sentiment briefing for {destination}. Travel focus: {travel_segment}. Research priorities: {research_priorities}.
 
 Use these exact headings:
 
@@ -64,14 +64,14 @@ BRIEFING_ANALYSIS_INSTRUCTION = """Analyze the supplied sources. Treat unverifie
 
 EDITOR_SYSTEM_MESSAGE = "You are an expert travel operations editor who produces source-backed destination intelligence briefs."
 
-COMPILE_CONTENT_PROMPT = """Compile the following briefings into one clear operational report for {company}, a travel destination. The operator's travel segment is {industry}; the user's research priorities are {research_priorities}.
+COMPILE_CONTENT_PROMPT = """Compile the following briefings into one clear operational report for {destination}, a travel destination. Travel focus: {travel_segment}. Research priorities: {research_priorities}.
 
 Briefings:
 {combined_content}
 
 Use this exact structure:
 
-# {company} Travel Intelligence Brief
+# {destination} Travel Intelligence Brief
 
 ## Destination demand and traveler experience
 [Destination demand and traveler experience content]
@@ -89,11 +89,11 @@ Keep confirmed observations separate from recommended actions. Be specific about
 
 CONTENT_SWEEP_SYSTEM_MESSAGE = "You are an expert markdown editor for source-backed travel intelligence briefs."
 
-CONTENT_SWEEP_PROMPT = """Edit this travel intelligence brief about {company}. Remove repetition, unsupported claims, and meta-commentary. Preserve the references section exactly.
+CONTENT_SWEEP_PROMPT = """Edit this travel intelligence brief about {destination}. Remove repetition, unsupported claims, and meta-commentary. Preserve the references section exactly.
 
 {content}
 
-The document must start with '# {company} Travel Intelligence Brief' and use only these ## headings, in order:
+The document must start with '# {destination} Travel Intelligence Brief' and use only these ## headings, in order:
 1. Destination demand and traveler experience
 2. Trends and events
 3. Pricing and demand outlook
@@ -102,17 +102,17 @@ The document must start with '# {company} Travel Intelligence Brief' and use onl
 
 Use ### only for subsections, use * for bullets, and return markdown only."""
 
-COMPANY_ANALYZER_QUERY_PROMPT = """Generate queries about destination demand and traveler experience for {company}, including visitor origin markets, seasonality, travel blogs, reviews, and social sentiment."""
+DESTINATION_ANALYZER_QUERY_PROMPT = """Generate queries about destination demand and traveler experience for {destination}, including visitor origin markets, seasonality, travel blogs, reviews, and social sentiment."""
 
-FINANCIAL_ANALYZER_QUERY_PROMPT = """Generate queries about pricing and demand for {company}, including hotel and flight pricing, capacity, booking windows, occupancy, and travel demand forecasts."""
+PRICING_ANALYZER_QUERY_PROMPT = """Generate queries about pricing and demand for {destination}, including hotel and flight pricing, capacity, booking windows, occupancy, and travel demand forecasts."""
 
-INDUSTRY_ANALYZER_QUERY_PROMPT = """Generate queries about destination trends and events for {company}, including festivals, conventions, holidays, new routes, attractions, and travel planning trends."""
+TRENDS_ANALYZER_QUERY_PROMPT = """Generate queries about destination trends and events for {destination}, including festivals, conventions, holidays, new routes, attractions, and travel planning trends."""
 
-NEWS_SCANNER_QUERY_PROMPT = """Generate queries about current disruptions and local sentiment for {company}, including weather, strikes, safety alerts, transport disruption, closures, and recent visitor or resident concerns."""
+DISRUPTIONS_ANALYZER_QUERY_PROMPT = """Generate queries about current disruptions and local sentiment for {destination}, including weather, strikes, safety alerts, transport disruption, closures, and recent visitor or resident concerns."""
 
 QUERY_FORMAT_GUIDELINES = """
 Important guidelines:
-- Focus only on the destination {company}
+- Focus only on the destination {destination}
 - Prefer current information and include a timeframe when useful
 - Make queries short and specific
 - Provide exactly 2 queries, one per line, with no labels, bullets, or explanations
