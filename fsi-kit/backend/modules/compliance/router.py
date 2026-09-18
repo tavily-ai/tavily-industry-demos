@@ -1,4 +1,4 @@
-"""Compliance API routes, including migration aliases."""
+"""Compliance screening, investigation, and roster routes."""
 
 import json
 import logging

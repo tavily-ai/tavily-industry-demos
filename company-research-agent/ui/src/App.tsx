@@ -60,11 +60,8 @@ function App() {
   const [isBriefingExpanded, setIsBriefingExpanded] = useState(true);
   const [hasScrolledToStatus, setHasScrolledToStatus] = useState(false);
   const [isReportStreaming, setIsReportStreaming] = useState(false);
-
-  // Add new state for color cycling
   const [loaderColor, setLoaderColor] = useState("#2677FF");
 
-  // Scroll helper function
   const scrollToStatus = () => {
     if (!hasScrolledToStatus && statusRef.current) {
       const yOffset = -20;
@@ -74,7 +71,6 @@ function App() {
     }
   };
 
-  // Add useEffect for color cycling
   useEffect(() => {
     if (!isResearching) return;
 
@@ -376,7 +372,6 @@ function App() {
     return () => controllerRef.current?.abort();
   }, []);
 
-  // Create a custom handler for the form that receives form data
   const liveReady = hasTavilyKey === true && hasOpenAIKey === true;
 
   const handleFormSubmit = async (formData: {
@@ -440,7 +435,6 @@ function App() {
     }
   };
 
-  // Add new function to handle PDF generation
   const handleGeneratePdf = async () => {
     if (!output || isGeneratingPdf) return;
 
@@ -461,23 +455,14 @@ function App() {
         throw new Error("Failed to generate PDF");
       }
 
-      // Get the blob from the response
       const blob = await response.blob();
-
-      // Create a URL for the blob
       const url = window.URL.createObjectURL(blob);
-
-      // Create a temporary link element
       const link = document.createElement("a");
       link.href = url;
       link.download = `${originalCompanyName || "research_report"}.pdf`;
-
-      // Append to body, click, and remove
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
-      // Clean up the URL
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error generating PDF:", error);
@@ -487,7 +472,6 @@ function App() {
     }
   };
 
-  // Add new function to handle copying to clipboard
   const handleCopyToClipboard = async () => {
     if (!output?.details?.report) return;
 

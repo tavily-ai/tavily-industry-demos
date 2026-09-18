@@ -66,9 +66,7 @@ export default function FsiShell() {
           </a>
           <SetupPrompt />
           <div className="nav-actions gap-2">
-            {activeModel && (
-              <ModelCard provider={activeModel.provider} model={activeModel.model} />
-            )}
+            {activeModel && <ModelCard provider={activeModel.provider} model={activeModel.model} />}
             <a
               href="https://github.com/tavily-ai/tavily-industry-demos/tree/main/fsi-kit"
               target="_blank"

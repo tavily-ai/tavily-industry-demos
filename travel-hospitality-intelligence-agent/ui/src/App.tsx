@@ -411,7 +411,7 @@ function App() {
         },
         body: JSON.stringify({
           report_content: output.details.report,
-          company_name: originalDestination || output.details.report,
+          destination_name: originalDestination || output.details.report,
         }),
       });
 

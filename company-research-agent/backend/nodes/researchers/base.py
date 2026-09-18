@@ -130,7 +130,7 @@ class BaseResearcher:
             if not queries:
                 raise ValueError(f"No queries generated for {company}")
 
-            queries = queries[:2]  # Fast mode: two focused queries per analyst
+            queries = queries[:2]  # Two queries per analyst
             logger.info(f"Final queries for {self.analyst_type}: {queries}")
             
             yield {"type": "queries_complete", "queries": queries, "count": len(queries)}

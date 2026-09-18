@@ -197,8 +197,6 @@ class Briefing:
                 async with briefing_semaphore:
                     result = {'content': ''}
                     
-                    # Consume events from briefing generation
-                    # Exceptions will propagate immediately (no catching)
                     async for event in self.generate_category_briefing(
                         task['curated_data'],
                         task['category'],
@@ -220,7 +218,6 @@ class Briefing:
                         'length': len(result['content']) if result['content'] else 0
                     }
 
-            # Process all briefings in parallel - exceptions will propagate and kill entire process
             results = await asyncio.gather(*[
                 process_briefing(task) 
                 for task in briefing_tasks

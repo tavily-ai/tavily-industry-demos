@@ -97,10 +97,8 @@ export function useWorkflowStream<TResult>(path: string, initialLanes: WorkflowL
             sources: mergeSources(lane.sources, event.sources),
           }));
           break;
-        case "lane_complete":
-        case "category_complete": {
-          // temporary alias accepted during migration
-          const laneId = event.lane_id ?? event.category;
+        case "lane_complete": {
+          const laneId = event.lane_id;
           if (!laneId) break;
           const eventSources = event.sources ?? [];
           setSources((current) => mergeSources(current, eventSources));
@@ -121,7 +119,7 @@ export function useWorkflowStream<TResult>(path: string, initialLanes: WorkflowL
           }));
           break;
         case "error": {
-          const laneId = event.lane_id ?? event.category;
+          const laneId = event.lane_id;
           const eventSources = event.sources ?? [];
           if (eventSources.length) {
             setSources((current) => mergeSources(current, eventSources));

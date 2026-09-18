@@ -45,7 +45,7 @@ class ResearchRequest(BaseModel):
 
 class PDFGenerationRequest(BaseModel):
     report_content: str
-    company_name: str | None = None
+    destination_name: str | None = None
 
 
 def missing_keys_error():
@@ -198,7 +198,7 @@ async def process_research(job_id: str, data: ResearchRequest):
 @app.post("/generate-pdf")
 async def generate_pdf(data: PDFGenerationRequest):
     try:
-        success, result = pdf_service.generate_pdf_stream(data.report_content, data.company_name)
+        success, result = pdf_service.generate_pdf_stream(data.report_content, data.destination_name)
         if success:
             pdf_buffer, filename = result
             return StreamingResponse(

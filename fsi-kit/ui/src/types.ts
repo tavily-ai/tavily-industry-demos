@@ -155,11 +155,10 @@ export type NormalizedWorkflowEvent =
       sources: ResearchSource[];
     }
   | {
-      type: "lane_complete" | "category_complete";
+      type: "lane_complete";
       run_id: string;
       workflow: WorkflowName;
-      lane_id?: string;
-      category?: string;
+      lane_id: string;
       data: unknown;
       sources?: ResearchSource[];
       message?: string;
@@ -176,7 +175,6 @@ export type NormalizedWorkflowEvent =
       run_id?: string;
       workflow?: WorkflowName;
       lane_id?: string;
-      category?: string;
       message: string;
       sources?: ResearchSource[];
     }

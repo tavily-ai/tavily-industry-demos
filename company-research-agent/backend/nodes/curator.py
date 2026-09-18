@@ -125,7 +125,7 @@ class Curator:
             relevant_docs = {doc['url']: doc for doc in evaluated_docs}
             sorted_items = sorted(relevant_docs.items(), key=lambda item: item[1]['evaluation']['overall_score'], reverse=True)
             
-            # Fast mode: enrich only the strongest sources in each category.
+            # Keep the five highest-scoring sources in each category.
             if len(sorted_items) > 5:
                 sorted_items = sorted_items[:5]
             relevant_docs = dict(sorted_items)

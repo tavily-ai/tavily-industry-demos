@@ -102,7 +102,7 @@ This exposes the API on port `8000` and the UI on port `3000`.
 | `GET` | `/api/runs?kind=...` | Local run history. |
 | `GET` | `/api/runs/{run_id}` | Stored run detail. |
 
-Temporary aliases preserve the previous `/api/roster`, `/api/watchlist/stream`, and `/api/investigate/stream` contracts.
+The same handlers are also available at `/api/roster`, `/api/watchlist/stream`, and `/api/investigate/stream`.
 
 Example request:
 

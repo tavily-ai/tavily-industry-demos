@@ -226,12 +226,7 @@
         "include_answer": "basic",
         "include_favicon": true,
         "include_usage": true,
-        "include_domains": [
-          "ofac.treasury.gov",
-          "bis.gov",
-          "gov.uk",
-          "consilium.europa.eu"
-        ]
+        "include_domains": ["ofac.treasury.gov", "bis.gov", "gov.uk", "consilium.europa.eu"]
       },
       "status": "complete",
       "summary": null,

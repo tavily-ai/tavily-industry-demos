@@ -27,10 +27,8 @@ class GroundingNode:
         emit_event(job_id, event)
         yield event
 
-        # Fast mode relies on targeted search and skips the potentially large
-        # company-site crawl. The submitted URL is retained in the job state.
+        # Research uses targeted search. The submitted URL stays on the job state.
         site_scrape = {}
-        # Add context about what information we have
         if hq := state.get('hq_location'):
             msg += f"\n📍 Company HQ: {hq}"
         if industry := state.get('industry'):
@@ -53,13 +51,9 @@ class GroundingNode:
         yield research_state
 
     async def run(self, state: InputState) -> ResearchState:
-        """Run grounding - note: for now returns directly, events can be captured if needed"""
-        # For compatibility, we call the generator but don't yield
-        # The calling code can be updated later to consume events
-        result = None
+        """Return the research state produced by initial_search."""
+        result = {}
         async for event in self.initial_search(state):
-            # The last yield should be the research_state (a dict with state fields)
-            # Earlier yields are event dicts with "type" field
             if isinstance(event, dict) and "type" not in event:
                 result = event
-        return result if result else {}
+        return result
