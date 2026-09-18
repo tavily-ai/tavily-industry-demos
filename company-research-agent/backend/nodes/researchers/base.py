@@ -144,7 +144,8 @@ class BaseResearcher:
         params = {
             "search_depth": "advanced",
             "include_raw_content": False,
-            "max_results": 3
+            "include_favicon": True,
+            "max_results": 3,
         }
         
         topic_map = {
@@ -175,51 +176,90 @@ class BaseResearcher:
             "query": query,
             "url": url,
             "source": "web_search",
-            "score": result.get("score", 0.0)
+            "score": result.get("score", 0.0),
+            "favicon": result.get("favicon") or "",
         }
 
     async def search_documents(self, state: ResearchState, queries: List[str]):
-        """Execute all Tavily searches in parallel and yield events"""
+        """Search each query and stream hits to the UI as they return."""
+        job_id = state.get("job_id")
         if not queries:
             logger.error("No valid queries to search")
             yield {"type": "error", "error": "No valid queries to search"}
             return
 
-        # Yield start event
-        yield {
+        start = {
             "type": "search_started",
             "message": f"Searching {len(queries)} queries",
-            "total_queries": len(queries)
+            "total_queries": len(queries),
+            "category": self.analyst_type,
         }
+        emit_event(job_id, start)
+        yield start
 
-        # Execute all searches in parallel
         search_params = self._get_search_params()
-        search_tasks = [self.tavily_client.search(query, **search_params) for query in queries]
 
+        async def search_one(query: str):
+            try:
+                response = await self.tavily_client.search(query, **search_params)
+                return query, response, None
+            except Exception as error:
+                return query, None, error
+
+        merged_docs = {}
+        tasks = [asyncio.create_task(search_one(query)) for query in queries]
         try:
-            results = await asyncio.gather(*search_tasks, return_exceptions=True)
-        except Exception as e:
-            logger.error(f"Error during parallel search execution: {e}")
-            yield {"type": "error", "error": str(e)}
+            for finished in asyncio.as_completed(tasks):
+                query, response, error = await finished
+                if error is not None or response is None:
+                    logger.error("Search failed for query '%s': %s", query, error)
+                    event = {
+                        "type": "query_error",
+                        "query": query,
+                        "error": str(error),
+                        "category": self.analyst_type,
+                    }
+                    emit_event(job_id, event)
+                    yield event
+                    continue
+
+                for item in response.get("results", []):
+                    doc = self._process_search_result(item, query)
+                    if not doc or doc["url"] in merged_docs:
+                        continue
+                    merged_docs[doc["url"]] = doc
+                    snippet = " ".join(doc["content"].split())
+                    if len(snippet) > 220:
+                        snippet = snippet[:220].rsplit(" ", 1)[0] + "…"
+                    event = {
+                        "type": "search_result",
+                        "title": doc["title"] or doc["url"],
+                        "url": doc["url"],
+                        "favicon": doc.get("favicon") or "",
+                        "content": snippet,
+                        "query": query,
+                        "category": self.analyst_type,
+                        "score": doc["score"],
+                    }
+                    emit_event(job_id, event)
+                    yield event
+        except Exception as error:
+            logger.error("Error during parallel search execution: %s", error)
+            event = {"type": "error", "error": str(error)}
+            emit_event(job_id, event)
+            yield event
             return
 
-        # Process and merge results
-        merged_docs = {}
-        for query, result in zip(queries, results):
-            if isinstance(result, Exception):
-                logger.error(f"Search failed for query '{query}': {result}")
-                yield {"type": "query_error", "query": query, "error": str(result)}
-                continue
-                
-            for item in result.get("results", []):
-                if doc := self._process_search_result(item, query):
-                    merged_docs[doc["url"]] = doc
-
-        # Yield completion event
-        yield {
+        complete = {
             "type": "search_complete",
             "message": f"Found {len(merged_docs)} documents",
             "total_documents": len(merged_docs),
             "queries_processed": len(queries),
-            "merged_docs": merged_docs
+            "category": self.analyst_type,
+            "merged_docs": merged_docs,
         }
+        emit_event(
+            job_id,
+            {key: value for key, value in complete.items() if key != "merged_docs"},
+        )
+        yield complete

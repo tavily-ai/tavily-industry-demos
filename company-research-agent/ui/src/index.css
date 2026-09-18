@@ -308,6 +308,56 @@
     object-fit: contain;
     border-radius: 4px;
   }
+  .search-hits {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 26rem;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .search-hit {
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    padding: 10px 12px;
+    border: 1px solid var(--color-black-10);
+    border-radius: 12px;
+    background: #fffcf699;
+  }
+  .search-hit-favicon {
+    margin-top: 3px;
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    border-radius: 3px;
+  }
+  .search-hit a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-black);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .search-hit a:hover,
+  .search-hit a:focus-visible {
+    color: var(--color-primary-blue);
+  }
+  .search-hit p {
+    margin: 4px 0 0;
+    color: var(--color-black-60);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .search-hit small {
+    display: block;
+    margin-top: 4px;
+    color: var(--color-black-60);
+    font-size: 11px;
+  }
   .research-submit {
     position: relative;
     isolation: isolate;

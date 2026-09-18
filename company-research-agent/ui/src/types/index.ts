@@ -17,6 +17,15 @@ export type EnrichmentCounts = {
   news: { total: number; enriched: number };
 };
 
+export type SearchHit = {
+  title: string;
+  url: string;
+  favicon: string;
+  content: string;
+  query: string;
+  category: string;
+};
+
 export type GlassStyle = {
   base: string;
   card: string;

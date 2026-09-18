@@ -7,8 +7,9 @@ import {
   ResearchQueries,
   CurationExtraction,
   ResearchBriefings,
+  SearchResults,
 } from "./components";
-import type { ResearchOutput, ResearchStatusType } from "./types";
+import type { ResearchOutput, ResearchStatusType, SearchHit } from "./types";
 import { glassStyle, fadeInAnimation } from "./styles";
 import { consumeSSE } from "./stream";
 
@@ -38,6 +39,8 @@ function App() {
     Record<string, { text: string; number: number; category: string; isComplete: boolean }>
   >({});
   const [isQueriesExpanded, setIsQueriesExpanded] = useState(true);
+  const [searchHits, setSearchHits] = useState<SearchHit[]>([]);
+  const [isSearchHitsExpanded, setIsSearchHitsExpanded] = useState(true);
   const [enrichmentCounts, setEnrichmentCounts] = useState<
     | {
         company: { total: number; enriched: number };
@@ -106,6 +109,7 @@ function App() {
       setCurrentPhase(null);
       setQueries([]);
       setStreamingQueries({});
+      setSearchHits([]);
       setEnrichmentCounts(undefined);
       setBriefingStatus({
         company: false,
@@ -114,6 +118,7 @@ function App() {
         news: false,
       });
       setIsQueriesExpanded(true);
+      setIsSearchHitsExpanded(true);
       setIsEnrichmentExpanded(true);
       setIsBriefingExpanded(true);
       setHasScrolledToStatus(false);
@@ -204,6 +209,39 @@ function App() {
         return updated;
       });
       scrollToStatus();
+    } else if (data.type === "search_started") {
+      setCurrentPhase("search");
+      setStatus({
+        step: "Search",
+        message: String(data.message || "Searching the web"),
+      });
+    } else if (data.type === "search_result" && data.url) {
+      setCurrentPhase("search");
+      const url = String(data.url);
+      setStatus({
+        step: "Search",
+        message: String(data.title || url),
+      });
+      setSearchHits((prev) => {
+        if (prev.some((hit) => hit.url === url)) return prev;
+        return [
+          ...prev,
+          {
+            title: String(data.title || url),
+            url,
+            favicon: String(data.favicon || ""),
+            content: String(data.content || ""),
+            query: String(data.query || ""),
+            category: String(data.category || ""),
+          },
+        ];
+      });
+    } else if (data.type === "search_complete") {
+      setCurrentPhase("search");
+      setStatus({
+        step: "Search",
+        message: String(data.message || "Search complete"),
+      });
     } else if (data.type === "research_init") {
       setCurrentPhase("search");
       setStatus({
@@ -513,6 +551,13 @@ function App() {
           glassStyle={glassStyle}
           loaderColor={loaderColor}
           statusRef={statusRef}
+        />
+
+        <SearchResults
+          hits={searchHits}
+          isExpanded={isSearchHitsExpanded}
+          onToggleExpand={() => setIsSearchHitsExpanded(!isSearchHitsExpanded)}
+          isResetting={isResetting}
         />
 
         {/* Research Report - always at the top when available */}
