@@ -1,0 +1,36 @@
+name: Request Industry Demo Deployment
+
+on:
+  workflow_run:
+    workflows: [Check public demos]
+    branches: [main]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch:
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request the shared deployment flow
+        env:
+          GH_TOKEN: ${{ secrets.INDUSTRY_DEMOS_DISPATCH_TOKEN }}
+          SOURCE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+        run: |
+          set -euo pipefail
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::Configure INDUSTRY_DEMOS_DISPATCH_TOKEN with dispatch access to tavily-ai/github-actions."
+            exit 1
+          fi
+          jq -n --arg sha "$SOURCE_SHA" \
+            '{event_type: "industry-demos-deploy", client_payload: {sha: $sha}}' > "$RUNNER_TEMP/industry-demos-dispatch.json"
+          gh api repos/tavily-ai/github-actions/dispatches \
+            --method POST --input "$RUNNER_TEMP/industry-demos-dispatch.json"
+          echo 'Deployment requested through the existing shared service-deploy.yml flow.' >> "$GITHUB_STEP_SUMMARY"
+          echo '[Track builds and Helm updates](https://github.com/tavily-ai/github-actions/actions/workflows/industry-demos-deploy.yml)' >> "$GITHUB_STEP_SUMMARY"

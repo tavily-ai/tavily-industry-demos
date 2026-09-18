@@ -31,3 +31,67 @@ jobs:
       - run: npm run fmt:check --if-present
       - run: npm test --if-present
       - run: npm run build
+
+  static-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install 'fastapi==0.121.2' 'httpx==0.28.1'
+      - run: python -m unittest discover -s tests -v
+
+  containers:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - demo: sales-meeting-prep
+            port: 3000
+            health: /api/health
+          - demo: company-research-agent
+            port: 8000
+            health: /health
+          - demo: market-researcher
+            port: 8000
+            health: /health
+          - demo: vendor-supply-chain-risk
+            port: 3000
+            health: /api/health
+          - demo: travel-hospitality-intelligence-agent
+            port: 8000
+            health: /health
+          - demo: tavily-chat
+            port: 3000
+            health: /api/health
+          - demo: fsi-kit
+            port: 8000
+            health: /api/modules
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build the production image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.demo }}
+          file: ${{ matrix.demo }}/Dockerfile
+          target: app
+          platforms: linux/arm64
+          push: false
+          load: true
+          tags: industry-demo:test
+          cache-from: type=gha,scope=${{ matrix.demo }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.demo }}
+      - name: Check UI and health routes
+        env:
+          DEMO_PORT: ${{ matrix.port }}
+          HEALTH_PATH: ${{ matrix.health }}
+        run: |
+          set -euo pipefail
+          # FSI validates the key at import. Smoke checks never call the external API.
+          docker run -d --name demo -e TAVILY_API_KEY=smoke-test-not-a-real-key \
+            -p "127.0.0.1:18080:$DEMO_PORT" industry-demo:test
+          trap 'docker logs demo; docker rm -f demo' EXIT
+          python3 scripts/smoke-image.py http://127.0.0.1:18080 "$HEALTH_PATH"

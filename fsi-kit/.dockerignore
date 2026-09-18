@@ -43,4 +43,5 @@ Thumbs.db
 # Generated
 logs/
 *.db
+**/*.db-*
 *.log
