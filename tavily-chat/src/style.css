@@ -77,16 +77,35 @@ a:hover,
 .text-button:hover {
   color: var(--blue);
 }
-.landscape {
+.landscape-background {
   position: fixed;
   inset: 0;
   z-index: -1;
+  pointer-events: none;
+  background: #fefcf5;
+}
+.landscape-background > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   opacity: 0.9;
   filter: saturate(1.26) contrast(1.04);
-  background:
-    linear-gradient(#fefcf5 0%, #fefcf540 45%, #fefcf5 100%),
-    url("/tavily-landscape.jpg") center/cover no-repeat;
-  pointer-events: none;
+}
+.landscape-fade-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to bottom, #fefcf5 0%, #fefcf5 10%, transparent 100%);
+}
+.landscape-fade-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: linear-gradient(to top, #fefcf5 0%, transparent 100%);
 }
 .app-shell {
   position: fixed;

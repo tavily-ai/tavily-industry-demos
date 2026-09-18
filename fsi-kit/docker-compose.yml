@@ -9,9 +9,8 @@ services:
       - PYTHONUNBUFFERED=1
       - PORT=8000
     volumes:
-      - ./reports:/app/reports
+      - ./logs:/app/logs
       - ./backend:/app/backend
-      - ./application.py:/app/application.py
     env_file:
       - .env
 
@@ -25,4 +24,4 @@ services:
       - ./ui:/ui
     environment:
       - NODE_ENV=development
-      - VITE_API_URL=http://localhost:8000 
+      - VITE_API_URL=http://localhost:8000

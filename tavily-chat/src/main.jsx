@@ -549,7 +549,11 @@ function App() {
 
   return (
     <>
-      <div className="landscape" aria-hidden="true" />
+      <div className="landscape-background" aria-hidden="true">
+        <img src="/tavily-landscape.jpg" alt="" />
+        <div className="landscape-fade-top" />
+        <div className="landscape-fade-bottom" />
+      </div>
       <div className="app-shell">
         <header className="topbar setup-header">
           <div className="brand-group">

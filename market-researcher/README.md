@@ -30,7 +30,7 @@ The UI connects to the API with `VITE_API_URL`. Stopping a run aborts the in-fli
 ## Prerequisites
 
 - [uv](https://docs.astral.sh/uv/) (Python 3.11 or later)
-- Node.js 18 or later
+- Node.js 24 or later
 - Tavily and OpenAI API keys on the backend
 
 ## Run locally
@@ -59,12 +59,12 @@ The UI connects to the API with `VITE_API_URL`. Stopping a run aborts the in-fli
    cd ui && npm ci && cd ..
    ```
 
-   Set `VITE_API_URL=http://localhost:8080` in `ui/.env.development.local`.
+   Set `VITE_API_URL=http://localhost:8000` in `ui/.env.development.local`.
 
 4. Start the API in one terminal:
 
    ```bash
-   uv run uvicorn application:app --reload --port 8080
+   uv run uvicorn application:app --reload --port 8000
    ```
 
 5. Start the UI in a second terminal:
@@ -74,7 +74,7 @@ The UI connects to the API with `VITE_API_URL`. Stopping a run aborts the in-fli
    npm run dev
    ```
 
-Open [http://localhost:3000](http://localhost:3000). The API is available at [http://localhost:8080/docs](http://localhost:8080/docs).
+Open [http://localhost:3000](http://localhost:3000). The API is available at [http://localhost:8000/docs](http://localhost:8000/docs).
 
 From `ui/`, `npm run lint` and `npm run fmt:check` run oxlint and oxfmt.
 
@@ -86,7 +86,7 @@ After creating the root `.env` and `ui/.env.development.local` files, run:
 docker compose up --build
 ```
 
-This exposes the API on port `8080` and the UI on port `3000`.
+This exposes the API on port `8000` and the UI on port `3000`.
 
 ## API
 
@@ -99,7 +99,7 @@ This exposes the API on port `8080` and the UI on port `3000`.
 Example request:
 
 ```bash
-curl -N -X POST http://localhost:8080/api/stock-digest/stream \
+curl -N -X POST http://localhost:8000/api/stock-digest/stream \
   -H 'Content-Type: application/json' \
   -d '{
     "tickers": ["AAPL", "MSFT"],

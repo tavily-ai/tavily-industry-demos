@@ -1,5 +1,5 @@
 # Stage 1: Build Frontend
-FROM node:20-slim AS frontend-builder
+FROM node:24-slim AS frontend-builder
 WORKDIR /app/ui
 COPY ui/package*.json ./
 RUN npm ci
@@ -27,6 +27,6 @@ RUN mkdir -p reports \
     && chown -R appuser:appuser /app
 USER appuser
 
-ENV PYTHONUNBUFFERED=1 PORT=8080 PATH="/app/.venv/bin:$PATH"
-EXPOSE 8080
-CMD ["uvicorn", "application:app", "--host", "0.0.0.0", "--port", "8080"]
+ENV PYTHONUNBUFFERED=1 PORT=8000 PATH="/app/.venv/bin:$PATH"
+EXPOSE 8000
+CMD ["uvicorn", "application:app", "--host", "0.0.0.0", "--port", "8000"]

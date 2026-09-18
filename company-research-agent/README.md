@@ -35,7 +35,7 @@ The UI connects to the API with `VITE_API_URL`. Stopping a run aborts the in-fli
 ## Prerequisites
 
 - [uv](https://docs.astral.sh/uv/) (Python 3.11 or later)
-- Node.js 18 or later
+- Node.js 24 or later
 - Tavily and OpenAI API keys on the backend
 
 ## Run locally
@@ -79,7 +79,7 @@ The UI connects to the API with `VITE_API_URL`. Stopping a run aborts the in-fli
    npm run dev
    ```
 
-Open [http://localhost:5174](http://localhost:5174). The API is available at [http://localhost:8000/docs](http://localhost:8000/docs).
+Open [http://localhost:3000](http://localhost:3000). The API is available at [http://localhost:8000/docs](http://localhost:8000/docs).
 
 From `ui/`, `npm run lint` and `npm run fmt:check` run oxlint and oxfmt.
 
@@ -91,7 +91,7 @@ After creating the root `.env` and `ui/.env.development.local` files, run:
 docker compose up --build
 ```
 
-This exposes the API on port `8000` and the UI on port `5174`.
+This exposes the API on port `8000` and the UI on port `3000`.
 
 ## API
 

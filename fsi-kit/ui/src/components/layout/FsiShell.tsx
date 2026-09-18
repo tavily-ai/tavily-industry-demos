@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { Landmark, Menu, ShieldCheck, X } from "lucide-react";
+import { Landmark, ShieldCheck } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { getApiUrl } from "../../sse";
 import ModelCard from "../ModelCard";
 import SetupPrompt from "../../SetupPrompt";
 
 const modules = [
-  { to: "/", label: "Kit home", end: true },
-  { to: "/compliance", label: "Compliance" },
+  { to: "/", label: "Home", end: true },
+  { to: "/compliance", label: "Compliance Intelligence" },
   { to: "/investment-research", label: "Investment Research" },
   { to: "/merchant-risk", label: "Merchant Risk" },
 ];
@@ -19,7 +19,6 @@ export default function FsiShell() {
     research_provider?: string;
     research_model?: string;
   } | null>(null);
-  const [open, setOpen] = useState(false);
   useEffect(() => {
     fetch(`${getApiUrl()}/api/config`)
       .then((r) => r.json())
@@ -66,7 +65,10 @@ export default function FsiShell() {
             />
           </a>
           <SetupPrompt />
-          <div className="nav-actions">
+          <div className="nav-actions gap-2">
+            {activeModel && (
+              <ModelCard provider={activeModel.provider} model={activeModel.model} />
+            )}
             <a
               href="https://github.com/tavily-ai/tavily-industry-demos/tree/main/fsi-kit"
               target="_blank"
@@ -79,61 +81,22 @@ export default function FsiShell() {
             </a>
           </div>
         </nav>
-        <div className="max-w-6xl mx-auto px-6 pb-2 flex items-center gap-5">
-          <NavLink to="/" className="flex items-center gap-3 shrink-0">
-            <span>
-              <span className="font-display font-semibold text-ink-100 block leading-tight">
-                Financial Services & Insurance
-              </span>
-            </span>
-          </NavLink>
-          <nav
-            className="hidden md:flex glass rounded-xl p-1 gap-1 ml-auto"
-            aria-label="Financial Services & Insurance modules"
-          >
+        <div className="max-w-6xl mx-auto px-6 pb-2">
+          <nav className="flex w-full glass rounded-xl p-1 gap-1" aria-label="Kit modules">
             {modules.map((item) => (
               <NavLink
                 key={item.to}
                 end={item.end}
                 to={item.to}
                 className={({ isActive }) =>
-                  `rounded-lg px-3 py-2 text-xs font-medium transition-all ${isActive ? "glass-button-active text-ink-100" : "text-ink-400 hover:text-ink-100"}`
+                  `flex-1 text-center rounded-lg px-2 py-2.5 text-xs font-medium leading-tight transition-all ${isActive ? "glass-button-active text-ink-100" : "text-ink-400 hover:text-ink-100"}`
                 }
               >
                 {item.label}
               </NavLink>
             ))}
           </nav>
-          {activeModel && (
-            <div className="hidden xl:block">
-              <ModelCard provider={activeModel.provider} model={activeModel.model} />
-            </div>
-          )}
-          <button
-            className="md:hidden ml-auto glass-button p-2 rounded-lg"
-            onClick={() => setOpen(!open)}
-            aria-label="Toggle navigation"
-          >
-            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
         </div>
-        {open && (
-          <nav className="md:hidden px-6 pb-3 flex flex-col gap-1">
-            {modules.map((item) => (
-              <NavLink
-                key={item.to}
-                end={item.end}
-                onClick={() => setOpen(false)}
-                to={item.to}
-                className={({ isActive }) =>
-                  `rounded-lg px-3 py-2 text-sm ${isActive ? "glass-button-active" : "text-ink-400"}`
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-        )}
       </header>
       <div className="relative z-10 max-w-6xl mx-auto px-6 pt-2">
         <Outlet />

@@ -14,7 +14,7 @@ fi
 echo -e "${GREEN}✓ uv $(uv --version | cut -d' ' -f2) is available${NC}"
 
 if ! command -v node >/dev/null 2>&1; then
-    echo "Node.js 18 or higher is required."
+    echo "Node.js 24 or higher is required."
     exit 1
 fi
 echo -e "${GREEN}✓ Node.js $(node -v) is installed${NC}"
@@ -54,7 +54,7 @@ start_servers=${start_servers:-Y}
 
 if [[ $start_servers =~ ^[Yy]$ ]]; then
     echo -e "\n${GREEN}Starting backend server...${NC}"
-    uv run uvicorn application:app --reload --port 8080 &
+    uv run uvicorn application:app --reload --port 8000 &
     backend_pid=$!
     sleep 2
     echo -e "\n${GREEN}Starting frontend server...${NC}"
@@ -69,7 +69,7 @@ if [[ $start_servers =~ ^[Yy]$ ]]; then
     wait
 else
     echo -e "\n${BOLD}To start the application manually:${NC}"
-    echo "   uv run uvicorn application:app --reload --port 8080"
+    echo "   uv run uvicorn application:app --reload --port 8000"
     echo "   cd ui && npm run dev"
     echo -e "\nAccess the application at ${BOLD}http://localhost:3000${NC}"
 fi

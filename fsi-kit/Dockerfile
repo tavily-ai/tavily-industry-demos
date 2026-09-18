@@ -19,14 +19,13 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 
 COPY backend/ ./backend/
-COPY application.py .
 COPY --from=frontend-builder /app/ui/dist/ ./ui/dist/
 
-RUN mkdir -p reports \
+RUN mkdir -p logs \
     && useradd -m -u 1000 appuser \
     && chown -R appuser:appuser /app
 USER appuser
 
 ENV PYTHONUNBUFFERED=1 PORT=8000 PATH="/app/.venv/bin:$PATH"
 EXPOSE 8000
-CMD ["uvicorn", "application:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "8000"]
