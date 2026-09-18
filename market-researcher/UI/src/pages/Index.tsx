@@ -103,7 +103,7 @@ const Index = () => {
   return (
     <div className="app-shell">
       <div className="landscape-background" aria-hidden="true">
-        <img src="/tavily-landscape.webp" alt="" />
+        <img src="/tavily-landscape.jpg" alt="" />
       </div>
       <div className="research-workspace">
       <Header />
@@ -113,7 +113,6 @@ const Index = () => {
             {/* Header */}
             <div className="portfolio-hero">
               <h1>Stock Portfolio Research &amp; Analysis</h1>
-              <p>Research up to five stocks and compare market performance, financial metrics, key risks, and price outlooks in a portfolio brief with linked sources.</p>
             </div>
 
             {/* Main Input Card */}

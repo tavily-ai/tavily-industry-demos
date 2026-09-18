@@ -142,7 +142,7 @@ All colors MUST be HSL.
 @layer components {
   .app-shell { position: relative; isolation: isolate; min-height: 100svh; padding: 0 24px 64px; }
   .landscape-background { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: var(--tavily-background); }
-  .landscape-background img { width: 100%; height: 100%; object-fit: cover; opacity: .7; }
+  .landscape-background img { width: 100%; height: 100%; object-fit: cover; opacity: .90; filter: saturate(1.26) contrast(1.04); }
   .landscape-background::before { content: ""; position: absolute; inset: 0 0 auto; height: 52%; background: linear-gradient(to bottom, var(--tavily-background) 0%, var(--tavily-background) 10%, transparent 100%); z-index: 1; }
   .landscape-background::after { content: ""; position: absolute; inset: auto 0 0; height: 32%; background: linear-gradient(to top, var(--tavily-background), transparent); z-index: 1; }
   .research-workspace { max-width: 1000px; margin: 0 auto; }
@@ -248,7 +248,21 @@ All colors MUST be HSL.
   .brand-link:hover, .brand-link:focus-visible, .nav-link:hover, .nav-link:focus-visible { transform: none; }
 }
 
-.demo-footer { display: flex; justify-content: flex-end; align-items: center; margin-top: 32px; padding: 12px 0; }
+.demo-footer { display: flex; justify-content: flex-end; align-items: center; margin-top: 12px; padding: 8px 0; }
+
+/* Compact desktop setup; reports and narrow screens can still scroll naturally. */
+@media (min-width: 761px) {
+  .app-shell { padding-bottom: 16px; }
+  .site-nav { min-height: 80px; }
+  .portfolio-hero { max-width: 100%; padding: 18px 0 22px; }
+  .portfolio-hero h1 { font-size: clamp(28px, 3.7vw, 44px); line-height: 1.12; white-space: nowrap; letter-spacing: -1.3px; }
+  .portfolio-form { padding: 20px 28px; margin-bottom: 0; }
+  .portfolio-form > :first-child { padding-bottom: 16px; }
+  .portfolio-form .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 14px; }
+  .portfolio-form .ticker-cloud { padding: 10px; gap: 6px; max-width: 100%; }
+  .portfolio-form .ticker-chip { height: 28px; padding-left: 10px; padding-right: 10px; }
+  .portfolio-form .research-submit { height: 44px; }
+}
 
 .search-api-link { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; color: #8b887e; font-size: 10px; line-height: 1.5; white-space: nowrap; text-decoration: none; }
 .search-api-link:hover, .search-api-link:focus-visible { color: #2677ff; }

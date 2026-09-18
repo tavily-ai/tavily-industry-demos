@@ -1,7 +1,8 @@
+import SetupPrompt from '../SetupPrompt';
 const Header = () => {
   return (
     <header>
-      <nav className="site-nav" aria-label="Main navigation">
+      <nav className="site-nav setup-header" aria-label="Main navigation">
         <a
           href="https://tavily.com"
           target="_blank"
@@ -11,7 +12,8 @@ const Header = () => {
         >
           <img src="/tavily-by-nebius.svg" alt="Tavily by Nebius" className="brand-logo" width="362" height="109" />
         </a>
-        <div className="nav-actions">
+        <SetupPrompt />
+      <div className="nav-actions">
           <a
             href="https://github.com/tavily-ai/tavily-industry-demos/tree/main/market-researcher"
             target="_blank"

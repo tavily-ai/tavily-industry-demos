@@ -25,30 +25,30 @@ const cards = [
 ];
 export default function KitHome() {
   return (
-    <main className="pb-10">
-      <header className="max-w-3xl py-8 md:py-14">
+    <main className="pb-4">
+      <header className="py-5 md:py-6">
         <p className="text-xs uppercase tracking-[.2em] text-tavily-green font-semibold mb-3">
           Financial Services & Insurance
         </p>
-        <h1 className="font-display text-4xl md:text-5xl font-semibold text-ink-100 leading-tight">
+        <h1 className="font-display text-3xl md:text-[clamp(26px,3.2vw,38px)] md:whitespace-nowrap tracking-tight font-semibold text-ink-100 leading-tight">
           Evidence-first workflows, grounded in the live web
         </h1>
-        <p className="text-base text-ink-400 mt-5 max-w-2xl">
+        <p className="text-sm text-ink-400 mt-3 max-w-3xl">
           Purpose-built modules for financial services and insurance turn current public-web
           context into reviewable work products — without hiding sources or uncertainty.
         </p>
       </header>
-      <div className="grid lg:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-3 gap-4">
         {cards.map(({ to, icon: Icon, eyebrow, title, copy }) => (
           <Link
             key={to}
             to={to}
-            className="glass rounded-2xl p-6 min-h-[260px] flex flex-col group hover:-translate-y-1 transition-transform"
+            className="glass rounded-2xl p-5 min-h-[220px] flex flex-col group hover:-translate-y-1 transition-transform"
           >
             <div className="w-11 h-11 bg-white/60 rounded-xl flex items-center justify-center">
               <Icon className="w-5 h-5 text-tavily-green" />
             </div>
-            <p className="text-[10px] uppercase tracking-[.16em] text-ink-500 font-semibold mt-7">
+            <p className="text-[10px] uppercase tracking-[.16em] text-ink-500 font-semibold mt-4">
               {eyebrow}
             </p>
             <h2 className="font-display text-xl text-ink-100 font-semibold mt-2">{title}</h2>

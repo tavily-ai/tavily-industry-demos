@@ -3,6 +3,7 @@ import { Landmark, Menu, ShieldCheck, X } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { getApiUrl } from "../../sse";
 import ModelCard from "../ModelCard";
+import SetupPrompt from "../../SetupPrompt";
 
 const modules = [
   { to: "/", label: "Kit home", end: true },
@@ -42,8 +43,8 @@ export default function FsiShell() {
       <div
         className="fixed inset-0 z-0 bg-cover bg-center"
         style={{
-          backgroundImage: "url(/landscape-08.webp)",
-          filter: "saturate(.58) brightness(1.08)",
+          backgroundImage: "url(/tavily-landscape.jpg)",
+          filter: "saturate(1.24) brightness(1.01) contrast(1.04)",
           transform: "scale(1.03)",
         }}
       />
@@ -51,16 +52,23 @@ export default function FsiShell() {
         className="fixed inset-0 z-0 pointer-events-none"
         style={{
           background:
-            "linear-gradient(180deg,rgba(255,252,246,.92),rgba(255,252,246,.62) 50%,rgba(255,252,246,.84))",
+            "linear-gradient(180deg,rgba(255,252,246,.78),rgba(255,252,246,.40) 50%,rgba(255,252,246,.66))",
           backdropFilter: "blur(3px)",
         }}
       />
       <header className="sticky top-0 z-30 border-b border-white/50 bg-white/30 backdrop-blur-xl">
+        <div className="setup-header max-w-7xl mx-auto px-5 py-3">
+          <a href="https://tavily.com" target="_blank" rel="noopener noreferrer" aria-label="Tavily website">
+            <img src="/tavily-by-nebius.svg" alt="Tavily by Nebius" className="w-36 h-12 object-contain" />
+          </a>
+          <SetupPrompt />
+          <a href="https://github.com/tavily-ai/tavily-industry-demos/tree/main/fsi-kit" target="_blank" rel="noopener noreferrer" aria-label="View on GitHub" className="p-3 rounded-full hover:bg-black/5">
+            <img src="/github-icon.png" alt="" width="28" height="28" />
+          </a>
+        </div>
         <div className="max-w-7xl mx-auto px-5 py-3 flex items-center gap-5">
           <NavLink to="/" className="flex items-center gap-3 shrink-0">
-            <img src="/tavily-full.svg" alt="Tavily" className="h-8" />
-            <span className="hidden lg:block w-px h-7 bg-ink-500/20" />
-            <span className="hidden lg:block">
+            <span>
               <span className="font-display font-semibold text-ink-100 block leading-tight">
                 Financial Services & Insurance
               </span>
@@ -114,9 +122,9 @@ export default function FsiShell() {
           </nav>
         )}
       </header>
-      <div className="relative z-10 max-w-6xl mx-auto px-5 pt-8">
+      <div className="relative z-10 max-w-6xl mx-auto px-5 pt-4">
         <Outlet />
-        <footer className="border-t border-white/50 pt-5 pb-8 mt-16 flex justify-between gap-4 flex-wrap text-[11px] text-ink-500">
+        <footer className="border-t border-white/50 pt-3 pb-4 mt-6 flex justify-between gap-4 flex-wrap text-[11px] text-ink-500">
           <span className="flex gap-2 items-center">
             <ShieldCheck className="w-3.5 h-3.5" />
             Demo — Tavily. Not for production, compliance, investment, or underwriting decisions.

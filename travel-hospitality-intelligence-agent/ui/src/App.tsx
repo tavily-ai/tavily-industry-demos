@@ -482,7 +482,7 @@ function App() {
   return (
     <div className="app-shell">
       <div className="landscape-background" aria-hidden="true">
-        <img src="/tavily-landscape.webp" alt="" />
+        <img src="/tavily-landscape.jpg" alt="" />
         <div className="landscape-fade-top" />
         <div className="landscape-fade-bottom" />
       </div>
