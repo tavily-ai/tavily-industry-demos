@@ -1,8 +1,8 @@
 <p align="center">
   <a href="https://www.tavily.com">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="assets/tavily-full-on-dark.svg">
-      <img alt="Tavily" src="assets/tavily-full.svg" width="280">
+      <source media="(prefers-color-scheme: dark)" srcset="assets/tavily-primary-logo-white.png">
+      <img alt="Tavily" src="assets/tavily-primary-logo.svg" width="280">
     </picture>
   </a>
 </p>
