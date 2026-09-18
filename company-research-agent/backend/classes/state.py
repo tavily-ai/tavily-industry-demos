@@ -30,7 +30,7 @@ class ResearchState(InputState):
     report: str
 
 # Global job status tracker - shared across application.py and backend nodes
-job_status = defaultdict[Any, dict[str, str | list[Any] | None]](lambda: {
+job_status = defaultdict[Any, dict[str, Any]](lambda: {
     "status": "pending",
     "result": None,
     "error": None,
@@ -38,5 +38,19 @@ job_status = defaultdict[Any, dict[str, str | list[Any] | None]](lambda: {
     "company": None,
     "report": None,
     "last_update": datetime.now().isoformat(),
-    "events": []  # Queue for events from parallel nodes
+    "events": [],
+    "queue": None,
 })
+
+
+def emit_event(job_id: str | None, event: Dict[str, Any]) -> None:
+    """Push a live event to the in-memory list and the request SSE queue."""
+    if not job_id or job_id not in job_status:
+        return
+    job = job_status[job_id]
+    events = job.get("events")
+    if isinstance(events, list):
+        events.append(event)
+    queue = job.get("queue")
+    if queue is not None:
+        queue.put_nowait(event)

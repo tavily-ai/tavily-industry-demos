@@ -8,7 +8,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
 from ..classes import ResearchState
-from ..classes.state import job_status
+from ..classes.state import emit_event
 from ..utils.references import format_references_section
 from ..prompts import (
     EDITOR_SYSTEM_MESSAGE,
@@ -56,16 +56,10 @@ class Editor:
         
         msg = [f"📑 Compiling final report for {company}..."]
         
-        # Emit report compilation start event
-        if job_id:
-            try:
-                if job_id in job_status:
-                    job_status[job_id]["events"].append({
-                        "type": "report_compilation",
-                        "message": f"Compiling final report for {company}"
-                    })
-            except Exception as e:
-                logger.error(f"Error appending report_compilation event: {e}")
+        emit_event(job_id, {
+            "type": "report_compilation",
+            "message": f"Compiling final report for {company}"
+        })
         
         # Pull individual briefings from dedicated state keys
         briefing_keys = {
@@ -116,13 +110,8 @@ class Editor:
             final_report = ""
             async for event in self.content_sweep(edited_report):
                 # Forward streaming events to job_status
-                if isinstance(event, dict) and job_id:
-                    try:
-                        if job_id in job_status:
-                            job_status[job_id]["events"].append(event)
-                            logger.debug(f"Appended report_chunk event ({len(event.get('chunk', ''))} chars)")
-                    except Exception as e:
-                        logger.error(f"Error appending report_chunk event: {e}")
+                if isinstance(event, dict):
+                    emit_event(job_id, event)
                 
                 # Accumulate the text
                 if isinstance(event, str):

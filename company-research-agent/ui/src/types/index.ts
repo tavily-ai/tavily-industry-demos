@@ -32,7 +32,7 @@ export type ResearchStatusProps = {
   status: ResearchStatusType | null;
   error: string | null;
   isComplete: boolean;
-  currentPhase: 'search' | 'enrichment' | 'briefing' | 'complete' | null;
+  currentPhase: "search" | "enrichment" | "briefing" | "complete" | null;
   isResetting: boolean;
   glassStyle: GlassStyle;
   loaderColor: string;
@@ -57,4 +57,4 @@ export type ResearchQueriesProps = {
   onToggleExpand: () => void;
   isResetting: boolean;
   glassStyle: string;
-}; 
+};

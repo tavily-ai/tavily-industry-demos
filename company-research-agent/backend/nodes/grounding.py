@@ -3,7 +3,7 @@ import logging
 from langchain_core.messages import AIMessage
 
 from ..classes import InputState, ResearchState
-from ..classes.state import job_status
+from ..classes.state import emit_event
 
 logger = logging.getLogger(__name__)
 
@@ -24,13 +24,7 @@ class GroundingNode:
             "step": "Initializing"
         }
         
-        if job_id:
-            try:
-                if job_id in job_status:
-                    job_status[job_id]["events"].append(event)
-            except Exception as e:
-                logger.error(f"Error appending research_init event: {e}")
-        
+        emit_event(job_id, event)
         yield event
 
         # Fast mode relies on targeted search and skips the potentially large

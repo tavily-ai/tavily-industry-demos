@@ -7,7 +7,7 @@ from langchain_core.messages import AIMessage
 from tavily import AsyncTavilyClient
 
 from ..classes import ResearchState
-from ..classes.state import job_status
+from ..classes.state import emit_event
 
 logger = logging.getLogger(__name__)
 
@@ -109,16 +109,11 @@ class Enricher:
                 'curated_docs': curated_docs
             })
 
-        # Emit enrichment start event
-        if enrichment_tasks and job_id:
-            try:
-                if job_id in job_status:
-                    job_status[job_id]["events"].append({
-                        "type": "enrichment",
-                        "message": f"Enriching {len(enrichment_tasks)} categories"
-                    })
-            except Exception as e:
-                logger.error(f"Error appending enrichment event: {e}")
+        if enrichment_tasks:
+            emit_event(job_id, {
+                "type": "enrichment",
+                "message": f"Enriching {len(enrichment_tasks)} categories"
+            })
         
         # Process all categories in parallel
         if enrichment_tasks:
@@ -157,19 +152,13 @@ class Enricher:
             for result in results:
                 msg.append(f"\n  ✓ {result['label']}: {result['enriched']}/{result['total']} documents enriched")
                 
-                # Emit enrichment completion event for each category
-                if job_id:
-                    try:
-                        if job_id in job_status:
-                            job_status[job_id]["events"].append({
-                                "type": "enrichment",
-                                "category": result['category'],  # Use category instead of label
-                                "enriched": result['enriched'],
-                                "total": result['total'],
-                                "message": f"Enriched {result['enriched']}/{result['total']} {result['label']} documents"
-                            })
-                    except Exception as e:
-                        logger.error(f"Error appending enrichment completion event: {e}")
+                emit_event(job_id, {
+                    "type": "enrichment",
+                    "category": result['category'],
+                    "enriched": result['enriched'],
+                    "total": result['total'],
+                    "message": f"Enriched {result['enriched']}/{result['total']} {result['label']} documents"
+                })
 
         # Update state with enrichment message
         state.setdefault('messages', []).append(AIMessage(content="\n".join(msg)))

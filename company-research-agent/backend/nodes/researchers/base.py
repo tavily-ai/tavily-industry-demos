@@ -9,7 +9,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from tavily import AsyncTavilyClient
 
 from ...classes import ResearchState
-from ...classes.state import job_status
+from ...classes.state import emit_event
 from ...utils.references import clean_title
 from ...prompts import QUERY_FORMAT_GUIDELINES
 
@@ -92,18 +92,7 @@ class BaseResearcher:
                     "category": self.analyst_type
                 }
                 
-                # Update job status if job_id provided
-                if job_id:
-                    try:
-                        logger.info(f"job_id={job_id}, job_id in job_status={job_id in job_status}")
-                        if job_id in job_status:
-                            job_status[job_id]["events"].append(event)
-
-                        else:
-                            logger.warning(f"job_id {job_id} not found in job_status. Available keys: {list(job_status.keys())[:3]}")
-                    except Exception as e:
-                        logger.error(f"Error appending event: {e}")
-                
+                emit_event(job_id, event)
                 yield event
                 
                 # Parse completed queries on newline
@@ -122,28 +111,21 @@ class BaseResearcher:
                                 "category": self.analyst_type
                             }
                             
-                            # Update job status if job_id provided
-                            if job_id:
-                                try:
-                                    if job_id in job_status:
-                                        job_status[job_id]["events"].append(event)
-                                    else:
-                                        logger.warning(f"job_id {job_id} not found in job_status for query_generated")
-                                except Exception as e:
-                                    logger.error(f"Error appending query_generated event: {e}")
-                            
+                            emit_event(job_id, event)
                             yield event
                             current_query_number += 1
 
             # Add remaining query
             if current_query.strip():
                 queries.append(current_query.strip())
-                yield {
+                event = {
                     "type": "query_generated",
                     "query": current_query.strip(),
                     "query_number": len(queries),
                     "category": self.analyst_type
                 }
+                emit_event(job_id, event)
+                yield event
             
             if not queries:
                 raise ValueError(f"No queries generated for {company}")

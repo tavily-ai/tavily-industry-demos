@@ -3,12 +3,12 @@ import logging
 import os
 from typing import Any, Dict, List, Union
 
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
 from ..classes import ResearchState
-from ..classes.state import job_status
+from ..classes.state import emit_event
 from ..prompts import (
     COMPANY_BRIEFING_PROMPT,
     INDUSTRY_BRIEFING_PROMPT,
@@ -24,16 +24,14 @@ class Briefing:
     
     def __init__(self) -> None:
         self.max_doc_length = 8000  # Maximum document content length
-        gemini_key = os.getenv("GEMINI_API_KEY")
-        if not gemini_key:
-            raise ValueError("GEMINI_API_KEY environment variable is not set")
-        
-        # Configure LangChain ChatGoogleGenerativeAI
-        self.llm = ChatGoogleGenerativeAI(
-            model="gemini-2.5-flash",
+        openai_key = os.getenv("OPENAI_API_KEY")
+        if not openai_key:
+            raise ValueError("OPENAI_API_KEY environment variable is not set")
+
+        self.llm = ChatOpenAI(
+            model="gpt-4o-mini",
             temperature=0,
-            google_api_key=gemini_key,
-            max_retries=0
+            api_key=openai_key,
         )
 
     def _get_category_prompt(self, category: str) -> str:
@@ -101,13 +99,7 @@ class Briefing:
             "step": "Briefing"
         }
         
-        if job_id:
-            try:
-                if job_id in job_status:
-                    job_status[job_id]["events"].append(event)
-            except Exception as e:
-                logger.error(f"Error appending briefing_start event: {e}")
-        
+        emit_event(job_id, event)
         yield event
 
         # Get category-specific prompt and prepare documents
@@ -149,13 +141,7 @@ class Briefing:
                 "step": "Briefing"
             }
             
-            if job_id:
-                try:
-                    if job_id in job_status:
-                        job_status[job_id]["events"].append(event)
-                except Exception as e:
-                    logger.error(f"Error appending briefing_complete event: {e}")
-            
+            emit_event(job_id, event)
             yield event
             yield {'content': content.strip()}
         except Exception as e:

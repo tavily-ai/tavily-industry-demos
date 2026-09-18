@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import Any, AsyncIterator, Dict
 
 from langchain_core.messages import SystemMessage
@@ -21,8 +22,8 @@ from .nodes.researchers import (
 logger = logging.getLogger(__name__)
 
 class Graph:
-    def __init__(self, company=None, url=None, hq_location=None, industry=None, job_id=None, tavily_api_key=None):
-        self.tavily_api_key = tavily_api_key
+    def __init__(self, company=None, url=None, hq_location=None, industry=None, job_id=None):
+        self.tavily_api_key = os.getenv("TAVILY_API_KEY")
         # Initialize InputState
         self.input_state = InputState(
             company=company,

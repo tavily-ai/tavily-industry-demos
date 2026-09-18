@@ -5,7 +5,7 @@ from urllib.parse import urljoin, urlparse
 from langchain_core.messages import AIMessage
 
 from ..classes import ResearchState
-from ..classes.state import job_status
+from ..classes.state import emit_event
 from ..utils.references import process_references_from_search_results
 
 logger = logging.getLogger(__name__)
@@ -110,18 +110,12 @@ class Curator:
             
             evaluated_docs = self.evaluate_documents(docs, context)
             
-            # Emit curation event with total count
-            if job_id:
-                try:
-                    if job_id in job_status:
-                        job_status[job_id]["events"].append({
-                            "type": "curation",
-                            "category": doc_type,
-                            "total": len(evaluated_docs) if evaluated_docs else 0,
-                            "message": f"Curating {doc_type} documents"
-                        })
-                except Exception as e:
-                    logger.error(f"Error appending curation event: {e}")
+            emit_event(job_id, {
+                "type": "curation",
+                "category": doc_type,
+                "total": len(evaluated_docs) if evaluated_docs else 0,
+                "message": f"Curating {doc_type} documents"
+            })
 
             if not evaluated_docs:
                 msg.append("  ⚠️ No relevant documents found")
